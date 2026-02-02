@@ -1,4 +1,5 @@
-import 'package:aiphc/model/recentInitiativesList.dart';
+
+import 'package:aiphc/model/pensionhelp.dart';
 import 'package:aiphc/utils/routes/serverassets.dart';
 import 'package:aiphc/view/widgets/appbar.dart';
 import 'package:aiphc/view/widgets/llivetimer.dart';
@@ -7,10 +8,10 @@ import 'package:flutter_html/flutter_html.dart';
 
 import 'full_screen_image.dart';
 
-class RecentInitiativeDetailScreen extends StatelessWidget {
-  final RecentInitiativeModel data;
+class PensionDetailScreen extends StatelessWidget {
+  final PensionHelpModel data;
 
-  const RecentInitiativeDetailScreen({
+  const PensionDetailScreen({
     super.key,
     required this.data,
   });

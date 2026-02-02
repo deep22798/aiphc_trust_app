@@ -1,16 +1,17 @@
 import 'package:aiphc/controllers/globalcontroller.dart';
+import 'package:aiphc/model/pensionhelp.dart';
 import 'package:aiphc/model/recentInitiativesList.dart';
-import 'package:aiphc/model/recenthelp.dart';
 import 'package:aiphc/utils/routes/serverassets.dart';
 import 'package:aiphc/utils/serverconstants.dart';
 import 'package:aiphc/view/widgets/appbar.dart';
 import 'package:aiphc/view/widgets/llivetimer.dart';
+import 'package:aiphc/view/widgets/pensiondetailed.dart';
 import 'package:aiphc/view/widgets/recent_initiative_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class RecentHelp extends StatelessWidget {
-  const RecentHelp({super.key});
+class PensionHelpScreeen extends StatelessWidget {
+  const PensionHelpScreeen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -42,10 +43,10 @@ class RecentHelp extends StatelessWidget {
                 mainAxisSpacing: 5,
                 childAspectRatio: 0.65,
               ),
-              itemCount: controller.recentiniti.length,
+              itemCount: controller.pensionlist.length,
               itemBuilder: (context, index) {
-                return SuccessGridCard(
-                  data: controller.recentiniti[index],
+                return PensionHelpScreeenGrid(
+                  data: controller.pensionlist[index],
                 );
               },
             );
@@ -56,10 +57,10 @@ class RecentHelp extends StatelessWidget {
   }
 }
 
-class SuccessGridCard extends StatelessWidget {
-  final RecentInitiativeModel data;
+class PensionHelpScreeenGrid extends StatelessWidget {
+  final PensionHelpModel data;
 
-  const SuccessGridCard({
+  const PensionHelpScreeenGrid({
     super.key,
     required this.data,
   });
@@ -72,7 +73,7 @@ class SuccessGridCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(14),
       onTap: () {
         Get.to(
-              () => RecentInitiativeDetailScreen(data: data),
+              () => PensionDetailScreen(data: data),
         );
       },
       child: Card(

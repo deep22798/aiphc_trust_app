@@ -1,25 +1,28 @@
+import 'package:aiphc/controllers/auth/login.dart';
 import 'package:aiphc/controllers/globalcontroller.dart';
-import 'package:aiphc/controllers/screens/memberscontroller.dart';
-import 'package:aiphc/view/widgets/appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../utils/routes/serverassets.dart';
 
-class ContactUs extends StatelessWidget {
-  const ContactUs({super.key});
+class supportquries extends StatelessWidget {
+   supportquries({super.key});
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(Globalcontroller());
-    final member = Get.find<MembersController>();
+    final auth = Get.find<AuthController>();
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: CustomeAppBar(title: "About Us"),
+      appBar: AppBar(
+        title: const Text('Support Queries'),
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
+      ),
 
       body: Obx(() {
-        if (controller.aboutLoading.value) {
+        if (controller.contactLoading.value) {
           return Center(
             child: CircularProgressIndicator(
               color: theme.colorScheme.primary,
@@ -27,168 +30,133 @@ class ContactUs extends StatelessWidget {
           );
         }
 
-        if (controller.ContactUs.isEmpty) {
+        if (auth.enablerole==1?controller.supportquries.isEmpty: controller.supportquries.where((s)=>s.id.toString()==auth.usermodel.value?.id.toString()).length<1) {
           return Center(
             child: Text(
-              'जानकारी उपलब्ध नहीं है',
+              'कोई सहायता अनुरोध उपलब्ध नहीं है',
               style: theme.textTheme.bodyMedium,
             ),
           );
         }
 
-        final about = controller.ContactUs.first;
+        return ListView.builder(
 
-        return SingleChildScrollView(
-          child: Column(
-            children: [
+          padding: const EdgeInsets.all(16),
+          itemCount:auth.enablerole==2? controller.supportquries.where((s)=>s.id.toString()==auth.usermodel.value?.id.toString()).length:controller.supportquries.length,
+          itemBuilder: (context, index) {
+            final item =auth.enablerole==1? controller.supportquries[index]: controller.supportquries.where((s)=>s.id.toString()==auth.usermodel.value?.id.toString()).toList()[index];
+            return Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: theme.cardColor,
+                borderRadius: BorderRadius.circular(18),
 
-              /// 🔥 HERO IMAGE
-              if (about.image != null && about.image!.isNotEmpty)
-                Stack(
-                  children: [
-                    Image.network(
-                      ServerAssets.ContactUs + about.image!,
-                      width: double.infinity,
-                      height: 240,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) =>
-                          Container(height: 240),
-                    ),
-                    Container(
-                      height: 240,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.black.withOpacity(0.2),
-                            Colors.black.withOpacity(0.65),
+                // ⭐ Better contrast in dark & light
+                border: Border.all(
+                  color: isDark
+                      ? Colors.white.withOpacity(0.08)
+                      : Colors.black.withOpacity(0.06),
+                ),
+
+                boxShadow: isDark
+                    ? []
+                    : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 10,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+
+                  /// 🔹 HEADER (Avatar + Name + Email)
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 22,
+                        backgroundColor:
+                        theme.colorScheme.primary.withOpacity(0.15),
+                        child: Icon(
+                          Icons.person_outline,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item.name,
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              item.email,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onSurface
+                                    .withOpacity(0.7),
+                              ),
+                            ),
                           ],
                         ),
                       ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 14),
+
+                  /// 🔹 MESSAGE BUBBLE
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primary.withOpacity(
+                        isDark ? 0.15 : 0.08,
+                      ),
+                      borderRadius: BorderRadius.circular(14),
                     ),
-                    Positioned(
-                      left: 16,
-                      bottom: 16,
-                      right: 16,
-                      child: Text(
-                        about.title,
-                        style: theme.textTheme.headlineSmall?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    child: Text(
+                      item.message,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        height: 1.6,
                       ),
                     ),
-                  ],
-                ),
+                  ),
 
-              const SizedBox(height: 16),
+                  const SizedBox(height: 10),
 
-              /// 🔹 STATS ROW
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    _statCard(
-                      theme,
-                      icon: Icons.group,
-                      title: about.firstBoxName,
-                      value: member.members.length.toString(),
-                    ),
-                    const SizedBox(width: 12),
-                    _statCard(
-                      theme,
-                      icon: Icons.trending_up,
-                      title: about.secondBoxName ?? '',
-                      value: about.secondValue.isEmpty
-                          ? "0"
-                          : about.secondValue,
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              /// 🔹 DESCRIPTION CARD
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Container(
-                  padding: const EdgeInsets.all(18),
-                  decoration: BoxDecoration(
-                    color: theme.cardColor,
-                    borderRadius: BorderRadius.circular(18),
-                    boxShadow: [
-                      BoxShadow(
-                        color: theme.shadowColor.withOpacity(0.12),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
+                  /// 🔹 FOOTER (Status / Info – optional)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Icon(
+                        Icons.help_outline,
+                        size: 16,
+                        color: theme.colorScheme.primary,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'User Query',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ],
                   ),
-                  child: Text(
-                    about.shortDescription ?? '',
-                    textAlign: TextAlign.justify,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      height: 1.6,
-                    ),
-                  ),
-                ),
+                ],
               ),
-
-              const SizedBox(height: 30),
-            ],
-          ),
+            );
+          },
         );
       }),
-    );
-  }
-
-  /// 🔹 STAT CARD WIDGET
-  Widget _statCard(
-      ThemeData theme, {
-        required IconData icon,
-        required String title,
-        required String value,
-      }) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: theme.cardColor,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: theme.shadowColor.withOpacity(0.12),
-              blurRadius: 6,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Icon(
-              icon,
-              size: 28,
-              color: theme.colorScheme.primary,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: theme.colorScheme.primary,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodySmall,
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

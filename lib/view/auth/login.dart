@@ -14,32 +14,60 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
-  late AnimationController controller;
-  late Animation<double> fade;
-  late Animation<Offset> slide;
-  late Animation<double> scale;
+
+  // 🔐 Text Controllers (NO late)
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  // 🔐 Auth Controller (created once)
+  final AuthController login = Get.put(AuthController(), permanent: true);
+
+  // 🎞️ Animation vars (NO late)
+  AnimationController? controller;
+  Animation<double>? fade;
+  Animation<Offset>? slide;
+  Animation<double>? scale;
 
   @override
   void initState() {
     super.initState();
+
     controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 900),
     );
 
-    fade = Tween(begin: 0.0, end: 1.0).animate(controller);
-    slide = Tween(begin: const Offset(0, 0.2), end: Offset.zero)
-        .animate(CurvedAnimation(parent: controller, curve: Curves.easeOut));
-    scale = Tween(begin: 0.9, end: 1.0).animate(
-      CurvedAnimation(parent: controller, curve: Curves.easeOutBack),
+    fade = Tween(begin: 0.0, end: 1.0).animate(controller!);
+
+    slide = Tween(begin: const Offset(0, 0.2), end: Offset.zero).animate(
+      CurvedAnimation(parent: controller!, curve: Curves.easeOut),
     );
 
-    controller.forward();
+    scale = Tween(begin: 0.9, end: 1.0).animate(
+      CurvedAnimation(parent: controller!, curve: Curves.easeOutBack),
+    );
+
+    controller!.forward();
+
+    // 👇 POPUP after build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showDonationPopup();
+    });
   }
+
+
+  bool startsWithLetter(String value) {
+    if (value.isEmpty) return false;
+    return RegExp(r'^[A-Za-z]').hasMatch(value[0]);
+  }
+
+
 
   @override
   void dispose() {
-    controller.dispose();
+    usernameController.dispose();
+    passwordController.dispose();
+    controller?.dispose();
     super.dispose();
   }
 
@@ -85,19 +113,15 @@ class _LoginPageState extends State<LoginPage>
     final isDark = theme.brightness == Brightness.dark;
 
     return FadeTransition(
-      opacity: fade,
+      opacity: fade!,
       child: SlideTransition(
-        position: slide,
+        position: slide!,
         child: ScaleTransition(
-          scale: scale,
+          scale: scale!,
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(22),
-
-              // ✅ THEME-AWARE CARD COLOR
               color: isDark ? theme.cardColor : Colors.white,
-
-              // ✅ LIGHT MODE SHADOW ONLY
               boxShadow: isDark
                   ? []
                   : [
@@ -107,8 +131,6 @@ class _LoginPageState extends State<LoginPage>
                   offset: const Offset(0, 18),
                 ),
               ],
-
-              // ✅ THEME-AWARE BORDER
               border: Border.all(
                 color: theme.dividerColor.withOpacity(0.6),
               ),
@@ -122,35 +144,30 @@ class _LoginPageState extends State<LoginPage>
                   children: [
                     Image.asset(Appconstants.applogo, height: 100),
                     const SizedBox(height: 16),
-
                     Text(
                       "Trust Login",
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-
                     const SizedBox(height: 28),
-
                     TextField(
+                      controller: usernameController,
                       maxLength: 12,
-                      keyboardType: TextInputType.number,
+                      // keyboardType: TextInputType.,
                       decoration: _inputDecoration(
                         "Aadhaar Number",
                         Icons.credit_card,
                       ),
                     ),
-
                     const SizedBox(height: 16),
-
                     TextField(
+                      controller: passwordController,
                       obscureText: true,
                       decoration:
                       _inputDecoration("Password", Icons.lock),
                     ),
-
                     const SizedBox(height: 28),
-
                     SizedBox(
                       width: double.infinity,
                       height: 52,
@@ -160,21 +177,125 @@ class _LoginPageState extends State<LoginPage>
                           theme.colorScheme.primary,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
+                            borderRadius:
+                            BorderRadius.circular(30),
                           ),
                         ),
+                        // onPressed: login.isLoading.value
+                        //     ? null
+                        //     : () {
+                        //   if (usernameController.text.isEmpty ||
+                        //       passwordController.text.isEmpty) {
+                        //     Get.snackbar(
+                        //       'Error',
+                        //       'Please enter Aadhaar & password',
+                        //       snackPosition:
+                        //       SnackPosition.BOTTOM,
+                        //     );
+                        //     return;
+                        //   }
+                        //
+                        //   login.adminLogin(
+                        //     username: usernameController.text
+                        //         .trim(),
+                        //     password: passwordController.text
+                        //         .trim(),
+                        //   );
+                        // },
                         onPressed: login.isLoading.value
                             ? null
-                            : login.login,
+                            : () {
+                          final username = usernameController.text.trim();
+                          final password = passwordController.text.trim();
+
+                          if (username.isEmpty || password.isEmpty) {
+                            Get.snackbar(
+                              'Error',
+                              'Please enter Aadhaar & password',
+                              snackPosition: SnackPosition.BOTTOM,
+                            );
+                            return;
+                          }
+
+                          // 👇 CHECK FIRST CHARACTER
+                          if (startsWithLetter(username)) {
+                            // 🔹 Call ANOTHER function
+                            login.adminLogin(
+                              username: username,
+                              password: password,
+                            );
+                          } else {
+                            // 🔹 Normal numeric login
+                            login.userLogin(
+                              aadhar: username,
+                              password: password,
+                            );
+                          }
+                        },
                         child: login.isLoading.value
                             ? const CircularProgressIndicator(
                           strokeWidth: 2,
                           color: Colors.white,
                         )
                             : const Text(
-                          "Login",
+                          "Login (लॉग इन)",
                           style: TextStyle(
                             fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      )),
+                    ),
+                    Divider(),
+                    Text("OR / या"),
+                    Divider(),
+
+                    SizedBox(
+                      width: MediaQuery.sizeOf(context).width/2,
+                      height: 40,
+                      child: Obx(() => ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                          theme.primaryColorDark,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                            BorderRadius.circular(30),
+                          ),
+                        ),
+                        // onPressed: login.isLoading.value
+                        //     ? null
+                        //     : () {
+                        //   if (usernameController.text.isEmpty ||
+                        //       passwordController.text.isEmpty) {
+                        //     Get.snackbar(
+                        //       'Error',
+                        //       'Please enter Aadhaar & password',
+                        //       snackPosition:
+                        //       SnackPosition.BOTTOM,
+                        //     );
+                        //     return;
+                        //   }
+                        //
+                        //   login.adminLogin(
+                        //     username: usernameController.text
+                        //         .trim(),
+                        //     password: passwordController.text
+                        //         .trim(),
+                        //   );
+                        // },
+                        onPressed: (){
+                        },
+                        child: login.isLoading.value
+                            ? const CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        )
+                            : const Text(
+                          "Register (रजिस्टर)",
+                          style: TextStyle(
+                            fontSize: 15,
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
                           ),
@@ -201,11 +322,11 @@ class _LoginPageState extends State<LoginPage>
         gradient: LinearGradient(
           colors: isDark
               ? [
-            theme.colorScheme.surface,               // dark base
+            theme.colorScheme.surface,
             theme.colorScheme.surface.withOpacity(0.85),
           ]
               : const [
-            Color(0xFF2E7D32),                       // SAME green
+            Color(0xFF2E7D32),
             Color(0xFF66BB6A),
           ],
           begin: Alignment.topLeft,
@@ -220,7 +341,7 @@ class _LoginPageState extends State<LoginPage>
             "Welcome to\nALL INDIA POLICE\nVITTIYA SAHAYATA TRUST",
             style: theme.textTheme.displaySmall?.copyWith(
               fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.white,
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 20),
@@ -231,7 +352,7 @@ class _LoginPageState extends State<LoginPage>
                 "• Community Welfare\n\n"
                 "Together we build a better future.",
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: isDark ? Colors.white70 : Colors.white70,
+              color: Colors.white70,
               height: 1.5,
             ),
           ),
@@ -245,14 +366,12 @@ class _LoginPageState extends State<LoginPage>
   @override
   Widget build(BuildContext context) {
     final theme = Get.find<ThemeController>();
-    final login = Get.put(AuthController());
 
     return Scaffold(
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isDesktop = constraints.maxWidth >= 900;
 
-          // ================= DESKTOP / WEB =================
           if (isDesktop) {
             return Row(
               children: [
@@ -267,24 +386,21 @@ class _LoginPageState extends State<LoginPage>
                           fit: BoxFit.cover,
                         ),
                       ),
-
-                      // ✅ BLUR CONFINED TO RIGHT PANEL
                       ClipRect(
                         child: BackdropFilter(
-                          filter:
-                          ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                          filter: ImageFilter.blur(
+                              sigmaX: 8, sigmaY: 8),
                           child: Container(
-                            color: Colors.black.withOpacity(0.25),
+                            color:
+                            Colors.black.withOpacity(0.25),
                           ),
                         ),
                       ),
-
                       Positioned(
                         top: 20,
                         right: 20,
                         child: _themeToggle(theme),
                       ),
-
                       Center(
                         child: ConstrainedBox(
                           constraints:
@@ -299,7 +415,7 @@ class _LoginPageState extends State<LoginPage>
             );
           }
 
-          // ================= MOBILE / TABLET =================
+          // ---------- MOBILE / TABLET ----------
           return Stack(
             children: [
               Positioned.fill(
@@ -308,22 +424,20 @@ class _LoginPageState extends State<LoginPage>
                   fit: BoxFit.cover,
                 ),
               ),
-
               ClipRect(
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                  filter:
+                  ImageFilter.blur(sigmaX: 8, sigmaY: 8),
                   child: Container(
                     color: Colors.black.withOpacity(0.25),
                   ),
                 ),
               ),
-
               Positioned(
                 top: 40,
                 right: 20,
                 child: _themeToggle(theme),
               ),
-
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
@@ -336,4 +450,154 @@ class _LoginPageState extends State<LoginPage>
       ),
     );
   }
+  void _showDonationPopup() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false, // ❌ tap outside disabled
+      builder: (context) {
+        return WillPopScope(
+          onWillPop: () async => false, // ❌ back button disabled
+          child: Stack(
+            children: [
+              // 🔹 FULL SCREEN BLUR
+              Positioned.fill(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: Container(
+                    color: Colors.black.withOpacity(0.4),
+                  ),
+                ),
+              ),
+
+              // 🔹 CENTER POPUP
+              Center(
+                child: Dialog(
+                  backgroundColor: Colors.transparent,
+                  insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(26),
+                      gradient: LinearGradient(
+                        colors: isDark
+                            ? [
+                          theme.colorScheme.surface,
+                          theme.colorScheme.surfaceVariant,
+                        ]
+                            : const [
+                          Color(0xFF2E7D32),
+                          Color(0xFF66BB6A),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.35),
+                          blurRadius: 30,
+                          offset: const Offset(0, 20),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.volunteer_activism,
+                          size: 60,
+                          color: Colors.white,
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          "आपका एक छोटा सा दान\nकिसी परिवार की मदद बन सकता है ❤️",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        const Text(
+                          "अभी रजिस्टर करें या लॉगिन करें\n"
+                              "आपका एक दान किसी ज़रूरतमंद\n"
+                              "परिवार का सहारा बन सकता है।",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.white70,
+                            height: 1.5,
+                          ),
+                        ),
+                        const SizedBox(height: 26),
+
+                        Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                  side:
+                                  const BorderSide(color: Colors.white),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(30),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 14),
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  Get.toNamed('/register');
+                                },
+                                child: const Text(
+                                  "Register",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(30),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 14),
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context); // ✅ blur removed
+                                },
+                                child: const Text(
+                                  "Login",
+                                  style: TextStyle(
+                                    color: Color(0xFF2E7D32),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
 }

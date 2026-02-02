@@ -1,75 +1,67 @@
-
-import 'package:aiphc/model/bannermodel.dart';
-import 'package:aiphc/model/membermodel.dart';
-import 'package:aiphc/model/processrules.dart';
+import 'package:aiphc/model/gallerymodel.dart';
 import 'package:aiphc/utils/serverconstants.dart';
-import 'package:aiphc/view/screens/process/process.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ProcessController extends GetxController{
+class GalleryController extends GetxController {
+
+  // 🔹 Loading flags (SEPARATED)
+  final albumLoading = false.obs;
+  final imageLoading = false.obs;
+
+  // 🔹 Data
+  final RxList<GalleryAlbumModel> gallery = <GalleryAlbumModel>[].obs;
+  final RxList<GalleryImageModel> galleryimages = <GalleryImageModel>[].obs;
 
   @override
-  void onReady() async{
-    // TODO: implement onReady
+  void onReady() {
     super.onReady();
-    await fetchMembers();
+    fetchGallery();
   }
 
-  var bannerloading=false.obs;
-
-  final RxList<ProcessRulesmodel> processrules = <ProcessRulesmodel>[].obs;
-
-  var currentCarouselIndex = 0.obs;
-  Future<void> fetchMembers() async {
+  /// 📸 Fetch Albums
+  Future<void> fetchGallery() async {
     try {
-      bannerloading.value = true;
+      albumLoading.value = true;
 
-      final response = await Dio().get(
-        ServerConstants.rules,
-      );
-
+      final response = await Dio().get(ServerConstants.galleryAlbums);
       final data = response.data;
-      print("PROCESS RESPONSE ::: $data\n${ServerConstants.rules}");
-      print("PROCESS RESPONSE :::\n${ServerConstants.rules}");
 
       if (data['status'] == true) {
-
-        // ✅ Parse & save banner list
         final List list = data['data'] ?? [];
-        processrules.value =
-            list.map((e) => ProcessRulesmodel.fromJson(e)).toList();
-
-        print("RESPONSE ::: ${processrules.value.first.description}");
-        // Get.snackbar(
-        //   'Success',
-        //   data['message'] ?? 'Banners fetched',
-        //   snackPosition: SnackPosition.BOTTOM,
-        //   backgroundColor: Colors.green,
-        //   colorText: Colors.white,
-        // );
-      } else {
-        // Get.snackbar(
-        //   'Error',
-        //   data['message'] ?? 'Failed to fetch banners',
-        //   snackPosition: SnackPosition.BOTTOM,
-        //   backgroundColor: Colors.red,
-        //   colorText: Colors.white,
-        // );
+        gallery.value =
+            list.map((e) => GalleryAlbumModel.fromJson(e)).toList();
       }
-    } on DioException catch (e) {
-      // Get.snackbar(
-      //   'Error',
-      //   e.response?.data['message'] ?? 'Server not responding',
-      //   snackPosition: SnackPosition.BOTTOM,
-      //   backgroundColor: Colors.red,
-      //   colorText: Colors.white,
-      // );
+    } catch (e) {
+      // handle error if needed
     } finally {
-      bannerloading.value = false;
+      albumLoading.value = false;
     }
   }
 
+  /// 🖼️ Fetch Images by Album
+  Future<void> fetchGalleryimages(String albumId) async {
+    try {
+      imageLoading.value = true;
 
+      // ✅ Clear old images first
+      galleryimages.clear();
+
+      final response = await Dio().get(
+        "${ServerConstants.galleryImages}?album_id=$albumId",
+      );
+
+      final data = response.data;
+
+      if (data['status'] == true) {
+        final List list = data['data'] ?? [];
+        galleryimages.value =
+            list.map((e) => GalleryImageModel.fromJson(e)).toList();
+      }
+    } catch (e) {
+      // handle error if needed
+    } finally {
+      imageLoading.value = false;
+    }
+  }
 }

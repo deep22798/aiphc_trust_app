@@ -3,7 +3,9 @@ import 'package:aiphc/model/recentInitiativesList.dart';
 import 'package:aiphc/model/recenthelp.dart';
 import 'package:aiphc/utils/routes/serverassets.dart';
 import 'package:aiphc/utils/serverconstants.dart';
+import 'package:aiphc/view/widgets/appbar.dart';
 import 'package:aiphc/view/widgets/llivetimer.dart';
+import 'package:aiphc/view/widgets/recent_initiative_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -15,10 +17,7 @@ class RecentHelp extends StatelessWidget {
     final controller = Get.put(Globalcontroller());
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('वित्तीय सहायता'),
-        centerTitle: true,
-      ),
+      appBar: CustomeAppBar(title: "Vittiya Sahayata"),
 
       body: Obx(() {
         if (controller.contactLoading.value) {
@@ -69,16 +68,21 @@ class SuccessGridCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Card(
-      color: theme.cardColor,
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: SingleChildScrollView(
+    return InkWell(
+      borderRadius: BorderRadius.circular(14),
+      onTap: () {
+        Get.to(
+              () => RecentInitiativeDetailScreen(data: data),
+        );
+      },
+      child: Card(
+        color: theme.cardColor,
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
         child: Column(
           children: [
-            /// IMAGE
             ClipRRect(
               borderRadius:
               const BorderRadius.vertical(top: Radius.circular(14)),
@@ -89,27 +93,24 @@ class SuccessGridCard extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ),
-        
-            const SizedBox(height: 12),
-        
-            /// TITLE
+
+            const SizedBox(height: 10),
+
             Text(
               data.title,
+              textAlign: TextAlign.center,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
-              textAlign: TextAlign.center,
             ),
-        
-            // const SizedBox(height: 12),
-        
-            /// LIVE TIMER
+
+            const SizedBox(height: 8),
+
             LiveTimer(startTime: data.dateCreated),
-        
-            // const SizedBox(height: 16),
           ],
         ),
       ),
     );
+
   }
 }

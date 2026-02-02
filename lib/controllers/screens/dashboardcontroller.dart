@@ -4,10 +4,9 @@ class DashboardController extends GetxController {
   RxInt currentPage = 0.obs;
 
   final gridItems = const [
-    {"icon": "school", "label": "Education"},
-    {"icon": "hospital", "label": "Health"},
-    {"icon": "people", "label": "Members"},
-    {"icon": "donate", "label": "Donations"},
+    {"icon": "people", "label": "सभी सदस्यों की सूची\nAll Member list"},
+    {"icon": "gallery", "label": "गैलरी\nGallery"},
+    {"icon": "rules", "label": "प्रक्रिया / निर्देश\nRules"},
   ];
 
   final carouselItems = const [
@@ -16,10 +15,19 @@ class DashboardController extends GetxController {
     "Community Welfare Initiatives",
   ];
 
-  final listItems =
-  List.generate(6, (i) => "Trust activity update ${i + 1}");
+  final listItems = const [
+    {"icon": "vhelp", "label": "वित्तीय सहायता\nVittiya Sahayata"},
+    {"icon": "help", "label": "पेंशन सहायता\nPension Help"},
+    {"icon": "donate", "label": "दान\nDonations"},
+  ];
 
   void updatePage(int index) {
     currentPage.value = index;
   }
+  var currentIndex = 0.obs;
+
+  void changeTab(int index) {
+    currentIndex.value = index;
+  }
+
 }

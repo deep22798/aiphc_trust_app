@@ -17,7 +17,6 @@ class _SplashPageState extends State<SplashPage>
   late AnimationController _controller;
   late Animation<double> _scale;
   late Animation<double> _fade;
-
   final splashCtrl = Get.put(SplashController());
   final themeCtrl = Get.find<ThemeController>();
 
