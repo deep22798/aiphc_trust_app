@@ -30,11 +30,28 @@ android {
         versionName = flutter.versionName
     }
 
+//    buildTypes {
+//        release {
+//            // TODO: Add your own signing config for the release build.
+//            // Signing with the debug keys for now, so `flutter run --release` works.
+//            signingConfig = signingConfigs.getByName("debug")
+//        }
+//    }
+    signingConfigs {
+        create("release") {
+            // If you don’t have a keystore yet, you can temporarily use debug keys:
+            storeFile = file("aiphcHce.jks")
+            storePassword = "aiphcHce"
+            keyAlias = "aiphcHce"
+            keyPassword = "aiphcHce"
+        }
+    }
+
     buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+        getByName("release") {
+            isMinifyEnabled = false
+            isShrinkResources = false
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }
