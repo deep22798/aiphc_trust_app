@@ -93,8 +93,8 @@ class _SplashPageState extends State<SplashPage>
                     const Color(0xFF0F172A).withOpacity(0.55),
                   ]
                       : [
-                    // const Color(0xFF0D47A1).withOpacity(0.55),
-                    // const Color(0xFF1976D2).withOpacity(0.45),
+                    const Color(0xFF00FF05).withOpacity(0.55),
+                    const Color(0xFF0D5314).withOpacity(0.45),
                   ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,

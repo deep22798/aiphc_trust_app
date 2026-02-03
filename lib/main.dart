@@ -52,8 +52,8 @@ class MyApp extends StatelessWidget {
       darkTheme: AppTheme.dark,
       themeMode: theme.themeMode,
       // initialRoute:Butttuon(key: key,),
-      // initialRoute: Routes.splash,
-      home: ButtonPage(),
+      initialRoute: Routes.splash,
+      // home: ButtonPage(),
       getPages: getPages,
     ));
   }

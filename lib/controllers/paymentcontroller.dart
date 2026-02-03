@@ -82,8 +82,6 @@ class PaymentController extends GetxController {
   }
 }
 
-
-
 class ButtonPage extends StatelessWidget {
   ButtonPage({super.key});
 
