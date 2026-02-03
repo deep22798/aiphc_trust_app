@@ -1,10 +1,13 @@
 import 'package:aiphc/model/aboutus.dart';
 import 'package:aiphc/model/contactus.dart';
+import 'package:aiphc/model/department.dart';
+import 'package:aiphc/model/districtmodel.dart';
 import 'package:aiphc/model/donation.dart';
 import 'package:aiphc/model/myteam.dart';
 import 'package:aiphc/model/pensionhelp.dart';
 import 'package:aiphc/model/recentInitiativesList.dart';
 import 'package:aiphc/model/recenthelp.dart';
+import 'package:aiphc/model/states.dart';
 import 'package:aiphc/utils/serverconstants.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
@@ -22,6 +25,15 @@ class Globalcontroller extends GetxController {
   final RxList<RecentInitiativeModel> recentiniti = <RecentInitiativeModel>[].obs;
   final RxList<PensionHelpModel> pensionlist = <PensionHelpModel>[].obs;
   final RxList<TeamMemberModel> myteamlist = <TeamMemberModel>[].obs;
+
+  final Rx<DepartmentModel?> selectedDepartment =
+  Rx<DepartmentModel?>(null);
+
+  final RxList<StateModel> states = <StateModel>[].obs;
+  final RxList<DistrictModel> districts = <DistrictModel>[].obs;
+
+  final Rx<StateModel?> selectedState = Rx<StateModel?>(null);
+  final Rx<DistrictModel?> selectedDistrict = Rx<DistrictModel?>(null);
 
   final RxString searchQuery = ''.obs;
   final RxString statusFilter = 'all'.obs;
@@ -44,6 +56,7 @@ class Globalcontroller extends GetxController {
     fetchsucessstories();
     fetchsucesrecentini();
     fetchsucespension();
+    fetchStates();
   }
 
   /// Generic safe API call
@@ -177,6 +190,40 @@ class Globalcontroller extends GetxController {
       if (data != null && data['status'] == true) {
         pensionlist.value = (data['data'] as List)
             .map((e) => PensionHelpModel.fromJson(e))
+            .toList();
+      }
+    } finally {
+      contactLoading.value = false;
+    }
+  }
+
+
+
+  Future<void> fetchStates() async {
+    contactLoading.value = true;
+    states.clear();
+    try {
+      final data = await _safeGet(ServerConstants.states);
+      if (data != null && data['status'] == true) {
+        states.value = (data['data'] as List)
+            .map((e) => StateModel.fromJson(e))
+            .toList();
+      }
+    } finally {
+      contactLoading.value = false;
+    }
+  }
+
+  Future<void> fetchDistrictsByState(String stateId) async {
+    contactLoading.value = true;
+    districts.clear();
+    try {
+      final data = await _safeGet(
+        "${ServerConstants.districts}?state_id=$stateId",
+      );
+      if (data != null && data['status'] == true) {
+        districts.value = (data['data'] as List)
+            .map((e) => DistrictModel.fromJson(e))
             .toList();
       }
     } finally {

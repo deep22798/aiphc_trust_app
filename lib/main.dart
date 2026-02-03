@@ -1,5 +1,6 @@
 import 'package:aiphc/controllers/auth/login.dart';
 import 'package:aiphc/controllers/globalcontroller.dart';
+import 'package:aiphc/controllers/paymentcontroller.dart';
 import 'package:aiphc/controllers/screens/bannercontroller.dart';
 import 'package:aiphc/controllers/screens/gallery.dart';
 import 'package:aiphc/controllers/screens/memberscontroller.dart';
@@ -50,7 +51,9 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: theme.themeMode,
-      initialRoute: Routes.splash,
+      // initialRoute:Butttuon(key: key,),
+      // initialRoute: Routes.splash,
+      home: ButtonPage(),
       getPages: getPages,
     ));
   }

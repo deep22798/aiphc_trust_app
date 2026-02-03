@@ -124,4 +124,35 @@ class ServerConstants {
 
 
 
+
+
+  static const String payenvmainmode    = "Test";
+
+  static const String payenvmode    = payenvmainmode=="Test"?"$payenvmodetest":"$payenvmodeprod";
+  static const String PHONEPE_CLIENT_ID    = payenvmainmode=="Test"?"$PHONEPE_CLIENT_IDtest":"$PHONEPE_CLIENT_IDprod";
+  static const String PHONEPE_MERCHANT_ID    = payenvmainmode=="Test"?"$PHONEPE_MERCHANT_IDtest":"$PHONEPE_MERCHANT_IDprod";
+  static const String PHONEPE_CLIENT_SECRET    = payenvmainmode=="Test"?"$PHONEPE_CLIENT_SECRETtest":"$PHONEPE_CLIENT_SECRETprod";
+  static const String PHONEPE_BASE_URL    = payenvmainmode=="Test"?"$PHONEPE_BASE_URLtest":"$PHONEPE_BASE_URLprod";
+  static const String PHONEPE_AUTH_URL    = payenvmainmode=="Test"?"$PHONEPE_AUTH_URLtest":"$PHONEPE_AUTH_URLprod";
+
+
+  static const String payenvmodetest    = "sandbox";
+  static const String PHONEPE_CLIENT_IDtest    = "M22WT1JEYXRO5_2511121523";
+  static const String PHONEPE_MERCHANT_IDtest    = "PGTESTPAYUAT";
+  static const String PHONEPE_CLIENT_SECRETtest    = "ZjY4ZjA2ZWQtNmUwYy00NzRmLTk0NGYtMTAyMDVjMmM5Yjdi";
+  static const String PHONEPE_BASE_URLtest    = "https://api-preprod.phonepe.com/apis/pg-sandbox";
+  static const String PHONEPE_AUTH_URLtest    = "https://api-preprod.phonepe.com/apis/pg-sandbox/v1/oauth/token";
+
+
+
+
+  static const String payenvmodeprod    = "production";
+  static const String PHONEPE_CLIENT_IDprod    = "SU2508251710261230112223";
+  static const String PHONEPE_MERCHANT_IDprod    = "SU2508251710261230112223";
+  static const String PHONEPE_CLIENT_SECRETprod    = "306c2ce3-373c-4bea-811f-12469a1b4d80";
+  static const String PHONEPE_BASE_URLprod    = "https://api.phonepe.com/apis/pg";
+  static const String PHONEPE_AUTH_URLprod    = "https://api.phonepe.com/apis/identity-manager/v1/oauth/token";
+
+
+
 }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:aiphc/controllers/sharedprefres.dart';
 import 'package:aiphc/model/auth/adminresmodel.dart';
 import 'package:aiphc/model/auth/usermodel.dart';
@@ -5,7 +7,8 @@ import 'package:aiphc/utils/routes/routes.dart';
 import 'package:aiphc/utils/serverconstants.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart' hide FormData; // adjust path if needed
+import 'package:get/get.dart' hide FormData, MultipartFile;
+import 'package:image_picker/image_picker.dart'; // adjust path if needed
 
 class AuthController extends GetxController {
 
@@ -135,6 +138,208 @@ class AuthController extends GetxController {
     enablerole.value=0;
     Get.offAllNamed(Routes.login);
   }
+
+
+  final Rx<File?> selectedImage = Rx<File?>(null);
+  final Rx<File?> paymentScreenshot  = Rx<File?>(null);
+  final Rx<File?> nomineeImage  = Rx<File?>(null);
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> pickFromCamera() async {
+    final XFile? image =
+    await _picker.pickImage(source: ImageSource.camera);
+    if (image != null) {
+      selectedImage.value = File(image.path);
+    }
+    Get.back();
+  }
+
+
+  Future<void> pickFromGallery() async {
+    final XFile? image =
+    await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      selectedImage.value = File(image.path);
+    }
+    Get.back();
+  }
+
+  Future<void> pickFromCameraqr() async {
+    final XFile? image =
+    await _picker.pickImage(source: ImageSource.camera);
+    if (image != null) {
+      paymentScreenshot.value = File(image.path);
+    }
+    Get.back();
+  }
+
+
+  Future<void> pickFromGalleryqr() async {
+    final XFile? image =
+    await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      paymentScreenshot.value = File(image.path);
+    }
+    Get.back();
+  }
+
+  bool startsWithLetter(String value) {
+    if (value.isEmpty) return false;
+    return RegExp(r'^[A-Za-z]').hasMatch(value[0]);
+  }
+
+
+  var iagree=false.obs;
+  final RxString selectedCategory = ''.obs;
+  final RxString selectedServiceStatus = ''.obs;
+  final RxString selectedGender = ''.obs;
+
+  Future<void> registerForceMan({
+    required String category,
+    required String inservice,
+    required String name,
+    required String aadhar,
+    required String fatherHusband,
+    required String birthday,
+    required String password,
+    required String mobile,
+    required String email,
+    required String dlNo,
+    required String gender,
+    required String occupation,
+    required String departmentId,
+    required String stateId,
+    required String districtId,
+    required String block,
+    required String permAddress,
+    required String nomineeName,
+    required String nomineeRelation,
+    required String nomineeMobile,
+    required String bankName,
+    required String ifscCode,
+    required String accountNo,
+  }) async {
+    try {
+      isLoading.value = true;
+
+      FormData formData = FormData.fromMap({
+        // BASIC
+        "category": category,
+        "inservice": inservice,
+        "name": name,
+        "aadhar": aadhar,
+        "fatherhusband": fatherHusband,
+        "birthday": birthday.toString(),
+        "password": password,
+        "mobile": mobile,
+        "email": email,
+        "dlno": dlNo,
+        "gender": gender,
+        "occupation": occupation,
+
+        // LOCATION
+        "department": departmentId,
+        "state": stateId,
+        "district": districtId,
+        "block": block,
+        "perm_address": permAddress,
+
+        // NOMINEE
+        "nominee_name": nomineeName,
+        "nominee_relationship": nomineeRelation,
+        "nominee_mobileno": nomineeMobile,
+
+        // BANK
+        "bankname": bankName,
+        "ifsccode": ifscCode,
+        "accountno": accountNo,
+
+        // SYSTEM (FIXED / HIDDEN)
+        "announcement": "1",
+        "role_id": "4", // Force Man
+        "status": "1",
+        "featured": "1",
+        "locked": "0",
+        "autopay_status": "0",
+      });
+
+      // FILES (OPTIONAL)
+      if (selectedImage.value != null) {
+        formData.files.add(
+          MapEntry(
+            "user_photo",
+            await MultipartFile.fromFile(
+              selectedImage.value!.path,
+              filename: selectedImage.value!.path.split('/').last,
+            ),
+          ),
+        );
+      }
+
+      if (nomineeImage.value != null) {
+        formData.files.add(
+          MapEntry(
+            "nominee_image",
+            await MultipartFile.fromFile(
+              nomineeImage.value!.path,
+              filename: nomineeImage.value!.path.split('/').last,
+            ),
+          ),
+        );
+      }
+
+      if (paymentScreenshot.value != null) {
+        formData.files.add(
+          MapEntry(
+            "payment_screenshot",
+            await MultipartFile.fromFile(
+              paymentScreenshot.value!.path,
+              filename: paymentScreenshot.value!.path.split('/').last,
+            ),
+          ),
+        );
+      }
+
+      print("jkfkbeskjfkjesbjkf :${ServerConstants.addMember}");
+      final response = await Dio().post(
+        ServerConstants.addMember, // 🔥 YOUR API URL
+        data: formData,
+        options: Options(
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        ),
+      );
+      print("dssfljbesek : ${response.data.toString()}");
+      if (response.data['status'] == true) {
+        
+        Get.snackbar("Success", response.data['message']);
+        // startsWithLetter(aadhar.toString())
+        if (startsWithLetter(aadhar)) {
+          // 🔹 Call ANOTHER function
+          adminLogin(
+            username: aadhar,
+            password: password,
+          );
+        } else {
+          // 🔹 Normal numeric login
+          userLogin(
+            aadhar: aadhar,
+            password: password,
+          );
+        }
+
+      } else {
+        Get.snackbar("Error", response.data['message']);
+      }
+    } catch (e) {
+      Get.snackbar("Error", e.toString());
+      print("sfljejnfjnesjfngj ${e.toString()}");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
 }
 
 
