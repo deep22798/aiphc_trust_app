@@ -370,85 +370,90 @@ class _LoginPageState extends State<LoginPage>
     final theme = Get.find<ThemeController>();
 
     return Scaffold(
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final isDesktop = constraints.maxWidth >= 900;
+      body: InkWell(
+        onTap: (){
+          FocusScope.of(context).unfocus();
+        },
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isDesktop = constraints.maxWidth >= 900;
 
-          if (isDesktop) {
-            return Row(
-              children: [
-                Expanded(flex: 5, child: _leftPanel(context)),
-                Expanded(
-                  flex: 4,
-                  child: Stack(
-                    children: [
-                      Positioned.fill(
-                        child: Image.asset(
-                          Appconstants.loginbackground,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      ClipRect(
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(
-                              sigmaX: 8, sigmaY: 8),
-                          child: Container(
-                            color:
-                            Colors.black.withOpacity(0.25),
+            if (isDesktop) {
+              return Row(
+                children: [
+                  Expanded(flex: 5, child: _leftPanel(context)),
+                  Expanded(
+                    flex: 4,
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: Image.asset(
+                            Appconstants.loginbackground,
+                            fit: BoxFit.cover,
                           ),
                         ),
-                      ),
-                      Positioned(
-                        top: 20,
-                        right: 20,
-                        child: _themeToggle(theme),
-                      ),
-                      Center(
-                        child: ConstrainedBox(
-                          constraints:
-                          const BoxConstraints(maxWidth: 420),
-                          child: _loginCard(login),
+                        ClipRect(
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(
+                                sigmaX: 8, sigmaY: 8),
+                            child: Container(
+                              color:
+                              Colors.black.withOpacity(0.25),
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                        Positioned(
+                          top: 20,
+                          right: 20,
+                          child: _themeToggle(theme),
+                        ),
+                        Center(
+                          child: ConstrainedBox(
+                            constraints:
+                            const BoxConstraints(maxWidth: 420),
+                            child: _loginCard(login),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            }
+
+            // ---------- MOBILE / TABLET ----------
+            return Stack(
+              children: [
+                Positioned.fill(
+                  child: Image.asset(
+                    Appconstants.loginbackground,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                ClipRect(
+                  child: BackdropFilter(
+                    filter:
+                    ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                    child: Container(
+                      color: Colors.black.withOpacity(0.25),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 40,
+                  right: 20,
+                  child: _themeToggle(theme),
+                ),
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: _loginCard(login),
                   ),
                 ),
               ],
             );
-          }
-
-          // ---------- MOBILE / TABLET ----------
-          return Stack(
-            children: [
-              Positioned.fill(
-                child: Image.asset(
-                  Appconstants.loginbackground,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              ClipRect(
-                child: BackdropFilter(
-                  filter:
-                  ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                  child: Container(
-                    color: Colors.black.withOpacity(0.25),
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 40,
-                right: 20,
-                child: _themeToggle(theme),
-              ),
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: _loginCard(login),
-                ),
-              ),
-            ],
-          );
-        },
+          },
+        ),
       ),
     );
   }
@@ -552,7 +557,8 @@ class _LoginPageState extends State<LoginPage>
                                 ),
                                 onPressed: () {
                                   Get.back();
-                                  Get.to(()=>ForceManRegistrationScreen());
+                                  // Get.to(()=>ForceManRegistrationScreen());
+                                  showBigRegistrationTypePopup();
                                 },
                                 child: const Text(
                                   "Register",

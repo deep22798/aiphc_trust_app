@@ -52,7 +52,8 @@ class MyApp extends StatelessWidget {
       darkTheme: AppTheme.dark,
       themeMode: theme.themeMode,
       // initialRoute:Butttuon(key: key,),
-      initialRoute: Routes.splash,
+      // initialRoute: Routes.splash,
+      home: MerchantApp(),
       // home: ButtonPage(),
       getPages: getPages,
     ));
