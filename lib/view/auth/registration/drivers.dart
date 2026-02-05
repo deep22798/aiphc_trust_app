@@ -10,14 +10,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-class ForceManRegistrationScreen extends StatefulWidget {
-  ForceManRegistrationScreen({super.key});
+class DriversRegistrationScreen extends StatefulWidget {
+  DriversRegistrationScreen({super.key});
 
   @override
-  State<ForceManRegistrationScreen> createState() => _ForceManRegistrationScreenState();
+  State<DriversRegistrationScreen> createState() => _DriversRegistrationScreenState();
 }
 
-class _ForceManRegistrationScreenState extends State<ForceManRegistrationScreen> {
+class _DriversRegistrationScreenState extends State<DriversRegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final Globalcontroller globalcontroller = Get.find();
@@ -63,8 +63,6 @@ class _ForceManRegistrationScreenState extends State<ForceManRegistrationScreen>
 
   final RxInt progress = 10.obs;
 
-
-
   @override
   void initState() {
     // TODO: implement initState
@@ -103,14 +101,12 @@ class _ForceManRegistrationScreenState extends State<ForceManRegistrationScreen>
     globalcontroller.selectedDepartment.value = null;
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     final isDark = Get.isDarkMode;
 
     return Scaffold(
-      appBar: CustomeAppBar(title: "Register for Force Man"),
+      appBar: CustomeAppBar(title: "Register for Drivers"),
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();
@@ -168,7 +164,7 @@ class _ForceManRegistrationScreenState extends State<ForceManRegistrationScreen>
                               color: Colors.white.withOpacity(0.2),
                             ),
                             child: const Icon(
-                              Icons.person,
+                              Icons.directions_car_rounded,
                               color: Colors.white,
                               size: 32,
                             ),
@@ -182,7 +178,7 @@ class _ForceManRegistrationScreenState extends State<ForceManRegistrationScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: const [
                                 Text(
-                                  "फोर्स मैन के लिए पंजीकरण",
+                                  "ड्राइवर के लिए पंजीकरण",
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 20,
@@ -191,7 +187,7 @@ class _ForceManRegistrationScreenState extends State<ForceManRegistrationScreen>
                                 ),
                                 SizedBox(height: 6),
                                 Text(
-                                  "Register as a Forceman",
+                                  "Register as a Driver",
                                   style: TextStyle(
                                     color: Colors.white70,
                                     fontSize: 14,
@@ -228,7 +224,7 @@ class _ForceManRegistrationScreenState extends State<ForceManRegistrationScreen>
                 _dropdown(
                   label: "Category (श्रेणी) *",
                   items: const [
-                    "Force Man – सैनिक",
+                    "ड्राइवर्स (Driver)",
                   ],
                   selectedValue: authController.selectedCategory,
                 ),
@@ -259,7 +255,7 @@ class _ForceManRegistrationScreenState extends State<ForceManRegistrationScreen>
 
                 _text(passwordC, "Password *", obscure: true),
                 _textmobile(mobileC, "Mobile Number *",
-                    type: TextInputType.phone,),
+                    type: TextInputType.phone),
                 // _text(emailC, "Email *",
                 //     type: TextInputType.emailAddress),
 
@@ -269,37 +265,43 @@ class _ForceManRegistrationScreenState extends State<ForceManRegistrationScreen>
                   authController.selectedGender,
                 ),
 
+                _text(dlC, "Driving License No. *"),
+                _dropdownSimplefordrivertype(
+                  "Driver Type *",
+                  ["TR(Transport)", "NT - Non Transport"],
+                  authController.selecteddrivetype,
+                ),
 
-                _section("Department & Address"),
-
-                Obx(() =>
-                    DropdownButtonFormField<DepartmentModel>(
-                      isExpanded: true,
-                      // ✅ MOST IMPORTANT
-                      decoration: const InputDecoration(
-                        labelText: "Department *",
-                      ),
-                      value: globalcontroller.selectedDepartment.value,
-                      items: departmentList
-                          .map(
-                            (e) =>
-                            DropdownMenuItem<DepartmentModel>(
-                              value: e,
-                              child: Text(
-                                e.name,
-                                maxLines: 1,
-                                overflow: TextOverflow
-                                    .ellipsis, // ✅ prevent overflow
-                              ),
-                            ),
-                      )
-                          .toList(),
-                      onChanged: (v) {
-                        globalcontroller.selectedDepartment.value = v;
-                        progress.value = 50;
-                      },
-                      validator: (v) => v == null ? "Required" : null,
-                    )),
+                // _section("Department & Address"),
+                //
+                // Obx(() =>
+                //     DropdownButtonFormField<DepartmentModel>(
+                //       isExpanded: true,
+                //       // ✅ MOST IMPORTANT
+                //       decoration: const InputDecoration(
+                //         labelText: "Department *",
+                //       ),
+                //       value: globalcontroller.selectedDepartment.value,
+                //       items: departmentList
+                //           .map(
+                //             (e) =>
+                //             DropdownMenuItem<DepartmentModel>(
+                //               value: e,
+                //               child: Text(
+                //                 e.name,
+                //                 maxLines: 1,
+                //                 overflow: TextOverflow
+                //                     .ellipsis, // ✅ prevent overflow
+                //               ),
+                //             ),
+                //       )
+                //           .toList(),
+                //       onChanged: (v) {
+                //         globalcontroller.selectedDepartment.value = v;
+                //         progress.value = 50;
+                //       },
+                //       validator: (v) => v == null ? "Required" : null,
+                //     )),
 
                 SizedBox(height: 10,),
                 Obx(() =>
@@ -350,11 +352,6 @@ class _ForceManRegistrationScreenState extends State<ForceManRegistrationScreen>
                 SizedBox(height: 10,),
                 _text(tehsilC, "Tehsil *"),
                 _multi(addressC, "Permanent Address *"),
-                //
-                // _section("Professional Details"),
-                //
-                // _text(dlC, "Driving License No. *"),
-                // _text(occupationC, "Occupation *"),
 
                 _section("Nominee Details"),
 
@@ -373,7 +370,6 @@ class _ForceManRegistrationScreenState extends State<ForceManRegistrationScreen>
                 const SizedBox(height: 10),
 
 
-
                 Obx(() =>
                     CheckboxListTile(
                       value: authController.iagree.value,
@@ -390,59 +386,6 @@ class _ForceManRegistrationScreenState extends State<ForceManRegistrationScreen>
                 ),
 
                 const SizedBox(height: 20),
-
-                // SizedBox(
-                //   width: double.infinity,
-                //   height: 50,
-                //   child: ElevatedButton(
-                //     onPressed: () {
-                //       if (_formKey.currentState!.validate()) {
-                //         // CALL API HERE
-                //
-                //         final inputFormat = DateFormat('dd-MM-yyyy');
-                //         final outputFormat = DateFormat('yyyy-MM-dd');
-                //
-                //         DateTime dob = inputFormat.parse(dobC.text);
-                //         String formattedDob = outputFormat.format(dob);
-                //
-                //         print("eflkneflnek :$formattedDob");
-                //         print("eflkneflnek :${dobC.text}");
-                //         _showPaymentPopup();
-                //       //   authController.registerForceMan(
-                //       //       category: '1',
-                //       //       inservice: authController.selectedServiceStatus.value.toString(),
-                //       //       name: nameC.text,
-                //       //       aadhar: aadhaarC.text,
-                //       //       fatherHusband: fatherC.text,
-                //       //       birthday: dobC.text,
-                //       //       password: passwordC.text,
-                //       //       mobile: mobileC.text,
-                //       //       email: emailC.text,
-                //       //       dlNo: dlC.text,
-                //       //       gender: authController.selectedGender.value,
-                //       //       occupation: occupationC.text,
-                //       //       departmentId: globalcontroller.selectedDepartment.value!.name.toString(),
-                //       //       stateId: globalcontroller.selectedState.value!.id.toString(),
-                //       //       districtId: globalcontroller.selectedDistrict.value!.id.toString(),
-                //       //       block: '',
-                //       //       permAddress: addressC.text,
-                //       //       nomineeName: nomineeNameC.text,
-                //       //       nomineeRelation: nomineeRelationC.text,
-                //       //       nomineeMobile: nomineeMobileC.text,
-                //       //       bankName: bankC.text,
-                //       //       ifscCode: ifscC.text,
-                //       //       accountNo: accountC.text);
-                //       }
-                //     },
-                //
-                //
-                //     child: const Text(
-                //       "Pay Now For Register",
-                //       style: TextStyle(
-                //           fontSize: 16, fontWeight: FontWeight.w700),
-                //     ),
-                //   ),
-                // ),
                 SafeArea(
                   child: SizedBox(
                     width: double.infinity,
@@ -453,10 +396,10 @@ class _ForceManRegistrationScreenState extends State<ForceManRegistrationScreen>
                         if (_formKey.currentState!.validate()) {
                           final inputFormat = DateFormat('dd-MM-yyyy');
                           final outputFormat = DateFormat('yyyy-MM-dd');
-
+                  
                           DateTime dob = inputFormat.parse(dobC.text);
                           String formattedDob = outputFormat.format(dob);
-
+                  
                           _showPaymentPopup();
                         }
                       },
@@ -506,6 +449,35 @@ class _ForceManRegistrationScreenState extends State<ForceManRegistrationScreen>
                     ),
                   ),
                 ),
+
+                // SizedBox(
+                //   width: double.infinity,
+                //   height: 50,
+                //   child: ElevatedButton(
+                //     onPressed: () {
+                //       if (_formKey.currentState!.validate()) {
+                //         // CALL API HERE
+                //
+                //         final inputFormat = DateFormat('dd-MM-yyyy');
+                //         final outputFormat = DateFormat('yyyy-MM-dd');
+                //
+                //         DateTime dob = inputFormat.parse(dobC.text);
+                //         String formattedDob = outputFormat.format(dob);
+                //
+                //         print("eflkneflnek :$formattedDob");
+                //         print("eflkneflnek :${dobC.text}");
+                //         _showPaymentPopup();
+                //
+                //       }
+                //     },
+                //
+                //     child: const Text(
+                //       "Pay Now For Register",
+                //       style: TextStyle(
+                //           fontSize: 16, fontWeight: FontWeight.w700),
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ),
@@ -630,30 +602,30 @@ class _ForceManRegistrationScreenState extends State<ForceManRegistrationScreen>
                 onPressed: () async{
 
                   // CALL REGISTER API HERE
-                    await authController.registerForceMan(
-                        category: '1',
-                        inservice: authController.selectedServiceStatus.value.toString(),
-                        name: nameC.text,
-                        aadhar: aadhaarC.text,
-                        fatherHusband: fatherC.text,
-                        birthday: dobC.text,
-                        password: passwordC.text,
-                        mobile: mobileC.text,
-                        email: emailC?.text??"",
-                        dlNo: '',
-                        gender: authController.selectedGender.value,
-                        occupation: '',
-                        departmentId: globalcontroller.selectedDepartment.value!.name.toString(),
-                        stateId: globalcontroller.selectedState.value!.id.toString(),
-                        districtId: globalcontroller.selectedDistrict.value!.id.toString(),
-                        block: '',
-                        permAddress: addressC.text,
-                        nomineeName: nomineeNameC.text,
-                        nomineeRelation: nomineeRelationC.text,
-                        nomineeMobile: nomineeMobileC.text,
-                        bankName: '',
-                        ifscCode: '',
-                        accountNo: '');
+                  authController.registerDrivers(
+                      category: '3',
+                      inservice: authController.selectedServiceStatus.value.toString(),
+                      name: nameC.text,
+                      aadhar: aadhaarC.text,
+                      fatherHusband: fatherC.text,
+                      birthday: dobC.text,
+                      password: passwordC.text,
+                      mobile: mobileC.text,
+                      email: emailC?.text??"",
+                      dlNo: dlC.text,
+                      gender: authController.selectedGender.value,
+                      occupation: '',
+                      departmentId: globalcontroller.selectedDepartment.value?.name ?? "",
+                      stateId: globalcontroller.selectedState.value!.id.toString(),
+                      districtId: globalcontroller.selectedDistrict.value!.id.toString(),
+                      block: '',
+                      permAddress: addressC.text,
+                      nomineeName: nomineeNameC.text,
+                      nomineeRelation: nomineeRelationC.text,
+                      nomineeMobile: nomineeMobileC.text,
+                      bankName: '',
+                      ifscCode: '',
+                      accountNo: '', driver_type: authController.selecteddrivetype.value.toString()=="TR(Transport)"?"TR":"NT");
                 },
                 child: const Text(
                   "Confirm & Register",
@@ -764,8 +736,7 @@ class _ForceManRegistrationScreenState extends State<ForceManRegistrationScreen>
                 fontWeight: FontWeight.bold,
                 color: Get.theme.primaryColor)),
       );
-
-  Widget _text(TextEditingController c,
+  Widget _textmobile(TextEditingController c,
       String l, {
         bool obscure = false,
         TextInputType type = TextInputType.text,
@@ -776,7 +747,7 @@ class _ForceManRegistrationScreenState extends State<ForceManRegistrationScreen>
       child: TextFormField(
         controller: c,
         obscureText: obscure,
-        keyboardType: type,
+        keyboardType: type,maxLength:10,
         cursorColor: Get.theme.primaryColor,
         decoration: InputDecoration(
           labelText: l,
@@ -826,18 +797,17 @@ class _ForceManRegistrationScreenState extends State<ForceManRegistrationScreen>
     );
   }
 
-  Widget _textmobile(TextEditingController c,
+  Widget _text(TextEditingController c,
       String l, {
         bool obscure = false,
         TextInputType type = TextInputType.text,
-      })
-  {
+      }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: TextFormField(
         controller: c,
         obscureText: obscure,
-        keyboardType: type,maxLength:10,
+        keyboardType: type,
         cursorColor: Get.theme.primaryColor,
         decoration: InputDecoration(
           labelText: l,
@@ -1000,7 +970,40 @@ class _ForceManRegistrationScreenState extends State<ForceManRegistrationScreen>
       String label,
       List<String> items,
       RxString selectedValue,
-      ) {
+      )
+  {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Obx(() => DropdownButtonFormField<String>(
+        value:
+        selectedValue.value.isEmpty ? null : selectedValue.value,
+        isExpanded: true,
+        decoration: InputDecoration(labelText: label),
+        items: items
+            .map(
+              (e) => DropdownMenuItem(
+            value: e,
+            child: Text(
+              e,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        )
+            .toList(),
+        onChanged: (v) {
+          selectedValue.value = v!;
+        },
+        validator: (v) => v == null ? "Required" : null,
+      )),
+    );
+  }
+
+  Widget _dropdownSimplefordrivertype(
+      String label,
+      List<String> items,
+      RxString selectedValue,
+      )
+  {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: Obx(() => DropdownButtonFormField<String>(

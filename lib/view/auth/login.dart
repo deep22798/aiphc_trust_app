@@ -1,5 +1,8 @@
 import 'dart:ui';
+import 'package:aiphc/view/auth/registration/drivers.dart';
 import 'package:aiphc/view/auth/registration/forceman.dart';
+import 'package:aiphc/view/auth/registration/transport.dart';
+import 'package:aiphc/view/screens/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:aiphc/controllers/auth/login.dart';
@@ -303,6 +306,57 @@ class _LoginPageState extends State<LoginPage>
                           ),
                         ),
                       )),
+                    ),SizedBox(height: 20,),
+                    SizedBox(
+                      width: MediaQuery.sizeOf(context).width/4,
+                      height: 40,
+                      child: Obx(() => ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                            BorderRadius.circular(30),
+                          ),
+                        ),
+                        // onPressed: login.isLoading.value
+                        //     ? null
+                        //     : () {
+                        //   if (usernameController.text.isEmpty ||
+                        //       passwordController.text.isEmpty) {
+                        //     Get.snackbar(
+                        //       'Error',
+                        //       'Please enter Aadhaar & password',
+                        //       snackPosition:
+                        //       SnackPosition.BOTTOM,
+                        //     );
+                        //     return;
+                        //   }
+                        //
+                        //   login.adminLogin(
+                        //     username: usernameController.text
+                        //         .trim(),
+                        //     password: passwordController.text
+                        //         .trim(),
+                        //   );
+                        // },
+                        onPressed: (){
+                          Get.offAll(()=>Dashboard());
+                        },
+                        child: login.isLoading.value
+                            ? const CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        )
+                            : const Text(
+                          "skip>>>>",
+                          style: TextStyle(
+                            fontSize: 15,
+                            color:  Colors.black,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      )),
                     ),
                   ],
                 ),
@@ -469,7 +523,7 @@ class _LoginPageState extends State<LoginPage>
           onWillPop: () async => false, // ❌ back button disabled
           child: Stack(
             children: [
-              // 🔹 FULL SCREEN BLUR
+                            // 🔹 FULL SCREEN BLUR
               Positioned.fill(
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -512,6 +566,18 @@ class _LoginPageState extends State<LoginPage>
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        InkWell(
+                          onTap: (){
+                            Get.offAll(()=>Dashboard());
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Align(
+                                alignment: Alignment.topRight,
+                                child: Icon(Icons.close,color: Colors.white,size: 20,)),
+                          ),
+                        ),
+
                         const Icon(
                           Icons.volunteer_activism,
                           size: 60,
@@ -601,6 +667,7 @@ class _LoginPageState extends State<LoginPage>
                   ),
                 ),
               ),
+
             ],
           ),
         );
@@ -671,12 +738,18 @@ class _LoginPageState extends State<LoginPage>
                   _themeAwareRegisterCard(
                     title: "Driver\n(ड्राइवर)",
                     image: "${Appconstants.driverregi}",
-                    onTap: () => Get.back(),
+                    onTap: () {
+                      Get.back();
+                      Get.to(()=>DriversRegistrationScreen());
+                    },
                   ),
                   _themeAwareRegisterCard(
                     title: "Transport\n(परिवहन)",
                     image: "${Appconstants.transregi}",
-                    onTap: () => Get.back(),
+                    onTap: () {
+                      Get.back();
+                      Get.to(()=>TransportRegistrationScreen());
+                    },
                   ),
                 ],
               ),

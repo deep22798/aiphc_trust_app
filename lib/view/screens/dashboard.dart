@@ -4,6 +4,7 @@ import 'package:aiphc/controllers/globalcontroller.dart';
 import 'package:aiphc/controllers/screens/bannercontroller.dart';
 import 'package:aiphc/utils/Appconstants.dart';
 import 'package:aiphc/utils/routes/serverassets.dart';
+import 'package:aiphc/view/auth/login.dart';
 import 'package:aiphc/view/screens/aboutus.dart';
 import 'package:aiphc/view/screens/adminprofile.dart';
 import 'package:aiphc/view/screens/contactus.dart';
@@ -15,7 +16,9 @@ import 'package:aiphc/view/screens/profile.dart';
 import 'package:aiphc/view/screens/recentiniti.dart';
 import 'package:aiphc/view/screens/supportquries.dart';
 import 'package:aiphc/view/widgets/marquee.dart';
+import 'package:aiphc/view/widgets/popup.dart';
 import 'package:aiphc/view/widgets/switchtheme.dart';
+import 'package:aiphc/view/widgets/willlpop.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +51,9 @@ class Dashboard extends StatelessWidget {
 
   // ================= HERO =================
   Widget _hero(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = Theme
+        .of(context)
+        .brightness == Brightness.dark;
 
     return Container(
       height: 160,
@@ -86,19 +91,20 @@ class Dashboard extends StatelessWidget {
                       "ALL INDIA POLICE\nVITTIYA SAHAYATA\nTRUST",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 15,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                     ),
+
                     const SizedBox(width: 10),
                     Image.asset(Appconstants.applogo, scale: 6),
                     const SizedBox(width: 10),
                     const Text(
-                      "ऑल इंडिया पुलिस\nवित्तीय सहायता ट्रस्ट",
+                      "ऑल इंडिया पुलिस\nवित्तीय सहायता \nट्रस्ट",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 17,
+                        fontSize: 15,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
@@ -205,10 +211,12 @@ class Dashboard extends StatelessWidget {
                           onTap: () {
                             // Hero full screen preview if you want
                             Get.to(
-                              () => BannerPreview(
-                                image: "${ServerAssets.banner}${banner.image}",
-                                tag: "banner_$index",
-                              ),
+                                  () =>
+                                  BannerPreview(
+                                    image: "${ServerAssets.banner}${banner
+                                        .image}",
+                                    tag: "banner_$index",
+                                  ),
                             );
                           },
                           child: Hero(
@@ -217,30 +225,32 @@ class Dashboard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8),
                               child: Stack(
                                 children: [
-                                  ImageFiltered(
-                                    imageFilter: ImageFilter.blur(
-                                      sigmaX: 4,
-                                      sigmaY: 4,
-                                    ),
-                                    // adjust blur intensity
-                                    child: Image.network(
-                                      "${ServerAssets.banner}${banner.image}",
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                      loadingBuilder: (c, w, p) {
-                                        if (p == null) return w;
-                                        return const Center(
-                                          child: CircularProgressIndicator(
-                                            color: Colors.white,
-                                          ),
-                                        );
-                                      },
-                                      errorBuilder: (_, __, ___) => const Icon(
-                                        Icons.broken_image,
-                                        color: Colors.white,
-                                      ),
+                                  // ImageFiltered(
+                                  //   imageFilter: ImageFilter.blur(
+                                  //     sigmaX: 4,
+                                  //     sigmaY: 4,
+                                  //   ),
+                                  // adjust blur intensity
+                                  // child:
+                                  Image.network(
+                                    "${ServerAssets.banner}${banner.image}",
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    loadingBuilder: (c, w, p) {
+                                      if (p == null) return w;
+                                      return const Center(
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                        ),
+                                      );
+                                    },
+                                    errorBuilder: (_, __, ___) =>
+                                    const Icon(
+                                      Icons.broken_image,
+                                      color: Colors.white,
                                     ),
                                   ),
+                                  // ),
                                   Column(
                                     children: [
                                       Expanded(
@@ -261,41 +271,44 @@ class Dashboard extends StatelessWidget {
                                                   ),
                                                 ),
                                               ),
-                                              Expanded(
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                    15.0,
-                                                  ),
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                      shape: index % 2 == 0
-                                                          ? BoxShape.circle
-                                                          : BoxShape.rectangle,
-                                                      image: DecorationImage(
-                                                        image: NetworkImage(
-                                                          "${ServerAssets.banner}${banner.image}",
-                                                        ),
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    ),
-                                                    // child: Image.network(
-                                                    //   "${ServerAssets.banner}${banner.image}",
-                                                    //   fit: BoxFit.cover,
-                                                    //   width: double.infinity,
-                                                    //   loadingBuilder: (c, w, p) {
-                                                    //     if (p == null) return w;
-                                                    //     return const Center(
-                                                    //       child: CircularProgressIndicator(color: Colors.white),
-                                                    //     );
-                                                    //   },
-                                                    //   errorBuilder: (_, __, ___) => const Icon(
-                                                    //     Icons.broken_image,
-                                                    //     color: Colors.white,
-                                                    //   ),
-                                                    // ),
-                                                  ),
-                                                ),
-                                              ),
+                                              Expanded(child: Container(
+
+                                              ))
+                                              // Expanded(
+                                              //   child: Padding(
+                                              //     padding: const EdgeInsets.all(
+                                              //       15.0,
+                                              //     ),
+                                              //     child: Container(
+                                              //       decoration: BoxDecoration(
+                                              //         shape: index % 2 == 0
+                                              //             ? BoxShape.circle
+                                              //             : BoxShape.rectangle,
+                                              //         image: DecorationImage(
+                                              //           image: NetworkImage(
+                                              //             "${ServerAssets.banner}${banner.image}",
+                                              //           ),
+                                              //           fit: BoxFit.cover,
+                                              //         ),
+                                              //       ),
+                                              //       // child: Image.network(
+                                              //       //   "${ServerAssets.banner}${banner.image}",
+                                              //       //   fit: BoxFit.cover,
+                                              //       //   width: double.infinity,
+                                              //       //   loadingBuilder: (c, w, p) {
+                                              //       //     if (p == null) return w;
+                                              //       //     return const Center(
+                                              //       //       child: CircularProgressIndicator(color: Colors.white),
+                                              //       //     );
+                                              //       //   },
+                                              //       //   errorBuilder: (_, __, ___) => const Icon(
+                                              //       //     Icons.broken_image,
+                                              //       //     color: Colors.white,
+                                              //       //   ),
+                                              //       // ),
+                                              //     ),
+                                              //   ),
+                                              // ),
                                             ],
                                           ),
                                         ),
@@ -334,7 +347,7 @@ class Dashboard extends StatelessWidget {
                           milliseconds: 800,
                         ),
                         enlargeCenterPage: true,
-                        viewportFraction: 0.85,
+                        viewportFraction: 1.0,
                         enableInfiniteScroll: true,
                         pauseAutoPlayOnTouch: true,
                         onPageChanged: (index, reason) {
@@ -388,9 +401,9 @@ class Dashboard extends StatelessWidget {
         gradient: LinearGradient(
           colors: isDark
               ? [
-                  const Color(0xFF0F172A), // dark navy
-                  const Color(0xFF020617),
-                ]
+            const Color(0xFF0F172A), // dark navy
+            const Color(0xFF020617),
+          ]
               : [const Color(0xFF0D5314), const Color(0xFF17610E)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -823,8 +836,7 @@ class Dashboard extends StatelessWidget {
                   Get.to(() => RecentHelp());
                 } else if (item["icon"] == "help") {
                   Get.to(() => PensionHelpScreeen());
-                } else if (item["icon"] == "donate") {
-                } else {}
+                } else if (item["icon"] == "donate") {} else {}
               },
               child: Row(
                 children: [
@@ -904,7 +916,7 @@ class Dashboard extends StatelessWidget {
             // 🔥 SORT BY AMOUNT (TOP DONATORS)
             final topDonators = [...controller.donation]
               ..sort(
-                (a, b) =>
+                    (a, b) =>
                     double.parse(b.amount).compareTo(double.parse(a.amount)),
               );
 
@@ -913,6 +925,7 @@ class Dashboard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
                   /// 🏆 TOP DONATORS
                   Text(
                     '🏆 Top Donators',
@@ -942,19 +955,19 @@ class Dashboard extends StatelessWidget {
 
                             border: isDark
                                 ? Border.all(
-                                    color: Colors.white.withOpacity(0.08),
-                                  )
+                              color: Colors.white.withOpacity(0.08),
+                            )
                                 : null,
 
                             boxShadow: isDark
                                 ? null
                                 : [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.12),
-                                      blurRadius: 16,
-                                      offset: const Offset(0, 8),
-                                    ),
-                                  ],
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.12),
+                                blurRadius: 16,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -977,8 +990,8 @@ class Dashboard extends StatelessWidget {
                                       overflow: TextOverflow.ellipsis,
                                       style: theme.textTheme.titleMedium
                                           ?.copyWith(
-                                            fontWeight: FontWeight.w600,
-                                          ),
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -1035,19 +1048,19 @@ class Dashboard extends StatelessWidget {
 
                           border: isDark
                               ? Border.all(
-                                  color: Colors.white.withOpacity(0.08),
-                                )
+                            color: Colors.white.withOpacity(0.08),
+                          )
                               : null,
 
                           boxShadow: isDark
                               ? null
                               : [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.10),
-                                    blurRadius: 14,
-                                    offset: const Offset(0, 6),
-                                  ),
-                                ],
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.10),
+                              blurRadius: 14,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1146,10 +1159,10 @@ class Dashboard extends StatelessWidget {
 
               final matchesStatus =
                   controller.statusFilter.value == 'all' ||
-                  (controller.statusFilter.value == 'active' &&
-                      m.status == "1") ||
-                  (controller.statusFilter.value == 'inactive' &&
-                      m.status == "0");
+                      (controller.statusFilter.value == 'active' &&
+                          m.status == "1") ||
+                      (controller.statusFilter.value == 'inactive' &&
+                          m.status == "0");
 
               return matchesSearch && matchesStatus;
             }).toList();
@@ -1219,28 +1232,30 @@ class Dashboard extends StatelessWidget {
                   Expanded(
                     child: isWeb
                         ? GridView.builder(
-                            itemCount: filteredList.length,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3,
-                                  crossAxisSpacing: 16,
-                                  mainAxisSpacing: 16,
-                                  childAspectRatio: 1.35,
-                                ),
-                            itemBuilder: (_, i) => _teamCard(
-                              context,
-                              filteredList.reversed.toList()[i],
-                              isDark,
-                            ),
-                          )
-                        : ListView.builder(
-                            itemCount: filteredList.length,
-                            itemBuilder: (_, i) => _teamCard(
-                              context,
-                              filteredList.reversed.toList()[i],
-                              isDark,
-                            ),
+                      itemCount: filteredList.length,
+                      gridDelegate:
+                      const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                        childAspectRatio: 1.35,
+                      ),
+                      itemBuilder: (_, i) =>
+                          _teamCard(
+                            context,
+                            filteredList.reversed.toList()[i],
+                            isDark,
                           ),
+                    )
+                        : ListView.builder(
+                      itemCount: filteredList.length,
+                      itemBuilder: (_, i) =>
+                          _teamCard(
+                            context,
+                            filteredList.reversed.toList()[i],
+                            isDark,
+                          ),
+                    ),
                   ),
                 ],
               ),
@@ -1271,12 +1286,12 @@ class Dashboard extends StatelessWidget {
           boxShadow: isDark
               ? []
               : [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 10,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 10,
+              offset: const Offset(0, 6),
+            ),
+          ],
         ),
         child: Row(
           children: [
@@ -1287,12 +1302,14 @@ class Dashboard extends StatelessWidget {
                 width: 60,
                 height: 60,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  width: 60,
-                  height: 60,
-                  color: theme.colorScheme.primary.withOpacity(0.15),
-                  child: Icon(Icons.person, color: theme.colorScheme.primary),
-                ),
+                errorBuilder: (_, __, ___) =>
+                    Container(
+                      width: 60,
+                      height: 60,
+                      color: theme.colorScheme.primary.withOpacity(0.15),
+                      child: Icon(
+                          Icons.person, color: theme.colorScheme.primary),
+                    ),
               ),
             ),
             const SizedBox(width: 14),
@@ -1335,7 +1352,7 @@ class Dashboard extends StatelessWidget {
                   Text(m.position, style: theme.textTheme.bodySmall),
                   const SizedBox(height: 4),
                   Text(
-                    'State: ${m.stateId} | District: ${m.districtId}',
+                    'State: ${m.state_name} | District: ${m.district_name}',
                     style: theme.textTheme.bodySmall,
                   ),
                 ],
@@ -1349,7 +1366,9 @@ class Dashboard extends StatelessWidget {
 
   Widget _statsHeader(ThemeData theme, List list) {
     final total = list.length;
-    final active = list.where((e) => e.status == "1").length;
+    final active = list
+        .where((e) => e.status == "1")
+        .length;
     final inactive = total - active;
 
     Widget box(String label, int value, Color color) {
@@ -1398,7 +1417,10 @@ class Dashboard extends StatelessWidget {
       ),
       builder: (_) {
         return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.55, // 🔥 Half screen
+          height: MediaQuery
+              .of(context)
+              .size
+              .height * 0.55, // 🔥 Half screen
           child: Column(
             children: [
               // 🔹 Drag Handle
@@ -1431,7 +1453,7 @@ class Dashboard extends StatelessWidget {
                               ServerAssets.baseUrl + "admin/" + m.image,
                               fit: BoxFit.contain,
                               errorBuilder: (_, __, ___) =>
-                                  const Icon(Icons.broken_image, size: 80),
+                              const Icon(Icons.broken_image, size: 80),
                             ),
                           ),
                         ),
@@ -1530,12 +1552,10 @@ class Dashboard extends StatelessWidget {
     );
   }
 
-  Widget _detailTile(
-    ThemeData theme,
-    IconData icon,
-    String label,
-    String value,
-  ) {
+  Widget _detailTile(ThemeData theme,
+      IconData icon,
+      String label,
+      String value,) {
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(14),
@@ -1545,12 +1565,12 @@ class Dashboard extends StatelessWidget {
         boxShadow: theme.brightness == Brightness.dark
             ? null
             : [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
-                  blurRadius: 10,
-                  offset: const Offset(0, 6),
-                ),
-              ],
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -1575,6 +1595,145 @@ class Dashboard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void _showAuthRequiredSheet(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return Container(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+          decoration: BoxDecoration(
+            color: theme.scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(26),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(isDark ? 0.6 : 0.25),
+                blurRadius: 18,
+                offset: const Offset(0, -6),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+
+              /// Drag Handle
+              Container(
+                width: 42,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: theme.dividerColor,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+
+              const SizedBox(height: 18),
+
+              /// Lock Icon
+              CircleAvatar(
+                radius: 34,
+                backgroundColor:
+                theme.colorScheme.primary.withOpacity(isDark ? 0.25 : 0.15),
+                child: Icon(
+                  Icons.lock_outline_rounded,
+                  size: 34,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              /// Hindi Title
+              Text(
+                "कृपया लॉगिन करें",
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(height: 6),
+
+              /// English subtitle
+              Text(
+                "Please login or register to continue",
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurface.withOpacity(0.75),
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              /// LOGIN BUTTON ✅ FIXED
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.colorScheme.primary,
+                    foregroundColor: theme.colorScheme.onPrimary,
+                    // 🔥 IMPORTANT
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    elevation: isDark ? 2 : 4,
+                  ),
+                  onPressed: () {
+                    Get.back();
+                    Get.to(() => LoginPage());
+                  },
+                  child: const Text(
+                    "Login / लॉगिन करें",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              /// REGISTER BUTTON
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: theme.colorScheme.primary, // 🔥 IMPORTANT
+                    side: BorderSide(
+                      color: theme.colorScheme.primary,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  onPressed: () {
+                    Get.back();
+                    showBigRegistrationTypePopup();
+                  },
+                  child: const Text(
+                    "Register / पंजीकरण करें",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -1604,12 +1763,12 @@ class Dashboard extends StatelessWidget {
               boxShadow: isDark
                   ? []
                   : [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
-                        blurRadius: 10,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 10,
+                  offset: const Offset(0, 6),
+                ),
+              ],
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -1646,11 +1805,23 @@ class Dashboard extends StatelessWidget {
                 title: 'Profile',
                 // onTap: () {
                 // },
-                onTap: () => Get.to(
-                  () => authcontroller.enablerole == 1
-                      ? Adminprofile()
-                      : UserProfile(),
-                ),
+                onTap: () {
+                  final role = authcontroller.enablerole.value;
+
+                  if (role == 0) {
+                    _showAuthRequiredSheet(Get.context!);
+                  } else if (role == 1) {
+                    Get.to(() => Adminprofile());
+                  } else {
+                    Get.to(() => UserProfile());
+                  }
+                },
+
+                // onTap: () => Get.to(
+                //   () => authcontroller.enablerole == 1
+                //       ? Adminprofile()
+                //       : UserProfile(),
+                // ),
               ),
               const SizedBox(width: 16),
               _card(
@@ -1708,12 +1879,12 @@ class Dashboard extends StatelessWidget {
                     boxShadow: isDark
                         ? []
                         : [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.08),
-                              blurRadius: 10,
-                              offset: const Offset(0, 6),
-                            ),
-                          ],
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 10,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
                   ),
 
                   child: Column(
@@ -1745,81 +1916,115 @@ class Dashboard extends StatelessWidget {
   // ================= BODY SWITCH =================
   Widget _bodyByIndex(BuildContext context, bool isWeb) {
     return Obx(
-      () => IndexedStack(
-        index: controller.currentIndex.value,
-        children: [
-          Column(
+          () =>
+          IndexedStack(
+            index: controller.currentIndex.value,
             children: [
-              _hero(context),
+              Column(
+                children: [
+                  _hero(context),
 
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      InfiniteMarquee(
-                        text:
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          InfiniteMarquee(
+                            text:
                             "🚨 ऑल इंडिया पुलिस वित्तीय सहायता ट्रस्ट में आपका स्वागत है 🚨",
-                        speed: 60,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                            speed: 60,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
 
-                      slider(context),
-                      gridview(context, isWeb),
-                      _list(context),
-                    ],
+                          slider(context),
+                          gridview(context, isWeb),
+                          _list(context),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
+              donatescreen(context),
+              MyteamScreen(context, isWeb),
+              _profileScreen(context),
             ],
           ),
-          donatescreen(context),
-          MyteamScreen(context, isWeb),
-          _profileScreen(context),
-        ],
-      ),
     );
   }
 
   // ================= BOTTOM NAV =================
   Widget _mobileBottomNav(BuildContext context) {
-    if (MediaQuery.of(context).size.width >= 1000) {
+    if (MediaQuery
+        .of(context)
+        .size
+        .width >= 1000) {
       return const SizedBox.shrink();
     }
 
     return Obx(
-      () => BottomNavigationBar(
-        currentIndex: controller.currentIndex.value,
-        onTap: controller.changeTab,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.currency_rupee),
-            label: "Donate now",
+          () =>
+          BottomNavigationBar(
+            currentIndex: controller.currentIndex.value,
+            onTap: controller.changeTab,
+            type: BottomNavigationBarType.fixed,
+            items: const [
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.currency_rupee),
+                label: "Donate now",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.people_outline),
+                label: "Our Team",
+              ),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.person), label: "Profile"),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.people_outline),
-            label: "Our Team",
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
-        ],
-      ),
     );
   }
 
   // ================= BUILD =================
+//   @override
+//   Widget build(BuildContext context) {
+//     return WillPopScope(
+//       onWillPop: onWillPop,
+//       child: Scaffold(
+//         bottomNavigationBar: _mobileBottomNav(context),
+//         body: LayoutBuilder(
+//           builder: (context, constraints) {
+//             final isWeb = constraints.maxWidth >= 1000;
+//             return _bodyByIndex(context, isWeb);
+//           },
+//         ),
+//       ),
+//     );
+//   }
+// }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: _mobileBottomNav(context),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final isWeb = constraints.maxWidth >= 1000;
-          return _bodyByIndex(context, isWeb);
-        },
+    return PopScope(
+      canPop: false, // 🔥 VERY IMPORTANT
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+
+        final shouldExit = await onWillPop();
+        if (shouldExit) {
+          Get.back(); // closes app / page
+        }
+      },
+      child: Scaffold(
+        bottomNavigationBar: _mobileBottomNav(context),
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            final isWeb = constraints.maxWidth >= 1000;
+            return _bodyByIndex(context, isWeb);
+          },
+        ),
       ),
     );
   }

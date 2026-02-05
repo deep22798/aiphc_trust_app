@@ -6,6 +6,8 @@ class TeamMemberModel {
   final String districtId;
   final String image;
   final String status;
+  final String state_name;
+  final String district_name;
   final DateTime dateCreated;
   final DateTime dateUpdated;
 
@@ -17,6 +19,8 @@ class TeamMemberModel {
     required this.districtId,
     required this.image,
     required this.status,
+    required this.state_name,
+    required this.district_name,
     required this.dateCreated,
     required this.dateUpdated,
   });
@@ -30,6 +34,8 @@ class TeamMemberModel {
       districtId: json['district_id']?.toString() ?? '',
       image: json['image'] ?? '',
       status: json['status']?.toString() ?? '',
+      state_name: json['state_name']?.toString() ?? '',
+      district_name: json['district_name']?.toString() ?? '',
       dateCreated: DateTime.parse(json['date_created']),
       dateUpdated: DateTime.parse(json['date_updated']),
     );
@@ -44,6 +50,8 @@ class TeamMemberModel {
       'district_id': districtId,
       'image': image,
       'status': status,
+      'state_name': state_name,
+      'district_name': district_name,
       'date_created': dateCreated.toIso8601String(),
       'date_updated': dateUpdated.toIso8601String(),
     };
