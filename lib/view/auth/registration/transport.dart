@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'package:aiphc/controllers/auth/login.dart';
 import 'package:aiphc/controllers/globalcontroller.dart';
+import 'package:aiphc/controllers/phonepaycontroller.dart';
+import 'package:aiphc/controllers/screens/memberscontroller.dart';
 import 'package:aiphc/model/department.dart';
 import 'package:aiphc/model/districtmodel.dart';
+import 'package:aiphc/model/driverlistmodel.dart';
 import 'package:aiphc/model/states.dart';
 import 'package:aiphc/utils/Appconstants.dart';
 import 'package:aiphc/view/widgets/appbar.dart';
@@ -23,6 +26,10 @@ class _TransportRegistrationScreenState extends State<TransportRegistrationScree
   final Globalcontroller globalcontroller = Get.find();
 
   final AuthController authController = Get.find();
+  final MembersController membersController = Get.find();
+  final PhonePeController phonePeAuthController = Get.find();
+
+
 
   // Controllers
   final TextEditingController nameC = TextEditingController();
@@ -67,6 +74,8 @@ class _TransportRegistrationScreenState extends State<TransportRegistrationScree
   void initState() {
     // TODO: implement initState
     super.initState();
+    membersController.fetchDrivers();
+
     nameC.clear();
     aadhaarC.clear();
     fatherC.clear();
@@ -187,7 +196,7 @@ class _TransportRegistrationScreenState extends State<TransportRegistrationScree
                                 ),
                                 SizedBox(height: 6),
                                 Text(
-                                  "Register as a Driver",
+                                  "Register as Transport",
                                   style: TextStyle(
                                     color: Colors.white70,
                                     fontSize: 14,
@@ -224,20 +233,22 @@ class _TransportRegistrationScreenState extends State<TransportRegistrationScree
                 _dropdown(
                   label: "Category (श्रेणी) *",
                   items: const [
-                    "ड्राइवर्स (Driver)",
+                    "परिवहन (Transport)",
                   ],
                   selectedValue: authController.selectedCategory,
                 ),
 
 
-                _dropdown(
-                  label: "Service Status (सेवा स्थिति) *",
-                  items: const [
-                    "In Service / सेवा में",
-                    "Retired / सेवानिवृत्त",
-                  ],
-                  selectedValue:  authController.selectedServiceStatus,
-                ),
+
+
+                // _dropdown(
+                //   label: "Service Status (सेवा स्थिति) *",
+                //   items: const [
+                //     "In Service / सेवा में",
+                //     "Retired / सेवानिवृत्त",
+                //   ],
+                //   selectedValue:  authController.selectedServiceStatus,
+                // ),
 
 
 
@@ -271,7 +282,58 @@ class _TransportRegistrationScreenState extends State<TransportRegistrationScree
                   ["TR(Transport)", "NT - Non Transport"],
                   authController.selecteddrivetype,
                 ),
-
+                Obx(() => InkWell(
+                  onTap: () => showMemberMultiSelect(),
+                  child: InputDecorator(
+                    decoration: InputDecoration(
+                      labelText: "Select Members",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: Text(
+                      membersController.selectedMembers.isEmpty
+                          ? "Tap to select members"
+                          : membersController.selectedMembers
+                          .map((e) => e.name)
+                          .join(', '),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                )),
+                //
+                // Obx(() {
+                //   if (membersController.isLoading.value) {
+                //     return const CircularProgressIndicator();
+                //   }
+                //
+                //   return DropdownButtonFormField<Member>(
+                //     value: membersController.selectedMember.value,
+                //     hint: const Text("Select Member"),
+                //     items: membersController.drivers.map((member) {
+                //       return DropdownMenuItem<Member>(
+                //         value: member,
+                //         child: Text(member.name),
+                //       );
+                //     }).toList(),
+                //     onChanged: (value) {
+                //       if (value != null) {
+                //         membersController.selectMember(value);
+                //       }
+                //     },
+                //     decoration: InputDecoration(
+                //       border: OutlineInputBorder(
+                //         borderRadius: BorderRadius.circular(10),
+                //       ),
+                //       contentPadding: const EdgeInsets.symmetric(
+                //         horizontal: 12,
+                //         vertical: 14,
+                //       ),
+                //     ),
+                //   );
+                // }),
+                SizedBox(height: 10,),
                 // _section("Department & Address"),
                 //
                 // Obx(() =>
@@ -510,6 +572,51 @@ class _TransportRegistrationScreenState extends State<TransportRegistrationScree
     );
   }
 
+
+  void showMemberMultiSelect() {
+    Get.bottomSheet(
+      Container(
+        height: 450,
+        padding: const EdgeInsets.all(12),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        child: Column(
+          children: [
+            const Text(
+              "Select Members",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+
+            Expanded(
+              child: Obx(() => ListView(
+                children: membersController.drivers.map((member) {
+                  final isSelected = membersController.selectedMembers
+                      .any((m) => m.id == member.id);
+
+                  return CheckboxListTile(
+                    title: Text(member.name),
+                    value: isSelected,
+                    onChanged: (_) {
+                      membersController.toggleMember(member);
+                    },
+                  );
+                }).toList(),
+              )),
+            ),
+
+            ElevatedButton(
+              onPressed: () => Get.back(),
+              child: const Text("Done"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _showPaymentPopup() {
     Get.bottomSheet(
       SafeArea(
@@ -563,14 +670,14 @@ class _TransportRegistrationScreenState extends State<TransportRegistrationScree
                 const SizedBox(height: 10),
 
                 /// TAB VIEWS
-                Expanded(
+                Obx(()=> authController.isLoading.value==true?Center(child: Container(child: CircularProgressIndicator())): Expanded(
                   child: TabBarView(
                     children: [
                       _qrPaymentTab(),
                       _upiPaymentTab(),
                     ],
                   ),
-                ),
+                ),),
               ],
             ),
           ),
@@ -627,7 +734,7 @@ class _TransportRegistrationScreenState extends State<TransportRegistrationScree
 
                 // CALL REGISTER API HERE
                 await authController.registerForceMan(
-                    category: '4',
+                    category: '1',
                     inservice: authController.selectedServiceStatus.value.toString(),
                     name: nameC.text,
                     aadhar: aadhaarC.text,
@@ -635,10 +742,10 @@ class _TransportRegistrationScreenState extends State<TransportRegistrationScree
                     birthday: dobC.text,
                     password: passwordC.text,
                     mobile: mobileC.text,
-                    email: emailC.text,
-                    dlNo: dlC.text,
+                    email: emailC?.text??"",
+                    dlNo: '',
                     gender: authController.selectedGender.value,
-                    occupation: occupationC.text,
+                    occupation: '',
                     departmentId: globalcontroller.selectedDepartment.value!.name.toString(),
                     stateId: globalcontroller.selectedState.value!.id.toString(),
                     districtId: globalcontroller.selectedDistrict.value!.id.toString(),
@@ -647,9 +754,11 @@ class _TransportRegistrationScreenState extends State<TransportRegistrationScree
                     nomineeName: nomineeNameC.text,
                     nomineeRelation: nomineeRelationC.text,
                     nomineeMobile: nomineeMobileC.text,
-                    bankName: bankC.text,
-                    ifscCode: ifscC.text,
-                    accountNo: accountC.text);
+                    bankName: '',
+                    ifscCode: '',
+                    accountNo: '', type: 'qr', amount: 0, orderId: '', transactionId: '', status: ''
+
+                );
               },
               child: const Text(
                 "Confirm & Register",
@@ -664,29 +773,141 @@ class _TransportRegistrationScreenState extends State<TransportRegistrationScree
   }
 
   Widget _upiPaymentTab() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          _upiTile(
-            title: "Google Pay",
-            icon: Icons.account_balance_wallet,
-            onTap: () {},
-          ),
-          _upiTile(
-            title: "PhonePe",
-            icon: Icons.phone_android,
-            onTap: () {},
-          ),
-          _upiTile(
-            title: "Paytm",
-            icon: Icons.payment,
-            onTap: () {},
-          ),
-        ],
+    final RxInt selectedAmount = 100.obs;
+    final TextEditingController amountController =
+    TextEditingController(text: '100');
+
+    /// 🔥 Added 100 here
+    final List<int> suggestedAmounts = [100, 500, 1000, 2000, 5000];
+
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// Amount title
+            Text(
+              "Enter Amount",
+              style: Get.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 12),
+
+            /// Amount input (read-only)
+            TextField(
+              controller: amountController,
+              enabled: false,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                prefixText: "₹ ",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            /// Suggested amounts
+            Text(
+              "Quick Select",
+              style: Get.textTheme.titleSmall,
+            ),
+            const SizedBox(height: 10),
+
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: suggestedAmounts.map((amount) {
+                return Obx(
+                      () => ChoiceChip(
+                    label: Text("₹$amount"),
+                    selected: selectedAmount.value == amount,
+                    onSelected: (_) {
+                      selectedAmount.value = amount;
+                      amountController.text = amount.toString();
+                    },
+                    selectedColor: Get.theme.colorScheme.primary,
+                    labelStyle: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: selectedAmount.value == amount
+                          ? Colors.white
+                          : Get.theme.colorScheme.onSurface,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+
+            const Spacer(),
+
+            /// Proceed button
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: Obx(
+                    () => ElevatedButton(
+                  onPressed: () async{
+                    final payAmount = selectedAmount.value;
+                    print("Proceed to pay ₹$payAmount");
+                    // startUpiPayment(payAmount);
+                    await phonePeAuthController.startTransaction(payAmount);
+
+                    if(phonePeAuthController.paymentsuccess.value.toString()=="1"){
+
+                      await authController.registerDrivers(
+                          category: '4',
+                          inservice: authController.selectedServiceStatus?.value.toString()??"",
+                          name: nameC.text,
+                          aadhar: aadhaarC.text,
+                          fatherHusband: fatherC.text,
+                          birthday: dobC.text,
+                          password: passwordC.text,
+                          mobile: mobileC.text,
+                          email: emailC?.text??"",
+                          dlNo: dlC.text,
+                          gender: authController.selectedGender.value,
+                          occupation: '',
+                          departmentId: globalcontroller.selectedDepartment.value?.name ?? "",
+                          stateId: globalcontroller.selectedState.value?.id.toString()??"",
+                          districtId: globalcontroller.selectedDistrict.value?.id.toString()??"",
+                          block: '',
+                          permAddress: addressC.text,
+                          nomineeName: nomineeNameC.text,
+                          nomineeRelation: nomineeRelationC.text,
+                          nomineeMobile: nomineeMobileC.text,
+                          bankName: '',
+                          ifscCode: '',
+                          accountNo: '', driver_type: authController.selecteddrivetype.value.toString()=="TR(Transport)"?"TR":"NT",
+                          type: 'pay', amount: payAmount, orderId: phonePeAuthController.orderid.toString(), transactionId: phonePeAuthController.orderid.value.toString(), status: phonePeAuthController.paymentstatus.value.toString()
+                      );
+                    }
+                    else{
+
+                    }
+
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  child: Text(
+                    "Proceed to Pay ₹${selectedAmount.value} ",
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
+
 
   Widget _upiTile({
     required String title,

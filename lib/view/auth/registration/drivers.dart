@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:aiphc/controllers/auth/login.dart';
 import 'package:aiphc/controllers/globalcontroller.dart';
+import 'package:aiphc/controllers/phonepaycontroller.dart';
 import 'package:aiphc/model/department.dart';
 import 'package:aiphc/model/districtmodel.dart';
 import 'package:aiphc/model/states.dart';
@@ -22,6 +23,8 @@ class _DriversRegistrationScreenState extends State<DriversRegistrationScreen> {
 
   final Globalcontroller globalcontroller = Get.find();
 
+
+  final PhonePeController phonePeAuthController = Get.find();
   final AuthController authController = Get.find();
 
   // Controllers
@@ -539,14 +542,14 @@ class _DriversRegistrationScreenState extends State<DriversRegistrationScreen> {
                 const SizedBox(height: 10),
 
                 /// TAB VIEWS
-                Expanded(
+                Obx(()=> authController.isLoading.value==true?Center(child: Container(child: CircularProgressIndicator())): Expanded(
                   child: TabBarView(
                     children: [
                       _qrPaymentTab(),
                       _upiPaymentTab(),
                     ],
                   ),
-                ),
+                ),),
               ],
             ),
           ),
@@ -596,43 +599,45 @@ class _DriversRegistrationScreenState extends State<DriversRegistrationScreen> {
 
           /// CONFIRM BUTTON
           Obx(()=>authController.isLoading.value==true?CircularProgressIndicator():SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: ElevatedButton(
-                onPressed: () async{
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton(
+              onPressed: () async{
 
-                  // CALL REGISTER API HERE
-                  authController.registerDrivers(
-                      category: '3',
-                      inservice: authController.selectedServiceStatus.value.toString(),
-                      name: nameC.text,
-                      aadhar: aadhaarC.text,
-                      fatherHusband: fatherC.text,
-                      birthday: dobC.text,
-                      password: passwordC.text,
-                      mobile: mobileC.text,
-                      email: emailC?.text??"",
-                      dlNo: dlC.text,
-                      gender: authController.selectedGender.value,
-                      occupation: '',
-                      departmentId: globalcontroller.selectedDepartment.value?.name ?? "",
-                      stateId: globalcontroller.selectedState.value!.id.toString(),
-                      districtId: globalcontroller.selectedDistrict.value!.id.toString(),
-                      block: '',
-                      permAddress: addressC.text,
-                      nomineeName: nomineeNameC.text,
-                      nomineeRelation: nomineeRelationC.text,
-                      nomineeMobile: nomineeMobileC.text,
-                      bankName: '',
-                      ifscCode: '',
-                      accountNo: '', driver_type: authController.selecteddrivetype.value.toString()=="TR(Transport)"?"TR":"NT");
-                },
-                child: const Text(
-                  "Confirm & Register",
-                  style: TextStyle(fontWeight: FontWeight.w700),
-                ),
+                // CALL REGISTER API HERE
+                await authController.registerForceMan(
+                    category: '1',
+                    inservice: authController.selectedServiceStatus.value.toString(),
+                    name: nameC.text,
+                    aadhar: aadhaarC.text,
+                    fatherHusband: fatherC.text,
+                    birthday: dobC.text,
+                    password: passwordC.text,
+                    mobile: mobileC.text,
+                    email: emailC?.text??"",
+                    dlNo: '',
+                    gender: authController.selectedGender.value,
+                    occupation: '',
+                    departmentId: globalcontroller.selectedDepartment.value!.name.toString(),
+                    stateId: globalcontroller.selectedState.value!.id.toString(),
+                    districtId: globalcontroller.selectedDistrict.value!.id.toString(),
+                    block: '',
+                    permAddress: addressC.text,
+                    nomineeName: nomineeNameC.text,
+                    nomineeRelation: nomineeRelationC.text,
+                    nomineeMobile: nomineeMobileC.text,
+                    bankName: '',
+                    ifscCode: '',
+                    accountNo: '', type: 'qr', amount: 0, orderId: '', transactionId: '', status: ''
+
+                );
+              },
+              child: const Text(
+                "Confirm & Register",
+                style: TextStyle(fontWeight: FontWeight.w700),
               ),
             ),
+          ),
           ),
         ],
       ),
@@ -640,26 +645,137 @@ class _DriversRegistrationScreenState extends State<DriversRegistrationScreen> {
   }
 
   Widget _upiPaymentTab() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          _upiTile(
-            title: "Google Pay",
-            icon: Icons.account_balance_wallet,
-            onTap: () {},
-          ),
-          _upiTile(
-            title: "PhonePe",
-            icon: Icons.phone_android,
-            onTap: () {},
-          ),
-          _upiTile(
-            title: "Paytm",
-            icon: Icons.payment,
-            onTap: () {},
-          ),
-        ],
+    final RxInt selectedAmount = 100.obs;
+    final TextEditingController amountController =
+    TextEditingController(text: '100');
+
+    /// 🔥 Added 100 here
+    final List<int> suggestedAmounts = [100, 500, 1000, 2000, 5000];
+
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// Amount title
+            Text(
+              "Enter Amount",
+              style: Get.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 12),
+
+            /// Amount input (read-only)
+            TextField(
+              controller: amountController,
+              enabled: false,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                prefixText: "₹ ",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            /// Suggested amounts
+            Text(
+              "Quick Select",
+              style: Get.textTheme.titleSmall,
+            ),
+            const SizedBox(height: 10),
+
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: suggestedAmounts.map((amount) {
+                return Obx(
+                      () => ChoiceChip(
+                    label: Text("₹$amount"),
+                    selected: selectedAmount.value == amount,
+                    onSelected: (_) {
+                      selectedAmount.value = amount;
+                      amountController.text = amount.toString();
+                    },
+                    selectedColor: Get.theme.colorScheme.primary,
+                    labelStyle: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: selectedAmount.value == amount
+                          ? Colors.white
+                          : Get.theme.colorScheme.onSurface,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+
+            const Spacer(),
+
+            /// Proceed button
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: Obx(
+                    () => ElevatedButton(
+                  onPressed: () async{
+                    final payAmount = selectedAmount.value;
+                    print("Proceed to pay ₹$payAmount");
+                    // startUpiPayment(payAmount);
+                    await phonePeAuthController.startTransaction(payAmount);
+
+                    if(phonePeAuthController.paymentsuccess.value.toString()=="1"){
+
+                      await authController.registerDrivers(
+                          category: '3',
+                          inservice: authController.selectedServiceStatus.value.toString(),
+                          name: nameC.text,
+                          aadhar: aadhaarC.text,
+                          fatherHusband: fatherC.text,
+                          birthday: dobC.text,
+                          password: passwordC.text,
+                          mobile: mobileC.text,
+                          email: emailC?.text??"",
+                          dlNo: dlC.text,
+                          gender: authController.selectedGender.value,
+                          occupation: '',
+                          departmentId: globalcontroller.selectedDepartment.value?.name ?? "",
+                          stateId: globalcontroller.selectedState.value!.id.toString(),
+                          districtId: globalcontroller.selectedDistrict.value!.id.toString(),
+                          block: '',
+                          permAddress: addressC.text,
+                          nomineeName: nomineeNameC.text,
+                          nomineeRelation: nomineeRelationC.text,
+                          nomineeMobile: nomineeMobileC.text,
+                          bankName: '',
+                          ifscCode: '',
+                          accountNo: '', driver_type: authController.selecteddrivetype.value.toString()=="TR(Transport)"?"TR":"NT",
+                          type: 'pay', amount: payAmount, orderId: phonePeAuthController.orderid.toString(), transactionId: phonePeAuthController.orderid.value.toString(), status: phonePeAuthController.paymentstatus.value.toString()
+                      );
+                    }
+                    else{
+
+                    }
+
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  child: Text(
+                    "Proceed to Pay ₹${selectedAmount.value} ",
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

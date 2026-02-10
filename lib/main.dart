@@ -1,12 +1,13 @@
 import 'package:aiphc/controllers/auth/login.dart';
 import 'package:aiphc/controllers/globalcontroller.dart';
-import 'package:aiphc/controllers/paymentcontroller.dart';
+import 'package:aiphc/controllers/phonepaycontroller.dart';
 import 'package:aiphc/controllers/screens/bannercontroller.dart';
 import 'package:aiphc/controllers/screens/gallery.dart';
 import 'package:aiphc/controllers/screens/memberscontroller.dart';
 import 'package:aiphc/controllers/screens/process_rules.dart';
 import 'package:aiphc/controllers/sharedprefres.dart';
 import 'package:aiphc/utils/app_theme.dart';
+import 'package:aiphc/utils/initialbinding.dart';
 import 'package:aiphc/utils/routes/routes.dart';
 import 'package:aiphc/view/auth/login.dart';
 import 'package:aiphc/view/screens/dashboard.dart';
@@ -34,20 +35,24 @@ void main() {
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
+  //
+  // final SharedprefresController sharedprefresController = Get.put(SharedprefresController());
+  // final AuthController authController = Get.put(AuthController());
+  // final Bannerscontroller bannerscontroller = Get.put(Bannerscontroller());
+  // final MembersController membersController = Get.put(MembersController());
+  // final ProcessController processController = Get.put(ProcessController());
+  // final GalleryController galleryController = Get.put(GalleryController());
+  // final Globalcontroller global = Get.put(Globalcontroller());
+  // final PhonePeAuthController phonePeAuthController = Get.put(PhonePeAuthController());
 
-  final SharedprefresController sharedprefresController = Get.put(SharedprefresController());
-  final AuthController authController = Get.put(AuthController());
-  final Bannerscontroller bannerscontroller = Get.put(Bannerscontroller());
-  final MembersController membersController = Get.put(MembersController());
-  final ProcessController processController = Get.put(ProcessController());
-  final GalleryController galleryController = Get.put(GalleryController());
-  final Globalcontroller global = Get.put(Globalcontroller());
 
   @override
   Widget build(BuildContext context) {
     final theme = Get.put(ThemeController());
-    return Obx(() => GetMaterialApp(
+    return Obx(() =>
+        GetMaterialApp(
       debugShowCheckedModeBanner: false,
+      initialBinding: InitialBinding(),
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: theme.themeMode,
@@ -56,9 +61,18 @@ class MyApp extends StatelessWidget {
       // home: MerchantApp(),
       // home: ButtonPage(),
       getPages: getPages,
-    ));
+    )
+    );
+
+
   }
 }
+
+
+
+
+
+
 
 // import 'package:aiphc/controllers/auth/login.dart';
 // import 'package:aiphc/controllers/globalcontroller.dart';

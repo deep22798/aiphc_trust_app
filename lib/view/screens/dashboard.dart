@@ -1,7 +1,9 @@
 import 'dart:ui';
 import 'package:aiphc/controllers/auth/login.dart';
 import 'package:aiphc/controllers/globalcontroller.dart';
+import 'package:aiphc/controllers/phonepaycontroller.dart';
 import 'package:aiphc/controllers/screens/bannercontroller.dart';
+import 'package:aiphc/controllers/screens/memberscontroller.dart';
 import 'package:aiphc/utils/Appconstants.dart';
 import 'package:aiphc/utils/routes/serverassets.dart';
 import 'package:aiphc/view/auth/login.dart';
@@ -32,6 +34,8 @@ class Dashboard extends StatelessWidget {
   final controller = Get.put(DashboardController());
   final themeController = Get.find<ThemeController>();
   final authcontroller = Get.find<AuthController>();
+  final phonepecontroller = Get.find<PhonePeController>();
+  final mebercn = Get.find<MembersController>();
   final banner = Get.find<Bannerscontroller>();
 
   IconData _iconFromKey(String key) {
@@ -1805,7 +1809,8 @@ class Dashboard extends StatelessWidget {
                 title: 'Profile',
                 // onTap: () {
                 // },
-                onTap: () {
+                onTap: () async{
+
                   final role = authcontroller.enablerole.value;
 
                   if (role == 0) {
@@ -1815,6 +1820,10 @@ class Dashboard extends StatelessWidget {
                   } else {
                     Get.to(() => UserProfile());
                   }
+                  // print("mdsbhvjhsdv ${mebercn.selectedMemberIds.toString()}");
+                 // await mebercn.submitMemberDrivers(aadhar: "382826585757");
+                  // phonepecontroller.startTransaction(10);
+                  // phonepecontroller.uploadPaymentData(aadhar: "382826585757", amount: 100, orderId: "514684654156468546115", transactionId:"5565645656", status: "SUCCESS");
                 },
 
                 // onTap: () => Get.to(

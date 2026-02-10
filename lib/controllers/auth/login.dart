@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:aiphc/controllers/phonepaycontroller.dart';
+import 'package:aiphc/controllers/screens/memberscontroller.dart';
 import 'package:aiphc/controllers/sharedprefres.dart';
 import 'package:aiphc/model/auth/adminresmodel.dart';
 import 'package:aiphc/model/auth/usermodel.dart';
@@ -14,9 +16,15 @@ class AuthController extends GetxController {
 
 
   final SharedprefresController sharedprefresController = Get.find<SharedprefresController>();
+
+
+  final PhonePeController phonePeAuthController = Get.put(PhonePeController());
+  final MembersController membersController = Get.put(MembersController());
+
   var enablerole=0.obs;
   // var islogin=0.obs;
 // 1 for admin and 2 for users
+
 
   final Dio _dio = Dio(
     BaseOptions(
@@ -219,6 +227,20 @@ class AuthController extends GetxController {
     required String bankName,
     required String ifscCode,
     required String accountNo,
+
+
+    required String type,
+
+    required int amount,
+    required String orderId,
+    required String transactionId,
+    required String status,
+
+
+
+
+
+
   }) async {
     try {
       isLoading.value = true;
@@ -318,16 +340,23 @@ class AuthController extends GetxController {
         // startsWithLetter(aadhar.toString())
         if (startsWithLetter(aadhar)) {
           // 🔹 Call ANOTHER function
-          adminLogin(
-            username: aadhar,
-            password: password,
-          );
-        } else {
-          // 🔹 Normal numeric login
-          userLogin(
+         await adminLogin(
+              username: aadhar,
+              password: password,
+            );
+
+           } else {
+
+          if(type=="pay"){
+            await phonePeAuthController.uploadPaymentData( amount: amount.toString(), orderId: orderId.toString(), transactionId: transactionId.toString(), status: status.toString(), aadhar: aadhar.toString());
+            // 🔹 Normal numeric login
+          await userLogin(
             aadhar: aadhar,
             password: password,
-          );
+          );}
+          else{
+            return print("ebcjkddbjkc");
+          }
         }
 
       } else {
@@ -367,6 +396,15 @@ class AuthController extends GetxController {
     required String ifscCode,
     required String accountNo,
     required String driver_type,
+
+
+
+    required String type,
+
+    required int amount,
+    required String orderId,
+    required String transactionId,
+    required String status,
   }) async {
     try {
       isLoading.value = true;
@@ -474,11 +512,24 @@ class AuthController extends GetxController {
             password: password,
           );
         } else {
-          // 🔹 Normal numeric login
-          userLogin(
-            aadhar: aadhar,
-            password: password,
-          );
+
+          if(type=="pay"){
+            await membersController.submitMemberDrivers(aadhar: aadhar);
+            await phonePeAuthController.uploadPaymentData( amount: amount.toString(), orderId: orderId.toString(), transactionId: transactionId.toString(), status: status.toString(), aadhar: aadhar.toString());
+            // 🔹 Normal numeric login
+            await userLogin(
+              aadhar: aadhar,
+              password: password,
+            );}
+          else{
+            return print("ebcjkddbjkc");
+          }
+
+          // // 🔹 Normal numeric login
+          // userLogin(
+          //   aadhar: aadhar,
+          //   password: password,
+          // );
         }
 
       } else {
