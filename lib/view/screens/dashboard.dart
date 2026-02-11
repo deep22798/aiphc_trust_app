@@ -9,9 +9,11 @@ import 'package:aiphc/utils/routes/serverassets.dart';
 import 'package:aiphc/view/auth/login.dart';
 import 'package:aiphc/view/screens/aboutus.dart';
 import 'package:aiphc/view/screens/adminprofile.dart';
+import 'package:aiphc/view/screens/autopay.dart';
 import 'package:aiphc/view/screens/contactus.dart';
 import 'package:aiphc/view/screens/gallery/gallery.dart';
 import 'package:aiphc/view/screens/members/member.dart';
+import 'package:aiphc/view/screens/payments.dart';
 import 'package:aiphc/view/screens/pensionhelpscreen.dart';
 import 'package:aiphc/view/screens/process/process.dart';
 import 'package:aiphc/view/screens/profile.dart';
@@ -1860,6 +1862,71 @@ class Dashboard extends StatelessWidget {
             ],
           ),
         ),
+
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Row(
+            children: [
+              _card(
+                icon: Icons.currency_rupee,
+                title: 'Payments',
+                onTap: () async {
+                  Get.to(()=>Payments());
+                },
+                // onTap: () => Get.to(() => const SettingsScreen()),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: InkWell(
+                  onTap: (){
+
+                    Get.to(()=>Autopay());
+                  },
+                  child: Container(
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: theme.cardColor,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: isDark
+                            ? Colors.white.withOpacity(0.08)
+                            : Colors.black.withOpacity(0.06),
+                      ),
+                      boxShadow: isDark
+                          ? []
+                          : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 10,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
+
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircleAvatar(
+                          radius: 24,
+                          backgroundColor: theme.colorScheme.primary
+                              .withOpacity(0.15),
+                          child: Icon(
+                            Icons.text_rotate_up,
+                            color: theme.colorScheme.primary,
+                            size: 26,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text("Autopay")
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
 
         Padding(
           padding: const EdgeInsets.all(20),

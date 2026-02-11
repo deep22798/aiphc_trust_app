@@ -12,7 +12,7 @@ class PhonePeController extends GetxController {
   var orderToken="".obs;
   var orderid="".obs;
   var expiresAt="".obs;
-  var appSchema = "com.wintechings.aiphc".obs;
+  var appSchema = "com.wintechwings.aiphc".obs;
   var paymentsuccess = "0".obs;
   var paymentstatus = "".obs;
 

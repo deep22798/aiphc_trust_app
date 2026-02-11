@@ -545,8 +545,8 @@ class _DriversRegistrationScreenState extends State<DriversRegistrationScreen> {
                 Obx(()=> authController.isLoading.value==true?Center(child: Container(child: CircularProgressIndicator())): Expanded(
                   child: TabBarView(
                     children: [
-                      _qrPaymentTab(),
                       _upiPaymentTab(),
+                      _qrPaymentTab(),
                     ],
                   ),
                 ),),

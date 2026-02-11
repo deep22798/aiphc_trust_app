@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:aiphc/controllers/autopaycontroller.dart';
 import 'package:aiphc/controllers/phonepaycontroller.dart';
 import 'package:aiphc/controllers/screens/memberscontroller.dart';
 import 'package:aiphc/controllers/sharedprefres.dart';
@@ -19,6 +20,7 @@ class AuthController extends GetxController {
 
 
   final PhonePeController phonePeAuthController = Get.put(PhonePeController());
+  final AutopayController autopayController = Get.put(AutopayController());
   final MembersController membersController = Get.put(MembersController());
 
   var enablerole=0.obs;

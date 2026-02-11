@@ -123,10 +123,16 @@ class ServerConstants {
   static const String deleteDonation    = "${api}deleteDonation";
 
 
+  static const String getPayments    = "${api}getPayments";
+  static const String createSubscription    = "${api}createSubscription";
+
+
 
   static const String create_payment_api    = "${api}create_payment_api";
 
-  static const String payenvmainmode    = payenvmodeprod;
+
+  static const String payenvmainmode    = payenvmodetest;
+  // static const String payenvmainmode    = payenvmodeprod;
 
   static const String payenvmode    = payenvmainmode=="SANDBOX"?"$payenvmodetest":"$payenvmodeprod";
   static const String PHONEPE_CLIENT_ID    = payenvmainmode=="SANDBOX"?"$PHONEPE_CLIENT_IDtest":"$PHONEPE_CLIENT_IDprod";

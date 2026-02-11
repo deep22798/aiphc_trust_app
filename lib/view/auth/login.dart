@@ -143,222 +143,224 @@ class _LoginPageState extends State<LoginPage>
               borderRadius: BorderRadius.circular(22),
               child: Padding(
                 padding: const EdgeInsets.all(28),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(Appconstants.applogo, height: 100),
-                    const SizedBox(height: 16),
-                    Text(
-                      "Trust Login",
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(Appconstants.applogo, height: 100),
+                      const SizedBox(height: 16),
+                      Text(
+                        "Trust Login",
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 28),
-                    TextField(
-                      controller: usernameController,
-                      maxLength: 12,
-                      // keyboardType: TextInputType.,
-                      decoration: _inputDecoration(
-                        "Aadhaar Number",
-                        Icons.credit_card,
+                      const SizedBox(height: 28),
+                      TextField(
+                        controller: usernameController,
+                        maxLength: 12,
+                        // keyboardType: TextInputType.,
+                        decoration: _inputDecoration(
+                          "Aadhaar Number",
+                          Icons.credit_card,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: passwordController,
-                      obscureText: true,
-                      decoration:
-                      _inputDecoration("Password", Icons.lock),
-                    ),
-                    const SizedBox(height: 28),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 52,
-                      child: Obx(() => ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                          theme.colorScheme.primary,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                            BorderRadius.circular(30),
+                      const SizedBox(height: 16),
+                      TextField(
+                        controller: passwordController,
+                        obscureText: true,
+                        decoration:
+                        _inputDecoration("Password", Icons.lock),
+                      ),
+                      const SizedBox(height: 28),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: Obx(() => ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                            theme.colorScheme.primary,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                              BorderRadius.circular(30),
+                            ),
                           ),
-                        ),
-                        // onPressed: login.isLoading.value
-                        //     ? null
-                        //     : () {
-                        //   if (usernameController.text.isEmpty ||
-                        //       passwordController.text.isEmpty) {
-                        //     Get.snackbar(
-                        //       'Error',
-                        //       'Please enter Aadhaar & password',
-                        //       snackPosition:
-                        //       SnackPosition.BOTTOM,
-                        //     );
-                        //     return;
-                        //   }
-                        //
-                        //   login.adminLogin(
-                        //     username: usernameController.text
-                        //         .trim(),
-                        //     password: passwordController.text
-                        //         .trim(),
-                        //   );
-                        // },
-                        onPressed: login.isLoading.value
-                            ? null
-                            : () {
-                          final username = usernameController.text.trim();
-                          final password = passwordController.text.trim();
-
-                          if (username.isEmpty || password.isEmpty) {
-                            Get.snackbar(
-                              'Error',
-                              'Please enter Aadhaar & password',
-                              snackPosition: SnackPosition.BOTTOM,
-                            );
-                            return;
-                          }
-
-                          // 👇 CHECK FIRST CHARACTER
-                          if (startsWithLetter(username)) {
-                            // 🔹 Call ANOTHER function
-                            login.adminLogin(
-                              username: username,
-                              password: password,
-                            );
-                          } else {
-                            // 🔹 Normal numeric login
-                            login.userLogin(
-                              aadhar: username,
-                              password: password,
-                            );
-                          }
-                        },
-                        child: login.isLoading.value
-                            ? const CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        )
-                            : const Text(
-                          "Login (लॉग इन)",
-                          style: TextStyle(
-                            fontSize: 16,
+                          // onPressed: login.isLoading.value
+                          //     ? null
+                          //     : () {
+                          //   if (usernameController.text.isEmpty ||
+                          //       passwordController.text.isEmpty) {
+                          //     Get.snackbar(
+                          //       'Error',
+                          //       'Please enter Aadhaar & password',
+                          //       snackPosition:
+                          //       SnackPosition.BOTTOM,
+                          //     );
+                          //     return;
+                          //   }
+                          //
+                          //   login.adminLogin(
+                          //     username: usernameController.text
+                          //         .trim(),
+                          //     password: passwordController.text
+                          //         .trim(),
+                          //   );
+                          // },
+                          onPressed: login.isLoading.value
+                              ? null
+                              : () {
+                            final username = usernameController.text.trim();
+                            final password = passwordController.text.trim();
+                  
+                            if (username.isEmpty || password.isEmpty) {
+                              Get.snackbar(
+                                'Error',
+                                'Please enter Aadhaar & password',
+                                snackPosition: SnackPosition.BOTTOM,
+                              );
+                              return;
+                            }
+                  
+                            // 👇 CHECK FIRST CHARACTER
+                            if (startsWithLetter(username)) {
+                              // 🔹 Call ANOTHER function
+                              login.adminLogin(
+                                username: username,
+                                password: password,
+                              );
+                            } else {
+                              // 🔹 Normal numeric login
+                              login.userLogin(
+                                aadhar: username,
+                                password: password,
+                              );
+                            }
+                          },
+                          child: login.isLoading.value
+                              ? const CircularProgressIndicator(
+                            strokeWidth: 2,
                             color: Colors.white,
-                            fontWeight: FontWeight.w600,
+                          )
+                              : const Text(
+                            "Login (लॉग इन)",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                      )),
-                    ),
-                    Divider(),
-                    Text("OR / या"),
-                    Divider(),
-
-                    SizedBox(
-                      width: MediaQuery.sizeOf(context).width/2,
-                      height: 40,
-                      child: Obx(() => ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                          theme.primaryColorDark,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                            BorderRadius.circular(30),
+                        )),
+                      ),
+                      Divider(),
+                      Text("OR / या"),
+                      Divider(),
+                  
+                      SizedBox(
+                        width: MediaQuery.sizeOf(context).width/2,
+                        height: 40,
+                        child: Obx(() => ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                            theme.primaryColorDark,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                              BorderRadius.circular(30),
+                            ),
                           ),
-                        ),
-                        // onPressed: login.isLoading.value
-                        //     ? null
-                        //     : () {
-                        //   if (usernameController.text.isEmpty ||
-                        //       passwordController.text.isEmpty) {
-                        //     Get.snackbar(
-                        //       'Error',
-                        //       'Please enter Aadhaar & password',
-                        //       snackPosition:
-                        //       SnackPosition.BOTTOM,
-                        //     );
-                        //     return;
-                        //   }
-                        //
-                        //   login.adminLogin(
-                        //     username: usernameController.text
-                        //         .trim(),
-                        //     password: passwordController.text
-                        //         .trim(),
-                        //   );
-                        // },
-                        onPressed: (){
-                          showBigRegistrationTypePopup();
-                        },
-                        child: login.isLoading.value
-                            ? const CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        )
-                            : const Text(
-                          "Register (रजिस्टर)",
-                          style: TextStyle(
-                            fontSize: 15,
+                          // onPressed: login.isLoading.value
+                          //     ? null
+                          //     : () {
+                          //   if (usernameController.text.isEmpty ||
+                          //       passwordController.text.isEmpty) {
+                          //     Get.snackbar(
+                          //       'Error',
+                          //       'Please enter Aadhaar & password',
+                          //       snackPosition:
+                          //       SnackPosition.BOTTOM,
+                          //     );
+                          //     return;
+                          //   }
+                          //
+                          //   login.adminLogin(
+                          //     username: usernameController.text
+                          //         .trim(),
+                          //     password: passwordController.text
+                          //         .trim(),
+                          //   );
+                          // },
+                          onPressed: (){
+                            showBigRegistrationTypePopup();
+                          },
+                          child: login.isLoading.value
+                              ? const CircularProgressIndicator(
+                            strokeWidth: 2,
                             color: Colors.white,
-                            fontWeight: FontWeight.w600,
+                          )
+                              : const Text(
+                            "Register (रजिस्टर)",
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                      )),
-                    ),SizedBox(height: 20,),
-                    SizedBox(
-                      width: MediaQuery.sizeOf(context).width/4,
-                      height: 40,
-                      child: Obx(() => ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                            BorderRadius.circular(30),
+                        )),
+                      ),SizedBox(height: 20,),
+                      SizedBox(
+                        width: MediaQuery.sizeOf(context).width/4,
+                        height: 40,
+                        child: Obx(() => ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                  
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                              BorderRadius.circular(30),
+                            ),
                           ),
-                        ),
-                        // onPressed: login.isLoading.value
-                        //     ? null
-                        //     : () {
-                        //   if (usernameController.text.isEmpty ||
-                        //       passwordController.text.isEmpty) {
-                        //     Get.snackbar(
-                        //       'Error',
-                        //       'Please enter Aadhaar & password',
-                        //       snackPosition:
-                        //       SnackPosition.BOTTOM,
-                        //     );
-                        //     return;
-                        //   }
-                        //
-                        //   login.adminLogin(
-                        //     username: usernameController.text
-                        //         .trim(),
-                        //     password: passwordController.text
-                        //         .trim(),
-                        //   );
-                        // },
-                        onPressed: (){
-                          Get.offAll(()=>Dashboard());
-                        },
-                        child: login.isLoading.value
-                            ? const CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        )
-                            : const Text(
-                          "skip>>>>",
-                          style: TextStyle(
-                            fontSize: 15,
-                            color:  Colors.black,
-                            fontWeight: FontWeight.w600,
+                          // onPressed: login.isLoading.value
+                          //     ? null
+                          //     : () {
+                          //   if (usernameController.text.isEmpty ||
+                          //       passwordController.text.isEmpty) {
+                          //     Get.snackbar(
+                          //       'Error',
+                          //       'Please enter Aadhaar & password',
+                          //       snackPosition:
+                          //       SnackPosition.BOTTOM,
+                          //     );
+                          //     return;
+                          //   }
+                          //
+                          //   login.adminLogin(
+                          //     username: usernameController.text
+                          //         .trim(),
+                          //     password: passwordController.text
+                          //         .trim(),
+                          //   );
+                          // },
+                          onPressed: (){
+                            Get.offAll(()=>Dashboard());
+                          },
+                          child: login.isLoading.value
+                              ? const CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          )
+                              : const Text(
+                            "skip>>>>",
+                            style: TextStyle(
+                              fontSize: 15,
+                              color:  Colors.black,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                      )),
-                    ),
-                  ],
+                        )),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

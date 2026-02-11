@@ -576,8 +576,8 @@ class _ForceManRegistrationScreenState extends State<ForceManRegistrationScreen>
                 Obx(()=> authController.isLoading.value==true?Center(child: Container(child: CircularProgressIndicator())): Expanded(
                   child: TabBarView(
                     children: [
-                      _qrPaymentTab(),
                       _upiPaymentTab(),
+                      _qrPaymentTab(),
                     ],
                   ),
                 ),),

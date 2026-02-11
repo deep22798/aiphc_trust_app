@@ -1,3 +1,4 @@
+import 'package:aiphc/controllers/paymentcontroller.dart';
 import 'package:aiphc/controllers/phonepaycontroller.dart';
 import 'package:aiphc/controllers/screens/bannercontroller.dart';
 import 'package:aiphc/controllers/screens/gallery.dart';
@@ -18,6 +19,7 @@ class InitialBinding extends Bindings {
     Get.put(MembersController(), permanent: true);
     Get.put(ProcessController(), permanent: true);
     Get.put(GalleryController(), permanent: true);
+    Get.put(PaymentsController(), permanent: true);
     Get.put(Globalcontroller(), permanent: true);
     // Get.put(PhonePeController(), permanent: true);
   }
