@@ -35,14 +35,6 @@ migrate_working_dir/
 
 # Symbolication related
 app.*.symbols
-# Secrets & archives
-*.zip
-*.json
-
-# Firebase / Google
-**/*firebase*.json
-android/app/*.json
-windows/*.json
 
 # Obfuscation related
 app.*.map.json

@@ -64,6 +64,7 @@ class Globalcontroller extends GetxController {
     try {
       final response = await _dio.get(url);
       if (response.statusCode != null && response.statusCode! >= 200 && response.statusCode! < 300) {
+        print("sdjkgbfsjkgfkd :${response.data.toString()}");
         return response.data;
       } else {
         print("API returned error ${response.statusCode} for $url");

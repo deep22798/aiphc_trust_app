@@ -216,6 +216,7 @@ class _EditMemberDetailsState extends State<EditMemberDetails> {
 
     // 👉 HERE you will call UPDATE API later
     // For now just close screen
+
     Get.back();
 
     Get.snackbar(

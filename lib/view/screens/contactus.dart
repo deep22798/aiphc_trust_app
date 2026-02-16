@@ -3,6 +3,7 @@ import 'package:aiphc/controllers/screens/memberscontroller.dart';
 import 'package:aiphc/view/widgets/appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../utils/routes/serverassets.dart';
 
 class ContactUs extends StatelessWidget {
@@ -98,14 +99,82 @@ class ContactUs extends StatelessWidget {
               const SizedBox(height: 12),
 
               /// 📞 CONTACT
+              ///
+              ///
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: _infoTile(
-                  theme,
-                  icon: Icons.call,
-                  title: "Mobile",
-                  value:
-                  "${trust.mobileNo} ${trust.mobileNo2.isNotEmpty ? ', ${trust.mobileNo2}' : ''}",
+                child:Card(color: Colors.white,elevation: 5,
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Row(
+                      children: [
+                        Icon(Icons.phone, color: Colors.redAccent, size: 22),
+                        const SizedBox(width: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Mobile",
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+
+                            // 👇 Tap to call
+                            GestureDetector(
+                              onTap: () async {
+                                final Uri uri = Uri(scheme: 'tel', path: '9520665114');
+
+                                if (!await launchUrl(
+                                  uri,
+                                  mode: LaunchMode.externalApplication,
+                                )) {
+                                  debugPrint("Could not launch dialer");
+                                }
+                              },
+
+                              child: const Text(
+                                "9520665114",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.blue, // looks clickable
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(height: 2),
+
+                            GestureDetector(
+                              onTap: () async {
+                                final Uri uri = Uri(scheme: 'tel', path: '9520665116');
+                                if (!await launchUrl(
+                                  uri,
+                                  mode: LaunchMode.externalApplication,
+                                )) {
+                                  debugPrint("Could not launch dialer");
+                                }
+                              },
+
+                              child: const Text(
+                                "9520665116",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.blue,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
 
@@ -177,3 +246,4 @@ class ContactUs extends StatelessWidget {
     );
   }
 }
+

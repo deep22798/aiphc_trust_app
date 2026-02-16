@@ -9,7 +9,9 @@ import 'package:aiphc/model/auth/usermodel.dart';
 import 'package:aiphc/utils/routes/routes.dart';
 import 'package:aiphc/utils/serverconstants.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:image_picker/image_picker.dart'; // adjust path if needed
 
@@ -20,12 +22,79 @@ class AuthController extends GetxController {
 
 
   final PhonePeController phonePeAuthController = Get.put(PhonePeController());
-  final AutopayController autopayController = Get.put(AutopayController());
+  // final AutopayController autopayController = Get.put(AutopayController());
   final MembersController membersController = Get.put(MembersController());
+
 
   var enablerole=0.obs;
   // var islogin=0.obs;
 // 1 for admin and 2 for users
+
+
+
+
+  final Dio dio = Dio(
+    BaseOptions(
+      baseUrl: "${ServerConstants.baseUrl}", // 🔴 change
+      headers: {
+        "Content-Type": "application/json",
+      },
+    ),
+  );
+
+  /// 🔔 update fcm tokenupdateFcmToken
+  Future<bool> updateFcmToken(String fcmToken) async {
+    try {
+      final res = await dio.post(
+        "${ServerConstants.updateFcmToken}",
+        data: {
+          "member_id": usermodel.value?.id.toString()??"",
+          "fcm_token": fcmToken,
+        },
+      );
+      print("jbjdsjvbdjkvjkbdjf :${res.data.toString()}");
+      return res.data['status'] == true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> updateLocation() async {
+    try {
+      // 1️⃣ Check location service
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) return false;
+
+      // 2️⃣ Permission check
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission == LocationPermission.deniedForever) return false;
+
+      // 3️⃣ Get current position
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      // 4️⃣ Convert to string (lat,lng)
+      String location = "${position.latitude},${position.longitude}";
+
+      // 5️⃣ Send to server
+      final res = await dio.post(
+        "updateLocation",
+        data: {
+          "member_id": usermodel.value?.id.toString()??"",
+          "location": location,
+        },
+      );
+
+      return res.data['status'] == true;
+    } catch (e) {
+      return false;
+    }
+  }
+
 
 
   final Dio _dio = Dio(
@@ -119,6 +188,11 @@ class AuthController extends GetxController {
        enablerole.value=2;
         print("ADMIN::::::::::: ${usermodel.value?.name.toString()}:::::::\n${usermodel.value?.userPhoto.toString()}");
         print("jbjdshvfdsvfdj ${enablerole.value.toString()}:::::::::::: ${sharedprefresController.uusername.value.toString()}::::::::::${sharedprefresController.upassword.value.toString()}");
+       FirebaseMessaging messaging = FirebaseMessaging.instance;
+       String? token = await messaging.getToken();
+       print("FCM Token: $token");
+
+       await updateFcmToken(token?.toString()??"");
        Get.offAllNamed(Routes.dashboard);
         Get.snackbar(
           'Success',
@@ -138,6 +212,62 @@ class AuthController extends GetxController {
         e.response?.data['message'] ?? 'Server not responding',
         snackPosition: SnackPosition.BOTTOM,colorText: Colors.white,backgroundColor: Colors.red
       );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+
+  Future<void> userLogintemp({required String aadhar, required String password,}) async
+  {
+    try {
+      isLoading.value = true;
+      print("LOGIN RESPONSE ::: $aadhar");
+      print("LOGIN RESPONSE ::: $password");
+      final formData = FormData.fromMap({
+        'aadhar': aadhar,
+        'password': password,
+      });
+      final response = await _dio.post(
+        ServerConstants.userLogin,
+        data: formData,
+        options: Options(
+          contentType: Headers.multipartFormDataContentType,
+          responseType: ResponseType.json,
+        ),
+      );
+      final data = response.data;
+      print("LOGIN RESPONSE ::: $data");
+      if (data['status'] == true) {
+       await sharedprefresController.saveusernamepassword(aadhar.toString(), password.toString());
+        usermodel.value = UserModel.fromJson(data['data']);
+       enablerole.value=2;
+        print("ADMIN::::::::::: ${usermodel.value?.name.toString()}:::::::\n${usermodel.value?.userPhoto.toString()}");
+        print("jbjdshvfdsvfdj ${enablerole.value.toString()}:::::::::::: ${sharedprefresController.uusername.value.toString()}::::::::::${sharedprefresController.upassword.value.toString()}");
+       FirebaseMessaging messaging = FirebaseMessaging.instance;
+       String? token = await messaging.getToken();
+       print("FCM Token: $token");
+
+       await updateFcmToken(token?.toString()??"");
+       // Get.offAllNamed(Routes.dashboard);
+        // Get.snackbar(
+        //   'Success',
+        //   data['message'] ?? 'Login successful',
+        //   snackPosition: SnackPosition.BOTTOM,backgroundColor: Colors.green,colorText: Colors.white
+        // );
+      } else {
+        // Get.snackbar(
+        //   'Error',
+        //   data['message'] ?? 'Invalid credentials',
+        //   snackPosition: SnackPosition.BOTTOM,colorText: Colors.white,backgroundColor: Colors.red
+        // );
+      }
+    } on DioException catch (e) {
+      // Get.snackbar(
+      //   'Login Failed',
+      //   e.response?.data['message'] ?? 'Server not responding',
+      //   snackPosition: SnackPosition.BOTTOM,colorText: Colors.white,backgroundColor: Colors.red
+      // );
     } finally {
       isLoading.value = false;
     }
@@ -350,7 +480,7 @@ class AuthController extends GetxController {
            } else {
 
           if(type=="pay"){
-            await phonePeAuthController.uploadPaymentData( amount: amount.toString(), orderId: orderId.toString(), transactionId: transactionId.toString(), status: status.toString(), aadhar: aadhar.toString());
+            await phonePeAuthController.uploadPaymentData( amount: amount.toString(), orderId: orderId.toString(), transactionId: transactionId.toString(), status: status.toString(), aadhar: aadhar.toString(), mop: 'pg');
             // 🔹 Normal numeric login
           await userLogin(
             aadhar: aadhar,
@@ -517,7 +647,7 @@ class AuthController extends GetxController {
 
           if(type=="pay"){
             await membersController.submitMemberDrivers(aadhar: aadhar);
-            await phonePeAuthController.uploadPaymentData( amount: amount.toString(), orderId: orderId.toString(), transactionId: transactionId.toString(), status: status.toString(), aadhar: aadhar.toString());
+            await phonePeAuthController.uploadPaymentData( amount: amount.toString(), orderId: orderId.toString(), transactionId: transactionId.toString(), status: status.toString(), aadhar: aadhar.toString(),mop: 'pg');
             // 🔹 Normal numeric login
             await userLogin(
               aadhar: aadhar,

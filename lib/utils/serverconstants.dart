@@ -119,6 +119,7 @@ class ServerConstants {
   // 👥 Team
   static const String donations      = "${api}donations";
   static const String addDonation       = "${api}addDonation";
+  static const String adddonations       = "${api}adddonations";
   static const String updateDonation    = "${api}updateDonation";
   static const String deleteDonation    = "${api}deleteDonation";
 
@@ -126,10 +127,23 @@ class ServerConstants {
   static const String getPayments    = "${api}getPayments";
   static const String createSubscription    = "${api}createSubscription";
 
+  static const String updateFcmToken    = "${api}updateFcmToken";
+  static const String updateLocation    = "${api}updateLocation";
+  static const String triggerEmergency    = "${api}triggerEmergency";
+  static const String updateLiveLocation    = "${api}updateLiveLocation";
+  static const String getActiveEmergencies    = "${api}getActiveEmergencies";
+  static const String endEmergency    = "${api}endEmergency";
+
+
+  static const String memberpic    = "https://trust.aiphc.in/uploads/member/";
+
+
 
 
   static const String create_payment_api    = "${api}create_payment_api";
-
+  static const String updatesubscriptionid    = "${api}updatesubscriptionid";
+  static const String adddkanyaadaan    = "${api}adddkanyaadaan";
+  static const String updatekanyadaansts    = "${api}updatekanyadaansts";
 
   static const String payenvmainmode    = payenvmodetest;
   // static const String payenvmainmode    = payenvmodeprod;
@@ -141,6 +155,7 @@ class ServerConstants {
   static const String PHONEPE_BASE_URL    = payenvmainmode=="SANDBOX"?"$PHONEPE_BASE_URLtest":"$PHONEPE_BASE_URLprod";
   static const String PHONEPE_AUTH_URL    = payenvmainmode=="SANDBOX"?"$PHONEPE_AUTH_URLtest":"$PHONEPE_AUTH_URLprod";
   static const String PHONEPE_AUTH_URLorder    = payenvmainmode=="SANDBOX"?"$PHONEPE_AUTH_URLtestorder":"$PHONEPE_AUTH_URLProdorder";
+  static const String PHONEPE_AUTH_URLsubscription    = payenvmainmode=="SANDBOX"?"$PHONEPE_AUTH_URLtestsubscription":"$PHONEPE_AUTH_URLProdorder";
 
 
 
@@ -151,6 +166,7 @@ class ServerConstants {
   static const String PHONEPE_BASE_URLtest    = "https://api-preprod.phonepe.com/apis/pg-sandbox";
   static const String PHONEPE_AUTH_URLtest    = "https://api-preprod.phonepe.com/apis/pg-sandbox/v1/oauth/token";
   static const String PHONEPE_AUTH_URLtestorder = "https://api-preprod.phonepe.com/apis/pg-sandbox/checkout/v2/sdk/order";
+  static const String PHONEPE_AUTH_URLtestsubscription = "https://api-preprod.phonepe.com/apis/pg-sandbox/checkout/v2/pay";
 
 
 

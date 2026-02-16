@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:aiphc/utils/serverconstants.dart';
+import 'package:aiphc/view/screens/payments.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -111,7 +112,8 @@ class PhonePeController extends GetxController {
       confirm: ElevatedButton(
         style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
         onPressed: () {
-          Get.back();
+          // Get.back();
+          Get.to(()=>Payments());
           // 👉 navigate if needed
           // Get.offAllNamed('/home');
         },
@@ -144,11 +146,11 @@ class PhonePeController extends GetxController {
         if (status == 'SUCCESS') {
           print("success");
           paymentsuccess.value="1";
-          showPaymentSuccessPopup();
+          // showPaymentSuccessPopup();
 
         } else {
           print("failed");
-          showPaymentFailedPopup();
+          // showPaymentFailedPopup();
         }
       } else {
         print("Flow incomplete");
@@ -165,6 +167,7 @@ class PhonePeController extends GetxController {
     required String orderId,
     required String transactionId,
     required String status,
+    required String mop,
     String screenshotPhoto = "",
   }) async {
     try {
@@ -187,6 +190,7 @@ class PhonePeController extends GetxController {
           "month": month,
           "year": year,
           "date": date,
+          "mop": mop,
           "amount": amount,
           "screenshot_photo": screenshotPhoto,
           "order_id": orderId,

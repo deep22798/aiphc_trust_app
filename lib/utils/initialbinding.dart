@@ -15,12 +15,17 @@ class InitialBinding extends Bindings {
     // ONLY light & required controllers
     Get.put(SharedprefresController(), permanent: true);
     Get.put(AuthController(), permanent: true);
-    Get.put(Bannerscontroller(), permanent: true);
-    Get.put(MembersController(), permanent: true);
-    Get.put(ProcessController(), permanent: true);
-    Get.put(GalleryController(), permanent: true);
-    Get.put(PaymentsController(), permanent: true);
-    Get.put(Globalcontroller(), permanent: true);
-    // Get.put(PhonePeController(), permanent: true);
+    Get.put(Globalcontroller() );
+    Get.put(Bannerscontroller() );
+    Get.put(MembersController() );
+    Get.put(ProcessController() );
+    Get.put(GalleryController() );
+    Get.put(PaymentsController() );
+    // Get.lazyPut(() => Bannerscontroller());
+    // Get.lazyPut(() => MembersController());
+    // Get.lazyPut(() => ProcessController());
+    // Get.lazyPut(() => GalleryController());
+    // Get.lazyPut(() => PaymentsController());
+    // Get.put(PhonePeController(), );
   }
 }

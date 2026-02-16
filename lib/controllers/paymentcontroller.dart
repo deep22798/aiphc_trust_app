@@ -14,11 +14,12 @@ class PaymentsController extends GetxController {
       isLoading.value = true;
 
       final response = await dio.get(
-        "${ServerConstants.getPayments}",
+          "${ServerConstants.getPayments}",
         queryParameters:
         memberId != null ? {"member_id": memberId} : null,
       );
 
+      print("dvmsdjbsdkbvjksjkdbv :${response.data.toString()}");
       if (response.statusCode == 200 &&
           response.data['status'] == true) {
         final List list = response.data['data'];

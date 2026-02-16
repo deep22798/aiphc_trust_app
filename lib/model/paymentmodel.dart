@@ -9,6 +9,7 @@ class Payment {
   final String transactionId;
   final String status;
   final String dateCreated;
+  final String mop;
 
   Payment({
     required this.id,
@@ -21,6 +22,7 @@ class Payment {
     required this.transactionId,
     required this.status,
     required this.dateCreated,
+    required this.mop,
   });
 
   factory Payment.fromJson(Map<String, dynamic> json) {
@@ -35,6 +37,7 @@ class Payment {
       transactionId: json['transaction_id'] ?? '',
       status: json['status'] ?? '',
       dateCreated: json['date_created'] ?? '',
+      mop: json['mop'] ?? '',
     );
   }
 }

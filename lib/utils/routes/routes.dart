@@ -2,6 +2,7 @@
 
 import 'package:aiphc/view/auth/login.dart';
 import 'package:aiphc/view/screens/dashboard.dart';
+import 'package:aiphc/view/screens/emergencyuserslist.dart';
 import 'package:aiphc/view/screens/onboarding_view.dart';
 import 'package:aiphc/view/screens/splash.dart';
 import 'package:get/get.dart';
@@ -11,10 +12,16 @@ class Routes {
   static String onboarding = '/onboarding';
   static String login = '/login';
   static String dashboard = '/dashboard';
+  static const emergencyList = '/emergency-list';
 }
 
 
 final getPages = [
+  GetPage(
+    name: Routes.emergencyList,
+    page: () => const EmergencyListScreen(),
+  ),
+
   GetPage(name: Routes.splash, page: () => const SplashPage()),
   GetPage(name: Routes.login, page: () => const LoginPage()),
   GetPage(name: Routes.dashboard, page: () => Dashboard()),

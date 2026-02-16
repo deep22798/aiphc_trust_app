@@ -563,8 +563,8 @@ class _ForceManRegistrationScreenState extends State<ForceManRegistrationScreen>
                       labelColor: Get.theme.primaryColor,
                       unselectedLabelColor: Colors.grey,
                       tabs: const [
-                        Tab(text: "QR Code"),
                         Tab(text: "Pay Now"),
+                        Tab(text: "QR Code"),
                       ],
                     ),
                   ],

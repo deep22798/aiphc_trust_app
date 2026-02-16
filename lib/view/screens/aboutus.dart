@@ -3,6 +3,7 @@ import 'package:aiphc/controllers/screens/memberscontroller.dart';
 import 'package:aiphc/view/widgets/appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../utils/routes/serverassets.dart';
 
 class Aboutus extends StatelessWidget {
@@ -81,6 +82,117 @@ class Aboutus extends StatelessWidget {
                     ),
                   ],
                 ),
+
+              const SizedBox(height: 16),
+              Container(
+                margin: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+
+                    // Trust Reg No
+                    Row(
+                      children: [
+                        Icon(Icons.verified, color: Colors.green, size: 22),
+                        const SizedBox(width: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Trust Reg No",
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            const Text(
+                              "UP-71/2025",
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 14),
+
+                    // PAN No
+                    Row(
+                      children: [
+                        Icon(Icons.badge, color: Colors.blue, size: 22),
+                        const SizedBox(width: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "PAN No",
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            const Text(
+                              "AALTA4598E",
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+
+                    const Divider(height: 28),
+
+                    // Darpan ID
+                    Row(
+                      children: [
+                        Icon(Icons.account_tree, color: Colors.orange, size: 22),
+                        const SizedBox(width: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Darpan ID",
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            const Text(
+                              "UP/2025/0540234",
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+                    // Mobile
+                  ],
+                ),
+              ),
 
               const SizedBox(height: 16),
 

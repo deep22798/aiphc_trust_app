@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:aiphc/controllers/auth/login.dart';
 import 'package:aiphc/controllers/screens/memberscontroller.dart';
 import 'package:aiphc/utils/routes/serverassets.dart';
 import 'package:aiphc/view/screens/members/memberdetails.dart';
@@ -14,6 +15,7 @@ class Members extends StatefulWidget {
 
 class _MembersState extends State<Members> {
   final MembersController controller = Get.put(MembersController());
+  final AuthController authController = Get.find<AuthController>();
 
   final TextEditingController searchController = TextEditingController();
   final RxString searchQuery = ''.obs;
@@ -255,7 +257,7 @@ class _MembersState extends State<Members> {
             Column(
               children: [
                 _statusBadge(m.status),
-                // IconButton(onPressed: ()=>Get.to(()=>EditMemberDetails(member: m)), icon: Icon(Icons.edit))
+                authController.enablerole.toString()!="1"?SizedBox(): IconButton(onPressed: ()=>Get.to(()=>EditMemberDetails(member: m)), icon: Icon(Icons.edit))
               ],
             ),
           ],

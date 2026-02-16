@@ -1,17 +1,24 @@
 import 'dart:ui';
 import 'package:aiphc/controllers/auth/login.dart';
+import 'package:aiphc/controllers/emergencycontroller.dart';
 import 'package:aiphc/controllers/globalcontroller.dart';
+import 'package:aiphc/controllers/paymentcontroller.dart';
 import 'package:aiphc/controllers/phonepaycontroller.dart';
 import 'package:aiphc/controllers/screens/bannercontroller.dart';
 import 'package:aiphc/controllers/screens/memberscontroller.dart';
+import 'package:aiphc/controllers/trackcontroller.dart';
 import 'package:aiphc/utils/Appconstants.dart';
 import 'package:aiphc/utils/routes/serverassets.dart';
 import 'package:aiphc/view/auth/login.dart';
+import 'package:aiphc/view/donationsscreen.dart';
 import 'package:aiphc/view/screens/aboutus.dart';
 import 'package:aiphc/view/screens/adminprofile.dart';
 import 'package:aiphc/view/screens/autopay.dart';
 import 'package:aiphc/view/screens/contactus.dart';
+import 'package:aiphc/view/screens/emergencymap.dart';
+import 'package:aiphc/view/screens/emergencyuserslist.dart';
 import 'package:aiphc/view/screens/gallery/gallery.dart';
+import 'package:aiphc/view/screens/kanyaddan.dart';
 import 'package:aiphc/view/screens/members/member.dart';
 import 'package:aiphc/view/screens/payments.dart';
 import 'package:aiphc/view/screens/pensionhelpscreen.dart';
@@ -27,18 +34,39 @@ import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../controllers/screens/dashboardcontroller.dart';
 import '../../controllers/theme/theme_controller.dart';
 
-class Dashboard extends StatelessWidget {
+class Dashboard extends StatefulWidget {
   Dashboard({super.key});
 
+  @override
+  State<Dashboard> createState() => _DashboardState();
+}
+
+class _DashboardState extends State<Dashboard> {
   final controller = Get.put(DashboardController());
+
   final themeController = Get.find<ThemeController>();
+
   final authcontroller = Get.find<AuthController>();
+
   final phonepecontroller = Get.find<PhonePeController>();
+
   final mebercn = Get.find<MembersController>();
+
   final banner = Get.find<Bannerscontroller>();
+
+  final paymentsController = Get.find<PaymentsController>();
+
+  final phonePeAuthController = Get.find<PhonePeController>();
+
+  final EmergencyController emergencyController =
+  Get.put(EmergencyController());
+
+  final TrackController ctrackontroller =
+  Get.put(TrackController());
 
   IconData _iconFromKey(String key) {
     switch (key) {
@@ -89,7 +117,7 @@ class Dashboard extends StatelessWidget {
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.only(top: 35),
+                padding: const EdgeInsets.only(top: 40),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -130,18 +158,58 @@ class Dashboard extends StatelessWidget {
             ),
           ),
           Center(
-            child: Text(
-              "${authcontroller.enablerole.value == 1
-                  ? "Welcome, ${authcontroller.adminData.value?.name}"
-                  : authcontroller.enablerole.value == 2
-                  ? "Welcome, ${authcontroller.usermodel.value?.name}"
-                  : ""}",
-              style: TextStyle(
-                color: isDark ? Colors.green : Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-              textAlign: TextAlign.start,
+            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Text(
+                        "${authcontroller.enablerole.value == 1
+                            ? "Welcome, ${authcontroller.adminData.value?.name}"
+                            : authcontroller.enablerole.value == 2
+                            ? "Welcome, ${authcontroller.usermodel.value?.name}"
+                            : ""}",
+                        style: TextStyle(
+                          color: isDark ? Colors.green : Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
+                  ),
+                ),
+               authcontroller.enablerole.toString()=="1"?SizedBox(): Obx(() => emergencyController.isLoading.value==true?CircularProgressIndicator():authcontroller.enablerole==0?SizedBox(): Padding(
+                  padding:  EdgeInsets.only(right: 10,top: 2,bottom: 2),
+                  child: ElevatedButton(style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.red)),
+                    onPressed: () async{
+                    print("sdvkdjsnvkjds :${!emergencyController.isActive.value}");
+                      if (!emergencyController.isActive.value) {
+                        emergencyController.trigger(int.parse(authcontroller.usermodel.value?.id??""));
+                        SharedPreferences prefs= await SharedPreferences.getInstance();
+                        var u= await prefs.getString("username");
+                        var p= await prefs.getString("password");
+
+                        await authcontroller.userLogintemp(aadhar: u.toString(), password: p.toString());
+                      } else {
+                        emergencyController.end(int.parse(authcontroller.usermodel.value?.id??""));
+                        SharedPreferences prefs= await SharedPreferences.getInstance();
+                        var u= await prefs.getString("username");
+                        var p= await prefs.getString("password");
+
+                        await authcontroller.userLogintemp(aadhar: u.toString(), password: p.toString());
+                      }
+                    },
+
+                    child: Text(emergencyController.isActive.value==true||authcontroller.usermodel.value?.is_emergency.toString()=="1"
+                        ? "END EMERGENCY"
+                        : "SOS EMERGENCY",style: TextStyle(color: Colors.white),),
+                  ),
+                ))
+
+                // MaterialButton(onPressed: (){},child: Text("HELP"),)
+              ],
             ),
           ),
         ],
@@ -150,7 +218,6 @@ class Dashboard extends StatelessWidget {
   }
 
   // ================= SLIDER =================
-
   Widget slider(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -438,123 +505,6 @@ class Dashboard extends StatelessWidget {
   }
 
   //
-  // // ================= WEB GRID =================
-  //   Widget _webGrid(BuildContext context) {
-  //     final theme = Theme.of(context);
-  //
-  //     return GridView.builder(
-  //       shrinkWrap: true,
-  //       physics: const NeverScrollableScrollPhysics(),
-  //       padding: EdgeInsets.zero, // remove extra top/bottom padding
-  //       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-  //         crossAxisCount: 6,
-  //         mainAxisSpacing: 12, // reduced spacing
-  //         crossAxisSpacing: 12,
-  //         childAspectRatio: 1, // square cells
-  //       ),
-  //       itemCount: controller.gridItems.length,
-  //       itemBuilder: (_, index) {
-  //         final item = controller.gridItems[index];
-  //
-  //         return InkWell(
-  //           borderRadius: BorderRadius.circular(14),
-  //           onTap: () {},
-  //           child: Container(
-  //             padding: const EdgeInsets.all(14),
-  //             decoration: BoxDecoration(
-  //               borderRadius: BorderRadius.circular(14),
-  //               color: theme.cardColor,
-  //               boxShadow: [
-  //                 BoxShadow(
-  //                   color: Colors.black.withOpacity(
-  //                       theme.brightness == Brightness.dark ? 0.35 : 0.08),
-  //                   blurRadius: 14,
-  //                   offset: const Offset(0, 6),
-  //                 ),
-  //               ],
-  //             ),
-  //             child: Column(
-  //               mainAxisAlignment: MainAxisAlignment.center,
-  //               children: [
-  //                 Icon(
-  //                   _iconFromKey(item["icon"]!),
-  //                   size: 28,
-  //                   color: theme.colorScheme.primary,
-  //                 ),
-  //                 const SizedBox(height: 8),
-  //                 Text(
-  //                   item["label"]!,
-  //                   textAlign: TextAlign.center,
-  //                   style: theme.textTheme.bodySmall?.copyWith(
-  //                     fontWeight: FontWeight.w600,
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         );
-  //       },
-  //     );
-  //   }
-  //
-  // // ================= MOBILE GRID =================
-  //   Widget _mobileGrid(BuildContext context) {
-  //     final theme = Theme.of(context);
-  //
-  //     return GridView.builder(
-  //       shrinkWrap: true,
-  //       physics: const NeverScrollableScrollPhysics(),
-  //       padding: EdgeInsets.zero, // remove extra top/bottom padding
-  //       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-  //         crossAxisCount: 3,
-  //         mainAxisSpacing: 10,
-  //         crossAxisSpacing: 10,
-  //         childAspectRatio: 1, // square cells
-  //       ),
-  //       itemCount: controller.gridItems.length,
-  //       itemBuilder: (_, index) {
-  //         final item = controller.gridItems[index];
-  //
-  //         return Container(
-  //           decoration: BoxDecoration(
-  //             borderRadius: BorderRadius.circular(16),
-  //             color: theme.cardColor,
-  //             boxShadow: [
-  //               BoxShadow(
-  //                 color: Colors.black.withOpacity(
-  //                     theme.brightness == Brightness.dark ? 0.4 : 0.1),
-  //                 blurRadius: 14,
-  //                 offset: const Offset(0, 6),
-  //               ),
-  //             ],
-  //           ),
-  //           child: Column(
-  //             mainAxisAlignment: MainAxisAlignment.center,
-  //             children: [
-  //               CircleAvatar(
-  //                 radius: 26,
-  //                 backgroundColor: theme.colorScheme.primary.withOpacity(0.18),
-  //                 child: Icon(
-  //                   _iconFromKey(item["icon"]!),
-  //                   size: 26,
-  //                   color: theme.colorScheme.primary,
-  //                 ),
-  //               ),
-  //               const SizedBox(height: 10),
-  //               Text(
-  //                 item["label"]!,
-  //                 textAlign: TextAlign.center,
-  //                 style: theme.textTheme.bodyMedium
-  //                     ?.copyWith(fontWeight: FontWeight.w600),
-  //               ),
-  //             ],
-  //           ),
-  //         );
-  //       },
-  //     );
-  //   }
-  // ================= LIST =================
-
   Widget _webGrid(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -724,48 +674,6 @@ class Dashboard extends StatelessWidget {
   }
 
   // Widget _list(BuildContext context) {
-  //   final theme = Theme.of(context);
-  //
-  //   return Column(
-  //     children: controller.listItems.map((text) {
-  //       return Container(
-  //         margin: const EdgeInsets.only(bottom: 12),
-  //         padding: const EdgeInsets.all(16),
-  //         decoration: BoxDecoration(
-  //           borderRadius: BorderRadius.circular(14),
-  //           color: theme.cardColor,
-  //           boxShadow: [
-  //             BoxShadow(
-  //               color: Colors.black.withOpacity(
-  //                 theme.brightness == Brightness.dark ? 0.35 : 0.08,
-  //               ),
-  //               blurRadius: 12,
-  //             ),
-  //           ],
-  //         ),
-  //         child: Row(
-  //           children: [
-  //             Icon(
-  //               Icons.notifications,
-  //               size: 20,
-  //               color: theme.colorScheme.primary,
-  //             ),
-  //             const SizedBox(width: 14),
-  //             Expanded(
-  //               child: Text(
-  //                 text,
-  //                 style: theme.textTheme.bodyMedium,
-  //               ),
-  //             ),
-  //             Icon(Icons.chevron_right,
-  //                 color: theme.iconTheme.color),
-  //           ],
-  //         ),
-  //       );
-  //     }).toList(),
-  //   );
-  // }
-
   List<List<Color>> themedGradientss(bool isDark) {
     if (isDark) {
       return const [
@@ -837,12 +745,113 @@ class Dashboard extends StatelessWidget {
               ],
             ),
             child: InkWell(
-              onTap: () {
+              onTap: () async{
                 if (item["icon"] == "vhelp") {
                   Get.to(() => RecentHelp());
                 } else if (item["icon"] == "help") {
                   Get.to(() => PensionHelpScreeen());
-                } else if (item["icon"] == "donate") {} else {}
+                } else if (item["icon"] == "donate") {
+                  print("djkbvjksdbjkvsdjkvjkbv");
+                  Get.to(()=>DonationList());
+                  // await authcontroller.updateFcmToken("dfkjsdbjkjkbjkbjKBJBJBJBJKBjkbBKJBjkbKBkbJKKJbk");
+                } else {}
+              },
+              child: Row(
+                children: [
+                  // ICON BADGE
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isDark
+                          ? Colors.white.withOpacity(0.15)
+                          : Colors.black.withOpacity(0.06),
+                    ),
+                    child: Icon(
+                      _listIconFromKey(item["icon"]!),
+                      size: 24,
+                      color: isDark ? Colors.white : theme.colorScheme.primary,
+                    ),
+                  ),
+
+                  const SizedBox(width: 14),
+
+                  // TEXT
+                  Expanded(
+                    child: Text(
+                      item["label"]!,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        height: 1.3,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                  ),
+
+                  // ARROW
+                  Icon(
+                    Icons.chevron_right,
+                    color: isDark ? Colors.white70 : theme.colorScheme.primary,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget _list2(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final gradients = themedGradientss(isDark);
+
+    return Column(
+      children: List.generate(controller.listItems2.length, (index) {
+        final item = controller.listItems2[index];
+        final gradient = gradients[index % gradients.length];
+
+        return InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () {
+            // TODO: navigation
+          },
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              gradient: LinearGradient(
+                colors: gradient,
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: isDark
+                      ? Colors.black.withOpacity(0.6)
+                      : gradient.first.withOpacity(0.35),
+                  blurRadius: 14,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: InkWell(
+              onTap: () async{
+                if (item["icon"] == "vhelp") {
+                  Get.to(() => RecentHelp());
+                } else if (item["icon"] == "help") {
+                  Get.to(() => PensionHelpScreeen());
+                }else if (item["label"] == "कन्यादान \nKanyadaan") {
+                  print("djkbvjksdbjkvsdjkvjkbv");
+                  Get.to(()=>Kanyaddan());
+                  // await authcontroller.updateFcmToken("dfkjsdbjkjkbjkbjKBJBJBJBJKBjkbBKJBjkbKBkbJKKJbk");
+                }  else if (item["icon"] == "donate") {
+                  print("djkbvjksdbjkvsdjkvjkbv");
+                  Get.to(()=>DonationList());
+                  // await authcontroller.updateFcmToken("dfkjsdbjkjkbjkbjKBJBJBJBJKBjkbBKJBjkbKBkbJKKJbk");
+                } else {}
               },
               child: Row(
                 children: [
@@ -1799,89 +1808,152 @@ class Dashboard extends StatelessWidget {
       );
     }
 
-    return Column(
-      children: [
-        _hero(context),
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            children: [
-              _card(
-                icon: Icons.person_outline,
-                title: 'Profile',
-                // onTap: () {
-                // },
-                onTap: () async{
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          _hero(context),
+         Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                _card(
+                  icon: Icons.person_outline,
+                  title: 'Profile',
+                  // onTap: () {
+                  // },
+                  onTap: () async{
 
-                  final role = authcontroller.enablerole.value;
+                    final role = authcontroller.enablerole.value;
 
-                  if (role == 0) {
-                    _showAuthRequiredSheet(Get.context!);
-                  } else if (role == 1) {
-                    Get.to(() => Adminprofile());
-                  } else {
-                    Get.to(() => UserProfile());
-                  }
-                  // print("mdsbhvjhsdv ${mebercn.selectedMemberIds.toString()}");
-                 // await mebercn.submitMemberDrivers(aadhar: "382826585757");
-                  // phonepecontroller.startTransaction(10);
-                  // phonepecontroller.uploadPaymentData(aadhar: "382826585757", amount: 100, orderId: "514684654156468546115", transactionId:"5565645656", status: "SUCCESS");
-                },
-
-                // onTap: () => Get.to(
-                //   () => authcontroller.enablerole == 1
-                //       ? Adminprofile()
-                //       : UserProfile(),
-                // ),
-              ),
-              const SizedBox(width: 16),
-              _card(
-                icon: Icons.info_outline,
-                title: 'About Us',
-                onTap: () => Get.to(() => const Aboutus()),
-              ),
-            ],
-          ),
-        ),
-
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            children: [
-              _card(
-                icon: Icons.contact_mail_outlined,
-                title: 'Contact Us',
-                onTap: () => Get.to(() => const ContactUs()),
-              ),
-              const SizedBox(width: 16),
-              _card(
-                icon: Icons.help_outline,
-                title: 'Support Queries',
-                onTap: () => Get.to(() => supportquries()),
-              ),
-            ],
-          ),
-        ),
-
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            children: [
-              _card(
-                icon: Icons.currency_rupee,
-                title: 'Payments',
-                onTap: () async {
-                  Get.to(()=>Payments());
-                },
-                // onTap: () => Get.to(() => const SettingsScreen()),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: InkWell(
-                  onTap: (){
-
-                    Get.to(()=>Autopay());
+                    if (role == 0) {
+                      _showAuthRequiredSheet(Get.context!);
+                    } else if (role == 1) {
+                      Get.to(() => Adminprofile());
+                    } else {
+                      Get.to(() => UserProfile());
+                    }
+                    // print("mdsbhvjhsdv ${mebercn.selectedMemberIds.toString()}");
+                   // await mebercn.submitMemberDrivers(aadhar: "382826585757");
+                    // phonepecontroller.startTransaction(10);
+                    // phonepecontroller.uploadPaymentData(aadhar: "382826585757", amount: 100, orderId: "514684654156468546115", transactionId:"5565645656", status: "SUCCESS");
                   },
+
+                  // onTap: () => Get.to(
+                  //   () => authcontroller.enablerole == 1
+                  //       ? Adminprofile()
+                  //       : UserProfile(),
+                  // ),
+                ),
+                const SizedBox(width: 16),
+                _card(
+                  icon: Icons.info_outline,
+                  title: 'About Us',
+                  onTap: () => Get.to(() => const Aboutus()),
+                ),
+              ],
+            ),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: [
+                _card(
+                  icon: Icons.contact_mail_outlined,
+                  title: 'Contact Us',
+                  onTap: () => Get.to(() => const ContactUs()),
+                ),
+                const SizedBox(width: 16),
+                authcontroller.enablerole==0?SizedBox():  _card(
+                  icon: Icons.help_outline,
+                  title: 'Support Queries',
+                  onTap: () => Get.to(() => supportquries()),
+                ),
+              ],
+            ),
+          ),
+
+          authcontroller.enablerole==0?SizedBox():Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                _card(
+                  icon: Icons.currency_rupee,
+                  title: 'Payments',
+                  onTap: () async {
+                    Get.to(()=>Payments());
+                  },
+                  // onTap: () => Get.to(() => const SettingsScreen()),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: InkWell(
+                    onTap: (){
+
+                      Get.to(()=>Autopay());
+                    },
+                    child: Container(
+                      height: 120,
+                      decoration: BoxDecoration(
+                        color: theme.cardColor,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: isDark
+                              ? Colors.white.withOpacity(0.08)
+                              : Colors.black.withOpacity(0.06),
+                        ),
+                        boxShadow: isDark
+                            ? []
+                            : [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.08),
+                            blurRadius: 10,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            radius: 24,
+                            backgroundColor: theme.colorScheme.primary
+                                .withOpacity(0.15),
+                            child: Icon(
+                              Icons.text_rotate_up,
+                              color: theme.colorScheme.primary,
+                              size: 26,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text("Autopay")
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                authcontroller.enablerole==0?SizedBox(): _card(
+                  icon: Icons.power_settings_new,
+                  title: 'Logout',
+                  onTap: () async {
+                    await authcontroller.logout();
+                    emergencyController.isActive.value=false;
+
+                  },
+                  // onTap: () => Get.to(() => const SettingsScreen()),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
                   child: Container(
                     height: 120,
                     decoration: BoxDecoration(
@@ -1911,81 +1983,22 @@ class Dashboard extends StatelessWidget {
                           backgroundColor: theme.colorScheme.primary
                               .withOpacity(0.15),
                           child: Icon(
-                            Icons.text_rotate_up,
+                            Icons.brightness_6_outlined,
                             color: theme.colorScheme.primary,
                             size: 26,
                           ),
                         ),
                         const SizedBox(height: 10),
-                        Text("Autopay")
+                        themeToggle(themeController)
                       ],
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-
-
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            children: [
-              _card(
-                icon: Icons.power_settings_new,
-                title: 'Logout',
-                onTap: () async {
-                  await authcontroller.logout();
-                },
-                // onTap: () => Get.to(() => const SettingsScreen()),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Container(
-                  height: 120,
-                  decoration: BoxDecoration(
-                    color: theme.cardColor,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: isDark
-                          ? Colors.white.withOpacity(0.08)
-                          : Colors.black.withOpacity(0.06),
-                    ),
-                    boxShadow: isDark
-                        ? []
-                        : [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
-                        blurRadius: 10,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
-                  ),
-
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircleAvatar(
-                        radius: 24,
-                        backgroundColor: theme.colorScheme.primary
-                            .withOpacity(0.15),
-                        child: Icon(
-                          Icons.brightness_6_outlined,
-                          color: theme.colorScheme.primary,
-                          size: 26,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      themeToggle(themeController)
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -2016,14 +2029,103 @@ class Dashboard extends StatelessWidget {
 
                           slider(context),
                           gridview(context, isWeb),
+                          Container(
+                            margin: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color(0xFFFFE0EC),
+                                  Color(0xFFFFF5F9),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              boxShadow: [
+                                // BoxShadow(
+                                //   color: Colors.pink.withOpacity(0.15),
+                                //   blurRadius: 12,
+                                //   offset: const Offset(0, 6),
+                                // ),
+                              ],
+                            ),
+                            child: Material(
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.circular(16),
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(16),
+                                onTap: (){},
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          color: Colors.pink.withOpacity(0.15),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(
+                                          Icons.volunteer_activism,
+                                          color: Colors.pink,
+                                          size: 26,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 14),
+                                      const Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Kanyadaan (कन्यादान)",
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                                letterSpacing: 0.2,
+                                              ),
+                                            ),
+                                            SizedBox(height: 4),
+                                            Text(
+                                              "बेटी की मुस्कान का हिस्सा बनिए",
+                                              style: TextStyle(
+                                                fontSize: 13,
+                                                color: Colors.black54,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                     Obx(()=> authcontroller.usermodel.value?.kanyadaan=="2"?SizedBox(): authcontroller.usermodel.value?.kanyadaan=="0"||authcontroller.usermodel.value?.kanyadaan==null?MaterialButton(onPressed: (){
+                                       showKanyadaanDialog(context);
+
+                                     },color: Colors.green.shade900,
+                                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                         child: Padding(
+                                           padding: const EdgeInsets.all(4.0),
+                                           child: Text("Register now\nअभी पंजीकरण करें",style: TextStyle(color: Colors.white),),
+                                         )
+                                     ):authcontroller.usermodel.value!.kanyadaan=="1"?Container(decoration: BoxDecoration(color:Colors.green,borderRadius: BorderRadius.circular(10)),child: Padding(
+                                       padding: const EdgeInsets.all(8.0),
+                                       child: Text("Verification \nPending....",style: TextStyle(color: Colors.yellow,fontWeight: FontWeight.bold),),
+                                     )):SizedBox())
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                           _list(context),
+
+                          // authcontroller.enablerole.value!=0?_list2(context):_list(context),
                         ],
                       ),
                     ),
                   ),
                 ],
               ),
-              donatescreen(context),
+              // donatescreen(context),
+              // EmergencyMapScreen(),
+              EmergencyListScreen(),
               MyteamScreen(context, isWeb),
               _profileScreen(context),
             ],
@@ -2046,11 +2148,17 @@ class Dashboard extends StatelessWidget {
             currentIndex: controller.currentIndex.value,
             onTap: controller.changeTab,
             type: BottomNavigationBarType.fixed,
-            items: const [
+            items:  [
               BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
               BottomNavigationBarItem(
-                icon: Icon(Icons.currency_rupee),
-                label: "Donate now",
+                icon: Icon(Icons.location_on_sharp),
+                label: "Live Help",
+                activeIcon: Stack(
+                  children: [
+                    Center(child: Icon(Icons.circle,color: int.parse(ctrackontroller.emergencyList.length.toString())<1?Colors.green:Colors.red,)),
+                    Center(child: Text(ctrackontroller.emergencyList.length.toString(),style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),))
+                  ],
+                )
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.people_outline),
@@ -2064,25 +2172,440 @@ class Dashboard extends StatelessWidget {
   }
 
   // ================= BUILD =================
-//   @override
-//   Widget build(BuildContext context) {
-//     return WillPopScope(
-//       onWillPop: onWillPop,
-//       child: Scaffold(
-//         bottomNavigationBar: _mobileBottomNav(context),
-//         body: LayoutBuilder(
-//           builder: (context, constraints) {
-//             final isWeb = constraints.maxWidth >= 1000;
-//             return _bodyByIndex(context, isWeb);
-//           },
-//         ),
-//       ),
-//     );
-//   }
-// }
+  bool isload=false;
+
+  void showDonateDialog(BuildContext context) {
+    final _formKey = GlobalKey<FormState>();
+    TextEditingController nameController = TextEditingController();
+    TextEditingController mobileController = TextEditingController();
+    TextEditingController messageController = TextEditingController();
+    TextEditingController amountController = TextEditingController();
+
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Container(
+            padding: EdgeInsets.all(20),
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+
+                    /// Title
+                    Text(
+                      "Make a Donation ❤️",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    SizedBox(height: 20),
+
+                    /// Full Name
+                    authcontroller.enablerole!=0?SizedBox(): TextFormField(
+                      controller: nameController,
+                      decoration: InputDecoration(
+                        labelText: "Full Name",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      validator: (value) =>
+                      value!.isEmpty ? "Enter your name" : null,
+                    ),
+
+                    authcontroller.enablerole!=0?SizedBox():SizedBox(height: 15),
+
+                    /// Mobile Number
+                    authcontroller.enablerole!=0?SizedBox():TextFormField(
+                      controller: mobileController,
+                      keyboardType: TextInputType.phone,
+                      decoration: InputDecoration(
+                        labelText: "Mobile Number",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      validator: (value) =>
+                      value!.isEmpty ? "Enter mobile number" : null,
+                    ),
+
+                    SizedBox(height: 15),
+
+                    /// Amount
+                    TextFormField(
+                      controller: amountController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: "Donation Amount",
+                        prefixText: "₹ ",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      validator: (value) =>
+                      value!.isEmpty ? "Enter amount" : null,
+                    ),
+
+                    SizedBox(height: 15),
+
+                    /// Message
+                    authcontroller.enablerole!=0?SizedBox():TextFormField(
+                      controller: messageController,
+                      maxLines: 3,
+                      decoration: InputDecoration(
+                        labelText: "Message (Optional)",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 25),
+
+                    /// Donate Button
+                    isload==true?CircularProgressIndicator():SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.pinkAccent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: () async{
+                            setState(() {
+                              isload=true;
+                            });
+                            final payAmount = amountController.text;
+                            print("Proceed to pay ₹$payAmount");
+                            // startUpiPayment(payAmount);
+                            await phonePeAuthController.startTransaction(int.parse(payAmount.toString()));
+
+                            if(phonePeAuthController.paymentsuccess.value.toString()=="1"){
+
+                              if(authcontroller.enablerole!=0) {
+                                await phonePeAuthController.uploadPaymentData(
+                                    amount: payAmount.toString(),
+                                    orderId: phonePeAuthController.orderid
+                                        .toString(),
+                                    transactionId: phonePeAuthController.orderid
+                                        .value.toString(),
+                                    status: phonePeAuthController.paymentstatus
+                                        .value.toString(),
+                                    aadhar: authcontroller.usermodel.value
+                                        ?.aadhar.toString() ?? "",
+                                    screenshotPhoto: '',
+                                    mop: 'donation');
+                                phonePeAuthController.paymentsuccess.value.toString()=="0";
+                              }else{
+
+                                if (_formKey.currentState!.validate()) {
+                                  await controller.addDonationSimple(
+                                      nameController.text,
+                                      mobileController.text,
+                                      messageController.text,
+                                      phonePeAuthController.orderid
+                                          .toString(),
+                                      phonePeAuthController.orderid
+                                          .value.toString(),
+                                      phonePeAuthController.paymentstatus
+                                          .value.toString(),
+                                      amountController.text);
+                                  phonePeAuthController.paymentsuccess.value.toString()=="0";
+                                }
+                              }
+                              await paymentsController.fetchPayments(memberId: authcontroller.usermodel.value?.id.toString()??"");
+
+                              // Get.back();
+                            }
+                            // await controller.addDonationSimple();
+                            setState(() {
+                              isload=false;
+                            });
+                            Navigator.pop(context);
+                            // ScaffoldMessenger.of(context).showSnackBar(
+                            //   SnackBar(
+                            //     content: Text("Thank you for your donation ❤️"),
+                            //   ),
+                            // );
+                          },
+                        child: Text(
+                          "Donate Now",
+                          style: TextStyle(
+                            fontSize: 16,color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
+  void showKanyadaanDialog(BuildContext context) {
+    final _formKey = GlobalKey<FormState>();
+    TextEditingController nameController = TextEditingController();
+    TextEditingController mobileController = TextEditingController();
+    TextEditingController banknameController = TextEditingController();
+    TextEditingController accnoController = TextEditingController();
+    TextEditingController accifscController = TextEditingController();
+    final List<int> suggestedAmounts = [501, 1001, 5001];
+
+    final RxInt selectedAmount = 501.obs;
+    final TextEditingController amountController =
+    TextEditingController(text: '501');
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Container(
+            padding: EdgeInsets.all(20),
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+
+                    /// Title
+                    Text(
+                      "Make a Donation ❤️",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    SizedBox(height: 20),
+
+                    /// Full Name
+                    TextFormField(
+                      controller: nameController,
+                      decoration: InputDecoration(
+                        labelText: "Daughter Name",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      validator: (value) =>
+                      value!.isEmpty ? "Enter your Daughter name" : null,
+                    ),
+
+                   SizedBox(height: 15),
+
+                    /// Mobile Number
+                    TextFormField(
+                      controller: mobileController,
+                      keyboardType: TextInputType.phone,maxLength: 10,
+                      decoration: InputDecoration(
+                        labelText: "Daughter Mobile Number",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      validator: (value) =>
+                      value!.isEmpty ? "Enter Daughter's mobile number" : null,
+                    ),
+
+                    SizedBox(height: 15),
+
+                    /// Amount
+                    TextFormField(
+                      controller: banknameController,
+                      decoration: InputDecoration(
+                        labelText: "Bank name",
+                        // prefixText: "₹ ",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      validator: (value) =>
+                      value!.isEmpty ? "Enter Bank name" : null,
+                    ),
+
+                    SizedBox(height: 15),
+
+                    /// Message
+                    TextFormField(
+                      controller: accnoController,
+                      // maxLines: 3,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: "Account Number",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ), validator: (value) =>
+                    value!.isEmpty ? "Enter Account number" : null,
+                    ),
+
+                    SizedBox(height: 15),
+
+                    /// Message
+                    TextFormField(
+                      controller: accifscController,
+                      // maxLines: 3,
+                      decoration: InputDecoration(
+                        labelText: "Account IFSC code",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ), validator: (value) =>
+                    value!.isEmpty ? "Enter Bank IFSC code" : null,
+                    ),
+
+                    SizedBox(height: 15),
+                    Text("starts with.."),
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: suggestedAmounts.map((amount) {
+                        return Obx(
+                              () => ChoiceChip(
+                            label: Text("₹$amount"),
+                            selected: selectedAmount.value == amount,
+                            onSelected: (_) {
+                              selectedAmount.value = amount;
+                              amountController.text = amount.toString();
+                            },
+                            selectedColor: Get.theme.colorScheme.primary,
+                            labelStyle: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: selectedAmount.value == amount
+                                  ? Colors.white
+                                  : Get.theme.colorScheme.onSurface,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+
+                    SizedBox(height: 25),
+
+                    /// Donate Button
+                    isload==true?CircularProgressIndicator():SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green.shade900,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: () async{
+                            setState(() {
+                              isload=true;
+                            });
+
+                            final payAmount = selectedAmount.value;
+                            print("Proceed to pay ₹$payAmount");
+                            // startUpiPayment(payAmount);
+                                if (_formKey.currentState!.validate()) {
+                                  await phonePeAuthController.startTransaction(payAmount);
+
+                                  if(phonePeAuthController.paymentsuccess.value.toString()=="1"){
+                                    await phonePeAuthController.uploadPaymentData( amount: payAmount.toString(), orderId: phonePeAuthController.orderid.toString(), transactionId: phonePeAuthController.orderid.value.toString(), status: phonePeAuthController.paymentstatus.value.toString(),aadhar: authcontroller.usermodel.value?.aadhar.toString()??"",screenshotPhoto: '', mop: 'kanyadaan');
+                                    await paymentsController.fetchPayments(memberId: authcontroller.usermodel.value?.id.toString()??"");
+                                    await controller.addKanyadaan(
+                                        authcontroller.usermodel.value?.id.toString()??"",
+                                        nameController.text,
+                                        mobileController.text,
+                                        banknameController.text,
+                                        accnoController.text,
+                                        accifscController.text,context);
+                                    SharedPreferences prefs= await SharedPreferences.getInstance();
+                                    var u= await prefs.getString("username");
+                                    var p= await prefs.getString("password");
+                                    await authcontroller.userLogintemp(aadhar: u.toString(), password: p.toString());
+                                    Get.back();
+                                  }
+
+                                }
+                            //
+                            // await controller.addDonationSimple();
+                            setState(() {
+                              isload=false;
+                            });
+                            // Navigator.pop(context);
+
+                          },
+                        child: Text(
+                          "Register Now",
+                          style: TextStyle(
+                            fontSize: 16,color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    // if(authcontroller.enablerole.toString()=="1"){
+    //   // if (authcontroller.adminData.value?.is_emergency.toString() == "1") {
+    //   //   emergencyController.isActive.value = true;
+    //   // }else{
+    //     emergencyController.isActive.value = false;
+    //   // }
+    // }else{
+    if(authcontroller.enablerole.toString()=="1"){
+      authcontroller.usermodel.value=null;
+    }else{
+      authcontroller.adminData.value=null;
+    }
+      if (authcontroller.usermodel.value?.is_emergency.toString() == "1") {
+        emergencyController.isActive.value = true;
+      }else{
+        emergencyController.isActive.value = false;
+      // }
+    }
+      if (authcontroller.usermodel.value?.is_emergency.toString() == "1") {
+        emergencyController.isActive.value = true;
+      }else{
+        emergencyController.isActive.value = false;
+      }
+    // });
+  }
 
   @override
   Widget build(BuildContext context) {
+    // if(authcontroller.usermodel.value?.is_emergency.toString()=="1"){
+    //   emergencyController.isActive.value=true;
+    // }
     return PopScope(
       canPop: false, // 🔥 VERY IMPORTANT
       onPopInvoked: (didPop) async {
@@ -2095,6 +2618,27 @@ class Dashboard extends StatelessWidget {
       },
       child: Scaffold(
         bottomNavigationBar: _mobileBottomNav(context),
+        floatingActionButton: SizedBox(
+          height: 55,
+          child: FloatingActionButton.extended(
+            onPressed: () {
+              showDonateDialog(context);
+            },
+            backgroundColor: Colors.pinkAccent,
+            elevation: 8,
+            icon: Icon(Icons.favorite, color: Colors.white),
+            label: Text(
+              "Donate Now",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        // floatingActionButtonLocation: FloatingActionButtonLocation.right,
+
         body: LayoutBuilder(
           builder: (context, constraints) {
             final isWeb = constraints.maxWidth >= 1000;

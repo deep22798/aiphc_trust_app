@@ -54,9 +54,9 @@ class _LoginPageState extends State<LoginPage>
     controller!.forward();
 
     // 👇 POPUP after build
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _showDonationPopup();
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _showDonationPopup();
+    // });
   }
 
 

@@ -35,6 +35,8 @@ class UserModel {
   final String subscriptionId;
   final String driverType;
   final String dateCreated;
+  final String kanyadaan;
+  final String is_emergency;
 
   UserModel({
     required this.id,
@@ -73,6 +75,8 @@ class UserModel {
     required this.subscriptionId,
     required this.driverType,
     required this.dateCreated,
+    required this.kanyadaan,
+    required this.is_emergency,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -113,6 +117,8 @@ class UserModel {
       subscriptionId: json['subscription_id']?.toString() ?? '',
       driverType: json['driver_type'] ?? '',
       dateCreated: json['date_created'] ?? '',
+      kanyadaan: json['kanyadaan'] ?? '',
+      is_emergency: json['is_emergency'] ?? '',
     );
   }
 
@@ -154,6 +160,8 @@ class UserModel {
       'subscription_id': subscriptionId,
       'driver_type': driverType,
       'date_created': dateCreated,
+      'kanyadaan': kanyadaan,
+      'is_emergency': is_emergency,
     };
   }
 }
