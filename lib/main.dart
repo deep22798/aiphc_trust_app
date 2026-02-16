@@ -23,6 +23,7 @@ import 'dart:async';
 
 void main() {WidgetsFlutterBinding.ensureInitialized();
   // Global error handling for release mode
+
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
     // Optionally log errors to server
