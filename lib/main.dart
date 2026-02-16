@@ -20,6 +20,7 @@ import 'package:get/get.dart';
 import 'controllers/theme/theme_controller.dart';
 import 'dart:async';
 
+
 void main() {WidgetsFlutterBinding.ensureInitialized();
   // Global error handling for release mode
   FlutterError.onError = (FlutterErrorDetails details) {
