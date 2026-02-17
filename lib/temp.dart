@@ -74,3 +74,15 @@
 // td{
 // border: 1px solid #000;}
 // </style>
+
+
+
+
+// 1. 300 rs in
+// 2. whatsapp intigration
+// 3. email
+// 4. photos
+// 5. call button show only when reached the location
+// 6. all are capital registrsation time
+// 7. donation purpose dropdown
+// 8. hindi in each place

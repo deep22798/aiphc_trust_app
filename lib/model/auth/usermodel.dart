@@ -37,6 +37,8 @@ class UserModel {
   final String dateCreated;
   final String kanyadaan;
   final String is_emergency;
+  final String is_district_member;
+  final String district_name;
 
   UserModel({
     required this.id,
@@ -77,6 +79,8 @@ class UserModel {
     required this.dateCreated,
     required this.kanyadaan,
     required this.is_emergency,
+    required this.is_district_member,
+    required this.district_name,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -119,6 +123,8 @@ class UserModel {
       dateCreated: json['date_created'] ?? '',
       kanyadaan: json['kanyadaan'] ?? '',
       is_emergency: json['is_emergency'] ?? '',
+      is_district_member: json['is_district_member'] ?? '',
+      district_name: json['district_name'] ?? '',
     );
   }
 
@@ -162,6 +168,8 @@ class UserModel {
       'date_created': dateCreated,
       'kanyadaan': kanyadaan,
       'is_emergency': is_emergency,
+      'is_district_member': is_district_member,
+      'district_name': district_name,
     };
   }
 }

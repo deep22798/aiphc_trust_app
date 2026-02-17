@@ -247,7 +247,7 @@ class _ProcessRulesState extends State<ProcessRules> {
                 /// 🔶 REGISTER BUTTON (Theme Safe)
                 SliverToBoxAdapter(
                   child: Center(
-                    child: authController.enablerole.value.toString()!=""?SizedBox():MaterialButton(
+                    child:authController.enablerole.value.toString()=="1"|| authController.enablerole.value.toString()!="0"?SizedBox():MaterialButton(
                       onPressed: () {
                         showBigRegistrationTypePopup();
                       },

@@ -37,13 +37,15 @@ class _MembersState extends State<Members> {
           ),
         ),
         child: SafeArea(
-          child: Column(
-            children: [
-              _header(),
-              _searchBar(),
-              _filtersAndTotal(),
-              Expanded(child: _memberList()),
-            ],
+          child: Obx(()=>Column(
+              children: [
+                _header(),
+                authController.enablerole.value.toString()!="1"?SizedBox():_searchBar(),
+                authController.enablerole.value.toString()!="1"?SizedBox(): _filtersAndTotal(),
+                Text("Total Members: ${_filteredMembers().length}",style: TextStyle(fontWeight: FontWeight.bold),),SizedBox(height: 10,),
+                Expanded(child: _memberList()),
+              ],
+            ),
           ),
         ),
       ),

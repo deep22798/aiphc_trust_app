@@ -53,10 +53,11 @@ class _LoginPageState extends State<LoginPage>
 
     controller!.forward();
 
+
     // 👇 POPUP after build
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   _showDonationPopup();
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showDonationPopup();
+    });
   }
 
 
@@ -350,9 +351,9 @@ class _LoginPageState extends State<LoginPage>
                             color: Colors.white,
                           )
                               : const Text(
-                            "skip>>>>",
+                            "skip(आगे बढे)",
                             style: TextStyle(
-                              fontSize: 15,
+                              fontSize: 10,
                               color:  Colors.black,
                               fontWeight: FontWeight.w600,
                             ),

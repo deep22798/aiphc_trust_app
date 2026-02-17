@@ -180,7 +180,7 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                 ),
-               authcontroller.enablerole.toString()=="1"?SizedBox(): Obx(() => emergencyController.isLoading.value==true?CircularProgressIndicator():authcontroller.enablerole==0?SizedBox(): Padding(
+               authcontroller.enablerole.toString()=="1"||authcontroller.enablerole.toString()=="0"?SizedBox(): Obx(() => emergencyController.isLoading.value==true?CircularProgressIndicator():authcontroller.enablerole==0?SizedBox(): Padding(
                   padding:  EdgeInsets.only(right: 10,top: 2,bottom: 2),
                   child: ElevatedButton(style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.red)),
                     onPressed: () async{
@@ -744,6 +744,7 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ],
             ),
+
             child: InkWell(
               onTap: () async{
                 if (item["icon"] == "vhelp") {
@@ -1199,12 +1200,12 @@ class _DashboardState extends State<Dashboard> {
               child: Column(
                 children: [
                   // 📊 STATS
-                  _statsHeader(theme, controller.myteamlist),
+                  authcontroller.enablerole.value.toString()!="1"?SizedBox():_statsHeader(theme, controller.myteamlist),
 
-                  const SizedBox(height: 16),
+                  authcontroller.enablerole.value.toString()!="1"?SizedBox():const SizedBox(height: 16),
 
                   // 🔍 SEARCH + FILTER
-                  Row(
+                authcontroller.enablerole.value.toString()!="1"?SizedBox():Row(
                     children: [
                       Expanded(
                         child: TextField(
@@ -1221,8 +1222,8 @@ class _DashboardState extends State<Dashboard> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      DropdownButton<String>(
+                      authcontroller.enablerole.value.toString()!="1"?SizedBox():const SizedBox(width: 12),
+                      authcontroller.enablerole.value.toString()!="1"?SizedBox():DropdownButton<String>(
                         value: controller.statusFilter.value,
                         underline: const SizedBox(),
                         items: const [
@@ -1241,8 +1242,8 @@ class _DashboardState extends State<Dashboard> {
                     ],
                   ),
 
-                  const SizedBox(height: 16),
-
+                  authcontroller.enablerole.value.toString()!="1"?SizedBox():const SizedBox(height: 16),
+Text("Team"),
                   // 📋 LIST / GRID
                   Expanded(
                     child: isWeb
@@ -1285,95 +1286,98 @@ class _DashboardState extends State<Dashboard> {
     final theme = Theme.of(context);
     final isActive = m.status == "1";
 
-    return InkWell(
-      borderRadius: BorderRadius.circular(18),
-      onTap: () => _showTeamDetail(context, m),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: theme.cardColor,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: isDark
-                ? Colors.white.withOpacity(0.08)
-                : Colors.black.withOpacity(0.06),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: () =>authcontroller.enablerole.value.toString()!="1"?(): _showTeamDetail(context, m),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: theme.cardColor,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withOpacity(0.08)
+                  : Colors.black.withOpacity(0.06),
+            ),
+            boxShadow: isDark
+                ? []
+                : [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 10,
+                offset: const Offset(0, 6),
+              ),
+            ],
           ),
-          boxShadow: isDark
-              ? []
-              : [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 10,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.network(
-                "${ServerAssets.baseUrl}/admin/${m.image}",
-                width: 60,
-                height: 60,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) =>
-                    Container(
-                      width: 60,
-                      height: 60,
-                      color: theme.colorScheme.primary.withOpacity(0.15),
-                      child: Icon(
-                          Icons.person, color: theme.colorScheme.primary),
-                    ),
-              ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          m.title,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  "${ServerAssets.baseUrl}/admin/${m.image}",
+                  width: 60,
+                  height: 60,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) =>
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isActive
-                              ? Colors.green.withOpacity(0.15)
-                              : Colors.red.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          isActive ? 'Active' : 'Deactivated',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: isActive ? Colors.green : Colors.red,
-                            fontWeight: FontWeight.w600,
+                        width: 60,
+                        height: 60,
+                        color: theme.colorScheme.primary.withOpacity(0.15),
+                        child: Icon(
+                            Icons.person, color: theme.colorScheme.primary),
+                      ),
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            m.title,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(m.position, style: theme.textTheme.bodySmall),
-                  const SizedBox(height: 4),
-                  Text(
-                    'State: ${m.state_name} | District: ${m.district_name}',
-                    style: theme.textTheme.bodySmall,
-                  ),
-                ],
+                        authcontroller.enablerole.value.toString()!="1"?SizedBox():Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isActive
+                                ? Colors.green.withOpacity(0.15)
+                                : Colors.red.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            isActive ? 'Active' : 'Deactivated',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: isActive ? Colors.green : Colors.red,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(m.position, style: theme.textTheme.bodySmall),
+                    const SizedBox(height: 4),
+                    Text(
+                      'State: ${m.state_name} | District: ${m.district_name}',
+                      style: theme.textTheme.bodySmall,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -1818,9 +1822,10 @@ class _DashboardState extends State<Dashboard> {
               children: [
                 _card(
                   icon: Icons.person_outline,
-                  title: 'Profile',
+                  title: 'Profile\nपहचान',
                   // onTap: () {
                   // },
+
                   onTap: () async{
 
                     final role = authcontroller.enablerole.value;
@@ -1847,7 +1852,7 @@ class _DashboardState extends State<Dashboard> {
                 const SizedBox(width: 16),
                 _card(
                   icon: Icons.info_outline,
-                  title: 'About Us',
+                  title: 'About Us\nहमारे बारे में',
                   onTap: () => Get.to(() => const Aboutus()),
                 ),
               ],
@@ -1860,7 +1865,7 @@ class _DashboardState extends State<Dashboard> {
               children: [
                 _card(
                   icon: Icons.contact_mail_outlined,
-                  title: 'Contact Us',
+                  title: 'Contact Us\nहमसे संपर्क करें',
                   onTap: () => Get.to(() => const ContactUs()),
                 ),
                 const SizedBox(width: 16),
@@ -2029,86 +2034,89 @@ class _DashboardState extends State<Dashboard> {
 
                           slider(context),
                           gridview(context, isWeb),
-                          Container(
-                            margin: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              gradient: const LinearGradient(
-                                colors: [
-                                  Color(0xFFFFE0EC),
-                                  Color(0xFFFFF5F9),
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              boxShadow: [
-                                // BoxShadow(
-                                //   color: Colors.pink.withOpacity(0.15),
-                                //   blurRadius: 12,
-                                //   offset: const Offset(0, 6),
-                                // ),
-                              ],
-                            ),
-                            child: Material(
-                              color: Colors.transparent,
-                              borderRadius: BorderRadius.circular(16),
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(16),
-                                onTap: (){},
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                          color: Colors.pink.withOpacity(0.15),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: const Icon(
-                                          Icons.volunteer_activism,
-                                          color: Colors.pink,
-                                          size: 26,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 14),
-                                      const Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "Kanyadaan (कन्यादान)",
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600,
-                                                letterSpacing: 0.2,
-                                              ),
-                                            ),
-                                            SizedBox(height: 4),
-                                            Text(
-                                              "बेटी की मुस्कान का हिस्सा बनिए",
-                                              style: TextStyle(
-                                                fontSize: 13,
-                                                color: Colors.black54,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                     Obx(()=> authcontroller.usermodel.value?.kanyadaan=="2"?SizedBox(): authcontroller.usermodel.value?.kanyadaan=="0"||authcontroller.usermodel.value?.kanyadaan==null?MaterialButton(onPressed: (){
-                                       showKanyadaanDialog(context);
 
-                                     },color: Colors.green.shade900,
-                                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                         child: Padding(
-                                           padding: const EdgeInsets.all(4.0),
-                                           child: Text("Register now\nअभी पंजीकरण करें",style: TextStyle(color: Colors.white),),
-                                         )
-                                     ):authcontroller.usermodel.value!.kanyadaan=="1"?Container(decoration: BoxDecoration(color:Colors.green,borderRadius: BorderRadius.circular(10)),child: Padding(
-                                       padding: const EdgeInsets.all(8.0),
-                                       child: Text("Verification \nPending....",style: TextStyle(color: Colors.yellow,fontWeight: FontWeight.bold),),
-                                     )):SizedBox())
-                                    ],
+                      Obx(()=>authcontroller.enablerole.value.toString()=="0"||authcontroller.enablerole.value.toString()=="1"?SizedBox(height: 10,):SizedBox()),
+                          Obx(()=>authcontroller.enablerole.value.toString()=="0"||authcontroller.enablerole.value.toString()=="1"?SizedBox(): Container(
+                              margin: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFFFFE0EC),
+                                    Color(0xFFFFF5F9),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                boxShadow: [
+                                  // BoxShadow(
+                                  //   color: Colors.pink.withOpacity(0.15),
+                                  //   blurRadius: 12,
+                                  //   offset: const Offset(0, 6),
+                                  // ),
+                                ],
+                              ),
+                              child: Material(
+                                color: Colors.transparent,
+                                borderRadius: BorderRadius.circular(16),
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(16),
+                                  onTap: (){},
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                            color: Colors.pink.withOpacity(0.15),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const Icon(
+                                            Icons.volunteer_activism,
+                                            color: Colors.pink,
+                                            size: 26,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 14),
+                                        const Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Kanyadaan (कन्यादान)",
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                  letterSpacing: 0.2,
+                                                ),
+                                              ),
+                                              SizedBox(height: 4),
+                                              Text(
+                                                "बेटी की मुस्कान का हिस्सा बनिए",
+                                                style: TextStyle(
+                                                  fontSize: 13,
+                                                  color: Colors.black54,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                       Obx(()=> authcontroller.usermodel.value?.kanyadaan=="2"?SizedBox(): authcontroller.usermodel.value?.kanyadaan=="0"||authcontroller.usermodel.value?.kanyadaan==null?MaterialButton(onPressed: (){
+                                         showKanyadaanDialog(context);
+
+                                       },color: Colors.green.shade900,
+                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                           child: Padding(
+                                             padding: const EdgeInsets.all(4.0),
+                                             child: Text("Register now\nअभी पंजीकरण करें",style: TextStyle(color: Colors.white),),
+                                           )
+                                       ):authcontroller.usermodel.value!.kanyadaan=="1"?Container(decoration: BoxDecoration(color:Colors.green,borderRadius: BorderRadius.circular(10)),child: Padding(
+                                         padding: const EdgeInsets.all(8.0),
+                                         child: Text("Verification \nPending....",style: TextStyle(color: Colors.yellow,fontWeight: FontWeight.bold),),
+                                       )):SizedBox())
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -2149,10 +2157,10 @@ class _DashboardState extends State<Dashboard> {
             onTap: controller.changeTab,
             type: BottomNavigationBarType.fixed,
             items:  [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home\nमुख्य पृष्ठ"),
               BottomNavigationBarItem(
                 icon: Icon(Icons.location_on_sharp),
-                label: "Live Help",
+                label: "Live Help\nलाइव सहायता",
                 activeIcon: Stack(
                   children: [
                     Center(child: Icon(Icons.circle,color: int.parse(ctrackontroller.emergencyList.length.toString())<1?Colors.green:Colors.red,)),
@@ -2162,10 +2170,10 @@ class _DashboardState extends State<Dashboard> {
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.people_outline),
-                label: "Our Team",
+                label: "Our Team\nहमारी टीम",
               ),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.person), label: "Profile"),
+                  icon: Icon(Icons.person), label: "Profile\nरूपरेखा"),
             ],
           ),
     );
@@ -2340,7 +2348,7 @@ class _DashboardState extends State<Dashboard> {
                             // );
                           },
                         child: Text(
-                          "Donate Now",
+                          "Donate Now\nअभी दान करें",
                           style: TextStyle(
                             fontSize: 16,color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -2413,6 +2421,7 @@ class _DashboardState extends State<Dashboard> {
                     ),
 
                    SizedBox(height: 15),
+
 
                     /// Mobile Number
                     TextFormField(
@@ -2628,7 +2637,7 @@ class _DashboardState extends State<Dashboard> {
             elevation: 8,
             icon: Icon(Icons.favorite, color: Colors.white),
             label: Text(
-              "Donate Now",
+              "Donate Now\nअभी दान करें",
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
