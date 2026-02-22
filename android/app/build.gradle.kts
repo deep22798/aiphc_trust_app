@@ -9,7 +9,7 @@ plugins {
 }
 
 //android {
-//    namespace = "com.wintechwings.aiphc"
+//    namespace = "com.wintechwings.aipvst"
 //    compileSdk = flutter.compileSdkVersion
 ////    ndkVersion = flutter.ndkVersion
 //    ndkVersion = "29.0.14206865"
@@ -25,7 +25,7 @@ plugins {
 //
 //    defaultConfig {
 //        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-//        applicationId = "com.wintechwings.aiphc"
+//        applicationId = "com.wintechwings.aipvst"
 //        // You can update the following values to match your application needs.
 //        // For more information, see: https://flutter.dev/to/review-gradle-config.
 //        minSdk = flutter.minSdkVersion
@@ -58,9 +58,11 @@ plugins {
 //            signingConfig = signingConfigs.getByName("release")
 //        }
 //    }
+
 //}
+
 android {
-    namespace = "com.wintechwings.aiphc"
+    namespace = "com.wintechwings.aipvst"
     compileSdk = flutter.compileSdkVersion
 
     // ✅ MUST use Flutter-stable NDK
@@ -77,11 +79,11 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.wintechwings.aiphc"
+        applicationId = "com.wintechwings.aipvst"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        versionCode = 1
+        versionName = "1.0.0"
     }
 
     // ✅ THIS FIXES "failed to strip debug symbols"
@@ -94,10 +96,10 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file("aiphcHce.jks")
-            storePassword = "aiphcHce"
-            keyAlias = "aiphcHce"
-            keyPassword = "aiphcHce"
+            storeFile = file("aipvst.jks")
+            storePassword = "aipvst"
+            keyAlias = "aipvst"
+            keyPassword = "aipvst"
         }
     }
 
@@ -108,9 +110,10 @@ android {
             signingConfig = signingConfigs.getByName("release")
 
             // ✅ Disable native symbol stripping
-            ndk {
-                debugSymbolLevel = "NONE"
-            }
+//            ndk {
+//                debugSymbolLevel = "NONE"
+//            }
+
         }
     }
 }

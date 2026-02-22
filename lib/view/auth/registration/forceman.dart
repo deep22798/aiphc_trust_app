@@ -682,7 +682,7 @@ class _ForceManRegistrationScreenState extends State<ForceManRegistrationScreen>
     TextEditingController(text: '100');
 
     /// 🔥 Added 100 here
-    final List<int> suggestedAmounts = [100, 500, 1000, 2000, 5000];
+    final List<int> suggestedAmounts = [100, 300, 500, 1000, 2000, 5000];
 
     return GestureDetector(
       onTap: () {

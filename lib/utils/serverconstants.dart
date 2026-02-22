@@ -7,6 +7,7 @@ class ServerConstants {
   // 🔐 Auth
   static const String adminLogin = "${api}adminlogin";
   static const String userLogin  = "${api}userlogin";
+  static const String resetPassword  = "${api}resetPassword";
 
   // 👤 Members
   static const String members      = "${api}members";

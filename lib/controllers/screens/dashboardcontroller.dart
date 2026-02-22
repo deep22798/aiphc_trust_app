@@ -164,8 +164,8 @@ class DashboardController extends GetxController {
   final listItems2 = const [
     {"icon": "vhelp", "label": "वित्तीय सहायता\nVittiya Sahayata"},
     {"icon": "help", "label": "पेंशन सहायता\nPension Help"},
-    {"icon": "donate", "label": "दान\nDonation"},
-    {"icon": "donate", "label": "कन्यादान \nKanyadaan"},
+    // {"icon": "donate", "label": "दान\nDonation"},
+    // {"icon": "donate", "label": "कन्यादान \nKanyadaan"},
   ];
 
   void updatePage(int index) {

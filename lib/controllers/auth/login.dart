@@ -8,12 +8,14 @@ import 'package:aiphc/model/auth/adminresmodel.dart';
 import 'package:aiphc/model/auth/usermodel.dart';
 import 'package:aiphc/utils/routes/routes.dart';
 import 'package:aiphc/utils/serverconstants.dart';
+import 'package:aiphc/view/auth/login.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
-import 'package:image_picker/image_picker.dart'; // adjust path if needed
+import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // adjust path if needed
 
 class AuthController extends GetxController {
 
@@ -157,6 +159,7 @@ class AuthController extends GetxController {
         e.response?.data['message'] ?? 'Server not responding',
         snackPosition: SnackPosition.BOTTOM,colorText: Colors.white,backgroundColor: Colors.red
       );
+      Get.offAll(LoginPage());
     } finally {
       isLoading.value = false;
     }
@@ -207,6 +210,8 @@ class AuthController extends GetxController {
         );
       }
     } on DioException catch (e) {
+
+      Get.offAll(LoginPage());
       Get.snackbar(
         'Login Failed',
         e.response?.data['message'] ?? 'Server not responding',
@@ -670,6 +675,60 @@ class AuthController extends GetxController {
     } catch (e) {
       Get.snackbar("Error", e.toString());
       print("sfljejnfjnesjfngj ${e.toString()}");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+
+
+
+
+  Future<void> resetPassword({
+    required String userId,
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    isLoading.value = true;
+
+    print("dfjbdjkbfjk :${userId}\n${currentPassword}\n${newPassword}");
+    try {
+      final dio = Dio();
+
+      final response = await dio.post(
+        ServerConstants.resetPassword,
+        data: {
+          'user_id': int.parse(userId),
+          'current_password': currentPassword,
+          'new_password': newPassword,
+        },
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        ),
+      );
+
+      print("dfsdkfdbskjfsj   :::${response.data.toString()}");
+      if (response.data['status'] == true) {
+
+        final prefs = await SharedPreferences.getInstance();
+        var p= prefs.getString("password");
+
+        print("dfsdkfdbskjfsj   :::${p.toString()}");
+        await prefs.setString('password', newPassword.toString());
+
+        var po= prefs.getString("password");
+
+        print("dfsdkfdbskjfssddj   :::${po.toString()}");
+        Get.back(); // close popup
+        Get.snackbar('Success', response.data['message'],backgroundColor: Colors.green,colorText: Colors.white);
+      } else {
+        Get.snackbar('Error', response.data['message'],backgroundColor: Colors.red,colorText: Colors.white);
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Something went wrong',backgroundColor: Colors.red,colorText: Colors.white);
     } finally {
       isLoading.value = false;
     }

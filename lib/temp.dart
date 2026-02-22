@@ -78,7 +78,6 @@
 
 
 
-// 1. 300 rs in
 // 2. whatsapp intigration
 // 3. email
 // 4. photos

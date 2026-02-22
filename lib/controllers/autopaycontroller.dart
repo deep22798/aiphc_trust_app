@@ -21,7 +21,7 @@ class AutopayController extends GetxController {
   var mechantsubsid = ''.obs;
   var ordertoken = ''.obs;
   var orderid = ''.obs;
-  var appSchema = "com.wintechwings.aiphc".obs;
+  var appSchema = "com.wintechwings.aipvst".obs;
   var paymentsuccess = "0".obs;
   var paymentstatus = "".obs;
   var autopaysts="".obs;

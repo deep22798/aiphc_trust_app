@@ -68,6 +68,78 @@ class _DashboardState extends State<Dashboard> {
   final TrackController ctrackontroller =
   Get.put(TrackController());
 
+
+  void showResetPasswordPopup(String userId) {
+
+    final currentPass = TextEditingController();
+    final newPass = TextEditingController();
+    final confirmPass = TextEditingController();
+
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('Reset Password\n(पासवर्ड बदलें)'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: currentPass,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: 'Current Password\nवर्तमान पासवर्ड',
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: newPass,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: 'New Password\nनया पासवर्ड',
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: confirmPass,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: 'Confirm Password\nपासवर्ड की पुष्टि कीजिये',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text('Cancel'),
+          ),
+          Obx(() => ElevatedButton(
+            onPressed: controller.isLoading.value
+                ? null
+                : () async{
+              if (newPass.text != confirmPass.text) {
+                Get.snackbar('Error', 'Passwords do not match');
+                return;
+              }
+
+             await authcontroller.resetPassword(
+                userId: userId,
+                currentPassword: currentPass.text.trim(),
+                newPassword: newPass.text.trim(),
+              );
+            },
+            child: controller.isLoading.value
+                ? const SizedBox(
+              height: 18,
+              width: 18,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+                : const Text('Update'),
+          )),
+        ],
+      ),
+    );
+  }
+
   IconData _iconFromKey(String key) {
     switch (key) {
       case "school":
@@ -166,9 +238,9 @@ class _DashboardState extends State<Dashboard> {
                       padding: const EdgeInsets.only(left: 20),
                       child: Text(
                         "${authcontroller.enablerole.value == 1
-                            ? "Welcome, ${authcontroller.adminData.value?.name}"
+                            ? "Welcome, ${authcontroller.adminData.value?.name}\nआपका स्वागत है, ${authcontroller.adminData.value?.name}"
                             : authcontroller.enablerole.value == 2
-                            ? "Welcome, ${authcontroller.usermodel.value?.name}"
+                            ? "Welcome, ${authcontroller.usermodel.value?.name}\nआपका स्वागत है, ${authcontroller.usermodel.value?.name}"
                             : ""}",
                         style: TextStyle(
                           color: isDark ? Colors.green : Colors.white,
@@ -1722,7 +1794,7 @@ Text("Team"),
 
               const SizedBox(height: 12),
 
-              /// REGISTER BUTTON
+
               SizedBox(
                 width: double.infinity,
                 height: 52,
@@ -1749,6 +1821,9 @@ Text("Team"),
                   ),
                 ),
               ),
+
+
+
             ],
           ),
         );
@@ -1799,7 +1874,7 @@ Text("Team"),
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  title,
+                  title,textAlign: TextAlign.center,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: theme.colorScheme.onSurface,
@@ -1871,15 +1946,17 @@ Text("Team"),
                 const SizedBox(width: 16),
                 authcontroller.enablerole==0?SizedBox():  _card(
                   icon: Icons.help_outline,
-                  title: 'Support Queries',
-                  onTap: () => Get.to(() => supportquries()),
+                  title: 'Support Queries\nसमर्थन प्रश्न',
+                  onTap: () => Get.to(() => supportquries(
+
+                  )),
                 ),
               ],
             ),
           ),
 
           authcontroller.enablerole==0?SizedBox():Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.only(left: 20,right: 20,top: 20),
             child: Row(
               children: [
                 _card(
@@ -1949,7 +2026,7 @@ Text("Team"),
               children: [
                 authcontroller.enablerole==0?SizedBox(): _card(
                   icon: Icons.power_settings_new,
-                  title: 'Logout',
+                  title: 'Logout\nलॉग आउट',
                   onTap: () async {
                     await authcontroller.logout();
                     emergencyController.isActive.value=false;
@@ -2000,6 +2077,60 @@ Text("Team"),
                   ),
                 ),
               ],
+            ),
+          ),
+          Obx(()=>authcontroller.enablerole.toString()!="2"?SizedBox():Padding(
+              padding: const EdgeInsets.only(left: 20,right: 20,bottom: 20),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: (){
+                        showResetPasswordPopup(authcontroller.usermodel.value?.id??"");
+                      },
+                      child: Container(
+                        height: 120,
+                        decoration: BoxDecoration(
+                          color: theme.cardColor,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: isDark
+                                ? Colors.white.withOpacity(0.08)
+                                : Colors.black.withOpacity(0.06),
+                          ),
+                          boxShadow: isDark
+                              ? []
+                              : [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.08),
+                              blurRadius: 10,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
+                        ),
+
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircleAvatar(
+                              radius: 24,
+                              backgroundColor: theme.colorScheme.primary
+                                  .withOpacity(0.15),
+                              child: Icon(
+                                Icons.password,
+                                color: theme.colorScheme.primary,
+                                size: 26,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text("Change Password \n(पासवर्ड बदलें)",textAlign: TextAlign.center,)
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],

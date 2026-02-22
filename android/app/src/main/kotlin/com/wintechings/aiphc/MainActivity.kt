@@ -1,4 +1,4 @@
-package com.wintechwings.aiphc
+package com.wintechwings.aipvst
 
 import io.flutter.embedding.android.FlutterActivity
 

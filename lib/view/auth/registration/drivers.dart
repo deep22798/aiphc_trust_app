@@ -534,8 +534,8 @@ class _DriversRegistrationScreenState extends State<DriversRegistrationScreen> {
                   labelColor: Get.theme.primaryColor,
                   unselectedLabelColor: Colors.grey,
                   tabs: const [
-                    Tab(text: "QR Code"),
                     Tab(text: "Pay Now"),
+                    Tab(text: "QR Code"),
                   ],
                 ),
 
@@ -650,7 +650,7 @@ class _DriversRegistrationScreenState extends State<DriversRegistrationScreen> {
     TextEditingController(text: '100');
 
     /// 🔥 Added 100 here
-    final List<int> suggestedAmounts = [100, 500, 1000, 2000, 5000];
+    final List<int> suggestedAmounts = [100, 300, 500, 1000, 2000, 5000];
 
     return GestureDetector(
       onTap: () {

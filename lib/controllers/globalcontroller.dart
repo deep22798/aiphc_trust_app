@@ -10,7 +10,9 @@ import 'package:aiphc/model/recenthelp.dart';
 import 'package:aiphc/model/states.dart';
 import 'package:aiphc/utils/serverconstants.dart';
 import 'package:dio/dio.dart';
-import 'package:get/get.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart' hide FormData;
+import 'package:url_launcher/url_launcher.dart';
 
 class Globalcontroller extends GetxController {
 
@@ -47,16 +49,16 @@ class Globalcontroller extends GetxController {
   }
 
   /// Wrap all fetch calls to handle exceptions gracefully
-  void safeFetchAll() {
-    fetchAboutus();
-    fetchsupportqureies();
-    fetchcontactus();
-    fetchteamlist();
-    fetchdonators();
-    fetchsucessstories();
-    fetchsucesrecentini();
-    fetchsucespension();
-    fetchStates();
+  Future<void> safeFetchAll()async {
+    await fetchAboutus();
+    await fetchsupportqureies();
+    await fetchcontactus();
+    await fetchteamlist();
+    await fetchdonators();
+    await fetchsucessstories();
+    await fetchsucesrecentini();
+    await fetchsucespension();
+    await fetchStates();
   }
 
   /// Generic safe API call
@@ -78,6 +80,91 @@ class Globalcontroller extends GetxController {
       return null;
     }
   }
+
+
+  Future<void> openEmail({
+    required String email,
+    String subjectPrefix = "AIPHC",
+    String body = "",
+  }) async {
+    if (email.isEmpty) {
+      Get.snackbar("Error", "Invalid email");
+      return;
+    }
+
+    final subject = Uri.encodeComponent(subjectPrefix);
+    final emailBody = Uri.encodeComponent(body);
+
+    /// ✅ Primary: mailto (opens Gmail app if available)
+    final mailtoUri = Uri.parse(
+      "mailto:$email?subject=$subject&body=$emailBody",
+    );
+
+    try {
+      await launchUrl(
+        mailtoUri,
+        mode: LaunchMode.externalApplication,
+      );
+    } catch (e) {
+      /// ✅ Fallback: Gmail Web Compose
+      final gmailWebUri = Uri.parse(
+        "https://mail.google.com/mail/?view=cm&fs=1"
+            "&to=$email"
+            "&su=$subject"
+            "&body=$emailBody",
+      );
+
+      await launchUrl(
+        gmailWebUri,
+        mode: LaunchMode.externalApplication,
+      );
+    }
+  }
+
+
+
+  String sanitizePhone(String phone) {
+    return phone.replaceAll(RegExp(r'[^0-9+]'), '');
+  }
+
+
+
+
+  Future<void> openDialer(String phone) async {
+    final cleanPhone = sanitizePhone(phone);
+    final uri = Uri(scheme: 'tel', path: cleanPhone);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+    } else {
+      Get.snackbar("Error", "Cannot open dialer");
+    }
+  }
+
+
+
+  Future<void> openWhatsApp(String phone) async {
+    final cleanPhone = sanitizePhone(phone);
+
+    final uri = Uri.parse(
+      "https://wa.me/$cleanPhone",
+    );
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+    } else {
+      Get.snackbar("Error", "WhatsApp not installed");
+    }
+  }
+
+
+
 
   Future<void> fetchAboutus() async {
     aboutLoading.value = true;
@@ -105,6 +192,59 @@ class Globalcontroller extends GetxController {
       }
     } finally {
       contactLoading.value = false;
+    }
+  }
+
+
+  var loading = false.obs;
+  var supportQueries = <Map<String, dynamic>>[].obs;
+
+
+  /// ADD SUPPORT QUERY
+  Future<void> addQuery({
+    required String name,
+    required String email,
+    required String mobile,
+    required String subject,
+    required String message,
+    required String memberid,
+  }) async {
+    loading.value = true;
+
+    try {
+      final response = await Dio().post(
+        "${ServerConstants.addContactUs}",
+        data: FormData.fromMap({
+          "name": name,
+          "memberid": memberid,
+          "email": email,
+          "mobile_no": mobile,
+          "subject": subject,
+          "message": message,
+        }),
+      );
+
+      if (response.data['status'] == true) {
+        supportQueries.insert(0, {
+          "id": response.data['id'],
+          "name": name,
+          "email": email,
+          "message": message,
+        });
+
+        Get.snackbar(
+          "Success",
+          "Query added successfully",
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        Get.snackbar("Error", response.data['message']);
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Server error");
+    } finally {
+      loading.value = false;
     }
   }
 

@@ -16,7 +16,7 @@ class CustomeAppBar extends StatelessWidget
 
     return AppBar(
       title: Text(
-        title,
+        title,textAlign: TextAlign.center,
         style: TextStyle(fontWeight: FontWeight.bold),
       ),
       centerTitle: true,

@@ -62,6 +62,7 @@ class AboutUsModel {
 
 class ContactMessageModel {
   final String id;
+  final String memberid;
   final String name;
   final String email;
   final String subject;
@@ -71,6 +72,7 @@ class ContactMessageModel {
 
   ContactMessageModel({
     required this.id,
+    required this.memberid,
     required this.name,
     required this.email,
     required this.subject,
@@ -82,6 +84,7 @@ class ContactMessageModel {
   factory ContactMessageModel.fromJson(Map<String, dynamic> json) {
     return ContactMessageModel(
       id: json['id']?.toString() ?? '',
+      memberid: json['memberid'] ?? '',
       name: json['name'] ?? '',
       email: json['email'] ?? '',
       subject: json['subject'] ?? '',
@@ -94,6 +97,7 @@ class ContactMessageModel {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'memberid': memberid,
       'name': name,
       'email': email,
       'subject': subject,
