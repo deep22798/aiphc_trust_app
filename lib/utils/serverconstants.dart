@@ -143,7 +143,11 @@ class ServerConstants {
 
   static const String create_payment_api    = "${api}create_payment_api";
   static const String updatesubscriptionid    = "${api}updatesubscriptionid";
+
+
   static const String adddkanyaadaan    = "${api}adddkanyaadaan";
+  static const String getKanyadaanMembers    = "${api}getKanyadaanMembers";
+
   static const String updatekanyadaansts    = "${api}updatekanyadaansts";
 
   static const String payenvmainmode    = payenvmodetest;

@@ -64,7 +64,7 @@ class _MembersState extends State<Members> {
           ),
           const SizedBox(width: 8),
           const Text(
-            "Members",
+            "Members (सदस्य)",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const Spacer(),

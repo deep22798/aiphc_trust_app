@@ -1,6 +1,9 @@
+import 'package:aiphc/controllers/screens/memberscontroller.dart';
 import 'package:aiphc/model/membermodel.dart';
+import 'package:aiphc/utils/serverconstants.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide FormData;
 
 class EditMemberDetails extends StatefulWidget {
   final MemberModel member;
@@ -13,6 +16,8 @@ class EditMemberDetails extends StatefulWidget {
 
 class _EditMemberDetailsState extends State<EditMemberDetails> {
   final _formKey = GlobalKey<FormState>();
+
+  final MembersController membersController=Get.find();
 
   // ================= CONTROLLERS =================
   late TextEditingController name;
@@ -84,7 +89,89 @@ class _EditMemberDetailsState extends State<EditMemberDetails> {
     announcement = m.announcement;
     locked = m.locked;
   }
+  Widget _genderDropdown() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: DropdownButtonFormField<String>(
+        value: gender.text.isNotEmpty ? gender.text : null,
+        decoration: InputDecoration(
+          labelText: "Gender",
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        items: const [
+          DropdownMenuItem(
+            value: "पुरुष (Male)",
+            child: Text("पुरुष (Male)"),
+          ),
+          DropdownMenuItem(
+            value: "महिला (FEMALE)",
+            child: Text("महिला (FEMALE)"),
+          ),
 
+          DropdownMenuItem(
+            value: "Other",
+            child: Text("Other (अन्य)"),
+          ),
+        ],
+        onChanged: (value) {
+          setState(() {
+            gender.text = value ?? "";
+          });
+        },
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return "Please select gender";
+          }
+          return null;
+        },
+      ),
+    );
+  }
+  Widget _dobField() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: TextFormField(
+        controller: birthday,
+        readOnly: true,
+        decoration: InputDecoration(
+          labelText: "Date of Birth",
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          suffixIcon: const Icon(Icons.calendar_month),
+        ),
+        onTap: () async {
+          FocusScope.of(context).unfocus();
+
+          DateTime initialDate = DateTime.now().subtract(const Duration(days: 365 * 18));
+
+          if (birthday.text.isNotEmpty) {
+            try {
+              initialDate = DateTime.parse(birthday.text);
+            } catch (_) {}
+          }
+
+          final pickedDate = await showDatePicker(
+            context: context,
+            initialDate: initialDate,
+            firstDate: DateTime(1950),
+            lastDate: DateTime.now(),
+          );
+
+          if (pickedDate != null) {
+            setState(() {
+              birthday.text =
+              "${pickedDate.year.toString().padLeft(4, '0')}-"
+                  "${pickedDate.month.toString().padLeft(2, '0')}-"
+                  "${pickedDate.day.toString().padLeft(2, '0')}";
+            });
+          }
+        },
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -109,8 +196,10 @@ class _EditMemberDetailsState extends State<EditMemberDetails> {
             children: [
               _section("Personal Details", [
                 _field("Name", name),
-                _field("Gender", gender),
-                _field("Date of Birth", birthday),
+                // _field("Gender", gender),
+                _genderDropdown(),
+                // _field("Date of Birth", birthday),
+                _dobField(),
                 _field("Father / Husband", fatherHusband),
                 _field("Aadhaar", aadhar,
                     keyboard: TextInputType.number),
@@ -211,18 +300,116 @@ class _EditMemberDetailsState extends State<EditMemberDetails> {
   }
 
   // ================= SAVE =================
-  void _saveMember() {
+  // void _saveMember() {
+  //   if (!_formKey.currentState!.validate()) return;
+  //
+  //   // 👉 HERE you will call UPDATE API later
+  //   // For now just close screen
+  //
+  //   Get.back();
+  //
+  //   Get.snackbar(
+  //     "Success",
+  //     "Member updated successfully",
+  //     snackPosition: SnackPosition.BOTTOM,
+  //   );
+  // }
+
+  void _saveMember() async {
     if (!_formKey.currentState!.validate()) return;
 
-    // 👉 HERE you will call UPDATE API later
-    // For now just close screen
+    try {
+      Get.dialog(
+        const Center(child: CircularProgressIndicator()),
+        barrierDismissible: false,
+      );
 
-    Get.back();
 
-    Get.snackbar(
-      "Success",
-      "Member updated successfully",
-      snackPosition: SnackPosition.BOTTOM,
-    );
+      final formData = FormData.fromMap({
+        "id": widget.member.id.toString(),
+
+        "name": name.text,
+        "gender": gender.text,
+        "birthday": birthday.text,
+        "fatherhusband": fatherHusband.text,
+        "aadhar": aadhar.text,
+        "mobile": mobile.text,
+        "email": email.text,
+
+        "perm_address": address.text,
+        "block": block.text,
+        "district": district.text,
+        "state": state.text,
+
+        "category": category.text,
+        "inservice": inService.text,
+        "occupation": occupation.text,
+        "department": department.text,
+        "driver_type": driverType.text,
+        "dlno": dlNo.text,
+
+        "nominee_name": nomineeName.text,
+        "nominee_relationship": nomineeRelation.text,
+        "nominee_mobileno": nomineeMobile.text,
+
+        "bankname": bankName.text,
+        "ifsccode": ifsc.text,
+        "accountno": account.text,
+        "autopay_status": autoPay.text,
+        "subscription_id": subscriptionId.text,
+
+        "description": description.text,
+
+        "status": status,
+        "featured": featured,
+        "announcement": announcement,
+        "locked": locked,
+      });
+
+
+      final response = await Dio().post(
+        "${ServerConstants.updateMember}",
+        data: formData,
+        options: Options(
+          headers: {
+            "Accept": "application/json",
+          },
+        ),
+      );
+
+      Get.back(); // loader close
+
+      print("dfjknsdvjksdbvjkds :${response.data.toString()}");
+      if (response.data["status"] == true) {
+        membersController.fetchMembers();
+        Get.back(); // screen close
+
+        Get.snackbar(
+          "Success",
+          response.data["message"] ?? "Member updated successfully",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.shade600,
+          colorText: Colors.white,
+        );
+      } else {
+        Get.snackbar(
+          "Failed",
+          response.data["message"] ?? "Update failed",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red.shade600,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.back();
+
+      Get.snackbar(
+        "Error",
+        "Something went wrong",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade700,
+        colorText: Colors.white,
+      );
+    }
   }
 }

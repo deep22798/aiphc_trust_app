@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:aiphc/model/knyadaanmodel.dart';
 import 'package:aiphc/utils/serverconstants.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,6 +10,96 @@ import 'package:get/get.dart';
 class DashboardController extends GetxController {
   RxInt currentPage = 0.obs;
  var isLoading=false.obs;
+
+
+  final RxBool loading = false.obs;
+  final RxList<KanyadaanMember> members = <KanyadaanMember>[].obs;
+  final RxList<KanyadaanMember> memberss = <KanyadaanMember>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchKanyadaanMembers();
+  }
+
+
+  Future<void> fetchKanyadaanMemberss({String? memberId}) async {
+    try {
+      loading.value = true;
+
+      final dio = Dio();
+
+      final res = await dio.get(
+        ServerConstants.getKanyadaanMembers,
+        queryParameters: memberId != null
+            ? {"member_id": memberId}
+            : null,
+      );
+
+      if (res.data["status"] == true) {
+        memberss.value = (res.data["data"] as List)
+            .map((e) => KanyadaanMember.fromJson(e))
+            .toList();
+      } else {
+        memberss.clear();
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Failed to fetch data");
+    } finally {
+      loading.value = false;
+    }
+  }
+
+
+  Future<void> updateKanyadaanStatus({
+    required String memberId,
+    required String kanyadaan,
+  }) async {
+    try {
+      final response = await Dio().post(
+        ServerConstants.updatekanyadaansts, // your API URL
+        data: {
+          "member_id": memberId,
+          "kanyadaan": kanyadaan,
+        },
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+          },
+        ),
+      );
+
+     await fetchKanyadaanMembers();
+      debugPrint("✅ Kanyadaan Update Response: ${response.data}");
+    } on DioException catch (e) {
+      debugPrint("❌ Dio Error: ${e.response?.data}");
+    } catch (e) {
+      debugPrint("❌ Error: $e");
+    }
+  }
+
+
+  Future<void> fetchKanyadaanMembers() async {
+    try {
+      loading.value = true;
+      final dio = Dio();
+      final res = await dio.get(ServerConstants.getKanyadaanMembers);
+
+      if (res.data['status'] == true) {
+        members.value = List<KanyadaanMember>.from(
+          res.data['data'].map(
+                (e) => KanyadaanMember.fromJson(e),
+          ),
+        );
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Failed to load kanyadaan members :${e.toString()}");
+    } finally {
+      loading.value = false;
+    }
+  }
+
+
 
   Future<void> addDonationSimple(
       String name,
@@ -59,9 +150,9 @@ class DashboardController extends GetxController {
     }
   }
 
-  Future<void> updateKanyadaanStatus({
+  Future<void> updateKanyadaanStatuss({
     required String memberId,
-    required String kanyadaan,
+    required int kanyadaan,
   }) async {
     try {
       final response = await Dio().post(

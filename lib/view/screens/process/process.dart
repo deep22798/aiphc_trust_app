@@ -1,4 +1,5 @@
 import 'package:aiphc/controllers/auth/login.dart';
+import 'package:aiphc/controllers/globalcontroller.dart';
 import 'package:aiphc/controllers/screens/process_rules.dart';
 import 'package:aiphc/controllers/theme/theme_controller.dart';
 import 'package:aiphc/utils/Appconstants.dart';
@@ -181,7 +182,8 @@ class _ProcessRulesState extends State<ProcessRules> {
       return Scaffold(
         backgroundColor: isDark ? Colors.black : Colors.white,
         // drawer: Drawer(),
-        appBar: CustomeAppBar(title: "Process/Rules"),
+        appBar: CustomeAppBar(title: "Process/Rules (प्रक्रिया / निर्देश)"),
+
         body: LayoutBuilder(
           builder: (context, constraints) {
             final isDesktop = constraints.maxWidth >= 900;

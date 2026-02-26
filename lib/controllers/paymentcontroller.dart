@@ -9,6 +9,8 @@ class PaymentsController extends GetxController {
   var payments = <Payment>[].obs;
   var isLoading = false.obs;
 
+
+
   Future<void> fetchPayments({String? memberId}) async {
     try {
       isLoading.value = true;

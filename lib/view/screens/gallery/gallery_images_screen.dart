@@ -18,6 +18,7 @@ class GalleryImagesScreen extends StatefulWidget {
   State<GalleryImagesScreen> createState() => _GalleryImagesScreenState();
 }
 
+
 class _GalleryImagesScreenState extends State<GalleryImagesScreen> {
   final controller = Get.put(GalleryController());
 
@@ -66,7 +67,7 @@ class _GalleryImagesScreenState extends State<GalleryImagesScreen> {
           itemCount: controller.galleryimages.length,
           itemBuilder: (context, index) {
             final image = controller.galleryimages[index];
-            final imageUrl = ServerAssets.gallery + image.image;
+            final imageUrl = ServerAssets.gallery2 + image.image;
 
             return GestureDetector(
               onTap: () {
@@ -85,8 +86,111 @@ class _GalleryImagesScreenState extends State<GalleryImagesScreen> {
           },
         );
       }),
+
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _openAddImageSheet(context);
+        },
+        child: const Icon(Icons.add_a_photo),
+      ),
     );
   }
+
+  void _openAddImageSheet(BuildContext context) {
+    final theme = Theme.of(context);
+
+    Get.bottomSheet(
+      Container(
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 16,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+        ),
+        decoration: BoxDecoration(
+          color: theme.scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Obx(
+              () => Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade400,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+
+              const Text(
+                "Add Image to Album",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Image Picker
+              GestureDetector(
+                onTap: controller.pickGalleryImage,
+                child: Container(
+                  height: 180,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(16),
+                    image: controller.selectedGalleryImage.value != null
+                        ? DecorationImage(
+                      image: FileImage(
+                          controller.selectedGalleryImage.value!),
+                      fit: BoxFit.cover,
+                    )
+                        : null,
+                  ),
+                  child: controller.selectedGalleryImage.value == null
+                      ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(Icons.image, size: 44),
+                      SizedBox(height: 6),
+                      Text("Tap to select image"),
+                    ],
+                  )
+                      : null,
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: controller.imageUploading.value
+                      ? null
+                      : () async {
+                    await controller.addGalleryImage(widget.albumId);
+                    controller.fetchGalleryimages(widget.albumId);
+                  },
+                  child: controller.imageUploading.value
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                    "UPLOAD IMAGE",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      isScrollControlled: true,
+    );
+  }
+
 }
 
 class FullImageViewer extends StatelessWidget {

@@ -7,6 +7,7 @@ import 'package:aiphc/controllers/phonepaycontroller.dart';
 import 'package:aiphc/controllers/screens/bannercontroller.dart';
 import 'package:aiphc/controllers/screens/memberscontroller.dart';
 import 'package:aiphc/controllers/trackcontroller.dart';
+import 'package:aiphc/model/myteam.dart';
 import 'package:aiphc/utils/Appconstants.dart';
 import 'package:aiphc/utils/routes/serverassets.dart';
 import 'package:aiphc/view/auth/login.dart';
@@ -18,6 +19,7 @@ import 'package:aiphc/view/screens/contactus.dart';
 import 'package:aiphc/view/screens/emergencymap.dart';
 import 'package:aiphc/view/screens/emergencyuserslist.dart';
 import 'package:aiphc/view/screens/gallery/gallery.dart';
+import 'package:aiphc/view/screens/kanyadaanscreen.dart';
 import 'package:aiphc/view/screens/kanyaddan.dart';
 import 'package:aiphc/view/screens/members/member.dart';
 import 'package:aiphc/view/screens/payments.dart';
@@ -26,6 +28,7 @@ import 'package:aiphc/view/screens/process/process.dart';
 import 'package:aiphc/view/screens/profile.dart';
 import 'package:aiphc/view/screens/recentiniti.dart';
 import 'package:aiphc/view/screens/supportquries.dart';
+import 'package:aiphc/view/screens/verifidkanyadaan.dart';
 import 'package:aiphc/view/widgets/marquee.dart';
 import 'package:aiphc/view/widgets/popup.dart';
 import 'package:aiphc/view/widgets/switchtheme.dart';
@@ -61,6 +64,7 @@ class _DashboardState extends State<Dashboard> {
   final paymentsController = Get.find<PaymentsController>();
 
   final phonePeAuthController = Get.find<PhonePeController>();
+  final global = Get.find<Globalcontroller>();
 
   final EmergencyController emergencyController =
   Get.put(EmergencyController());
@@ -2164,10 +2168,113 @@ Text("Team"),
                           ),
 
                           slider(context),
+                          Container(color: Colors.green.shade50,
+                            child: Padding(
+
+                              padding: const EdgeInsets.only(left: 8.0,right: 8.0,bottom: 20,top: 20),
+                              child: Obx(() {
+                                if (global.myteamlist.isEmpty) {
+                                  return const Center(child: Text("No team members"));
+                                }
+
+                                final members = global.myteamlist.reversed.toList();
+                                final screenWidth = MediaQuery.of(context).size.width;
+                                final cardWidth = (screenWidth - 32) / 4; // 4 visible cards
+
+                                return SizedBox(
+                                  height: cardWidth / 0.7, // keep aspect ratio
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    physics: const BouncingScrollPhysics(),
+                                    itemCount: members.length,
+                                    itemBuilder: (context, index) {
+                                      final m = members[index];
+                                      final imageUrl = "${ServerAssets.baseUrl}/admin/${m.image}";
+
+                                      return Padding(
+                                        padding: const EdgeInsets.only(right: 10),
+                                        child: SizedBox(
+                                          width: cardWidth,
+                                          child: GestureDetector(
+                                            onTap: () => _showImagePopup(context, imageUrl, m),
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(14),
+                                              child: Stack(
+                                                fit: StackFit.expand,
+                                                children: [
+
+                                                  /// IMAGE
+                                                  Image.network(
+                                                    imageUrl,
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder: (_, __, ___) => Container(
+                                                      color: Colors.grey.shade300,
+                                                      child: const Icon(Icons.person, size: 40),
+                                                    ),
+                                                  ),
+
+                                                  /// GRADIENT
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      gradient: LinearGradient(
+                                                        begin: Alignment.topCenter,
+                                                        end: Alignment.bottomCenter,
+                                                        colors: [
+                                                          Colors.transparent,
+                                                          Colors.black.withOpacity(0.75),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+
+                                                  /// TEXT
+                                                  Positioned(
+                                                    left: 8,
+                                                    right: 8,
+                                                    bottom: 8,
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Text(
+                                                          m.title,
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow.ellipsis,
+                                                          style: const TextStyle(
+                                                            color: Colors.white,
+                                                            fontWeight: FontWeight.bold,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                        const SizedBox(height: 2),
+                                                        Text(
+                                                          m.position,
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow.ellipsis,
+                                                          style: const TextStyle(
+                                                            color: Colors.white70,
+                                                            fontSize: 11,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                );
+                              }),
+                            ),
+                          ),
                           gridview(context, isWeb),
 
+
                       Obx(()=>authcontroller.enablerole.value.toString()=="0"||authcontroller.enablerole.value.toString()=="1"?SizedBox(height: 10,):SizedBox()),
-                          Obx(()=>authcontroller.enablerole.value.toString()=="0"||authcontroller.enablerole.value.toString()=="1"?SizedBox(): Container(
+                          Obx(()=>authcontroller.enablerole.value.toString()=="0"?SizedBox(): Container(
                               margin: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(16),
@@ -2233,19 +2340,38 @@ Text("Team"),
                                             ],
                                           ),
                                         ),
-                                       Obx(()=> authcontroller.usermodel.value?.kanyadaan=="2"?SizedBox(): authcontroller.usermodel.value?.kanyadaan=="0"||authcontroller.usermodel.value?.kanyadaan==null?MaterialButton(onPressed: (){
-                                         showKanyadaanDialog(context);
 
-                                       },color: Colors.green.shade900,
+                                        Obx(()=> authcontroller.usermodel.value?.kanyadaan=="2"?MaterialButton(
+                                            onPressed:(){
+                                              Get.to(()=>Verifidkanyadaan(memberId: authcontroller.usermodel.value?.id.toString()??""));
+                                            },color: Colors.green.shade900,
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(4.0),
+                                              child:Text("Verified (सत्यापित) \nOpen now (अभी खोलें)",style: TextStyle(color: Colors.white),),
+                                            )
+                                        )
+                                            : authcontroller.usermodel.value?.kanyadaan=="0"||authcontroller.usermodel.value?.kanyadaan==null?MaterialButton(
+                                            onPressed:authcontroller.enablerole.value.toString()=="1"? ()async{
+                                              await controller.fetchKanyadaanMembers();
+                                         Get.to(()=>KanyadaanMembersScreen());
+
+                                       }:(){
+
+                                              showKanyadaanDialog(context);
+
+                                            },color: Colors.green.shade900,
                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                            child: Padding(
                                              padding: const EdgeInsets.all(4.0),
-                                             child: Text("Register now\nअभी पंजीकरण करें",style: TextStyle(color: Colors.white),),
+                                             child:authcontroller.enablerole.value.toString()=="1"?Text("Open now",style: TextStyle(color: Colors.white),):Text("Register now\nअभी पंजीकरण करें",style: TextStyle(color: Colors.white),),
                                            )
                                        ):authcontroller.usermodel.value!.kanyadaan=="1"?Container(decoration: BoxDecoration(color:Colors.green,borderRadius: BorderRadius.circular(10)),child: Padding(
                                          padding: const EdgeInsets.all(8.0),
                                          child: Text("Verification \nPending....",style: TextStyle(color: Colors.yellow,fontWeight: FontWeight.bold),),
-                                       )):SizedBox())
+                                       )
+                                        )
+                                            :SizedBox())
                                       ],
                                     ),
                                   ),
@@ -2272,6 +2398,55 @@ Text("Team"),
     );
   }
 
+  void _showImagePopup(BuildContext context, String imageUrl, TeamMemberModel m) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.9),
+      builder: (_) {
+        return GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Dialog(
+            backgroundColor: Colors.transparent,
+            insetPadding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+
+                /// IMAGE
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(18),
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                /// NAME + POSITION
+                Text(
+                  m.title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  m.position,
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
   // ================= BOTTOM NAV =================
   Widget _mobileBottomNav(BuildContext context) {
     if (MediaQuery

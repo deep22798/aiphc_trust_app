@@ -15,7 +15,7 @@ class Gallery extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: CustomeAppBar(title: "Gallery"),
+      appBar: CustomeAppBar(title: "Gallery (गैलरी)"),
 
       body: Obx(() {
         if (controller.albumLoading.value) {
@@ -77,7 +77,7 @@ class Gallery extends StatelessWidget {
                           top: Radius.circular(16),
                         ),
                         child: Image.network(
-                          ServerAssets.gallery + album.coverImage,
+                          ServerAssets.gallery2 + album.coverImage,
                           fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) =>
                           const Icon(Icons.broken_image),
@@ -102,7 +102,118 @@ class Gallery extends StatelessWidget {
             );
           },
         );
-      }),
+      }),  floatingActionButton: FloatingActionButton(
+      onPressed: () {
+        _openAddAlbumSheet(context);
+      },
+      child: const Icon(Icons.add),
+    ),
+
+    );
+  }
+  void _openAddAlbumSheet(BuildContext context) {
+    final controller = Get.put(GalleryController());
+
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(24),
+          ),
+        ),
+        child: Obx(
+              () => Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade400,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+
+              const Text(
+                "Add Gallery Album",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Cover Image Picker
+              GestureDetector(
+                onTap: controller.pickCoverImage,
+                child: Container(
+                  height: 160,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(16),
+                    image: controller.coverImage.value != null
+                        ? DecorationImage(
+                      image: FileImage(controller.coverImage.value!),
+                      fit: BoxFit.cover,
+                    )
+                        : null,
+                  ),
+                  child: controller.coverImage.value == null
+                      ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(Icons.image, size: 42),
+                      SizedBox(height: 6),
+                      Text("Tap to select cover image"),
+                    ],
+                  )
+                      : null,
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Album Title
+              TextField(
+                controller: controller.titleController,
+                decoration: InputDecoration(
+                  labelText: "Album Title",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Submit Button
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: controller.loading.value
+                      ? null
+                      : () async {
+                    await controller.addAlbum();
+                    controller.fetchGallery(); // 🔥 refresh gallery
+                  },
+                  child: controller.loading.value
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                    "CREATE ALBUM",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+            ],
+          ),
+        ),
+      ),
+      isScrollControlled: true,
     );
   }
 }

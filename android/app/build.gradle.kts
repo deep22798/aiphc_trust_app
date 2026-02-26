@@ -82,9 +82,10 @@ android {
         applicationId = "com.wintechwings.aipvst"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "2.0.0"
     }
+
 
     // ✅ THIS FIXES "failed to strip debug symbols"
     packagingOptions {

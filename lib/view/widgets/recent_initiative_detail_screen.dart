@@ -1,13 +1,15 @@
+import 'package:aiphc/controllers/globalcontroller.dart';
 import 'package:aiphc/model/recentInitiativesList.dart';
 import 'package:aiphc/utils/routes/serverassets.dart';
 import 'package:aiphc/view/widgets/appbar.dart';
 import 'package:aiphc/view/widgets/llivetimer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:get/get.dart';
 
 import 'full_screen_image.dart';
 
-class RecentInitiativeDetailScreen extends StatelessWidget {
+class RecentInitiativeDetailScreen extends StatefulWidget {
   final RecentInitiativeModel data;
 
   const RecentInitiativeDetailScreen({
@@ -16,12 +18,127 @@ class RecentInitiativeDetailScreen extends StatelessWidget {
   });
 
   @override
+  State<RecentInitiativeDetailScreen> createState() => _RecentInitiativeDetailScreenState();
+}
+
+class _RecentInitiativeDetailScreenState extends State<RecentInitiativeDetailScreen> {
+
+
+  void _openAddMoreImagesSheet(BuildContext context) {
+    final controller = Get.put(Globalcontroller());
+    final theme = Theme.of(context);
+
+    Get.bottomSheet(
+      Container(
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 16,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+        ),
+        decoration: BoxDecoration(
+          color: theme.scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Obx(
+              () => Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade400,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+
+              const Text(
+                "Add More Images",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+
+              const SizedBox(height: 16),
+
+              // IMAGE PICKER
+              GestureDetector(
+                onTap: controller.pickImages,
+                child: Container(
+                  height: 150,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Center(
+                    child: Text("Tap to select images"),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: controller.images
+                    .map(
+                      (img) => ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.file(
+                      img,
+                      height: 70,
+                      width: 70,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                )
+                    .toList(),
+              ),
+
+              const SizedBox(height: 20),
+
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: controller.uploading.value
+                      ? null
+                      : () async {
+                    await controller.uploadImages(
+                      id:widget.data.id,
+                    );
+                    await controller.fetchsucesrecentini();
+                  },
+
+                  child: controller.uploading.value
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                    "UPLOAD",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      isScrollControlled: true,
+    );
+  }
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: CustomeAppBar(title: data.title),
-
+      appBar: CustomeAppBar(title: widget.data.title),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _openAddMoreImagesSheet(context);
+        },
+        child: const Icon(Icons.add_photo_alternate),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -32,17 +149,18 @@ class RecentInitiativeDetailScreen extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: Image.network(
-                '${ServerAssets.baseUrl}admin/${data.image}',
-                width: double.infinity,
+                '${ServerAssets.recent2}${widget.data.image}',
+                width: double.infinity,height: 300,
                 fit: BoxFit.cover,
               ),
             ),
+
 
             const SizedBox(height: 16),
 
             /// 🔹 TITLE
             Text(
-              data.title,
+              widget.data.title,
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -56,7 +174,7 @@ class RecentInitiativeDetailScreen extends StatelessWidget {
                 const Icon(Icons.currency_rupee, size: 18),
                 const SizedBox(width: 4),
                 Text(
-                  data.amount,
+                  widget.data.amount,
                   style: theme.textTheme.titleMedium,
                 ),
               ],
@@ -70,7 +188,7 @@ class RecentInitiativeDetailScreen extends StatelessWidget {
                 const Icon(Icons.calendar_today, size: 16),
                 const SizedBox(width: 6),
                 Text(
-                  data.date,
+                  widget.data.date,
                   style: theme.textTheme.bodyMedium,
                 ),
               ],
@@ -79,13 +197,13 @@ class RecentInitiativeDetailScreen extends StatelessWidget {
             const SizedBox(height: 12),
 
             /// 🔹 LIVE TIMER
-            LiveTimer(startTime: data.dateCreated),
+            LiveTimer(startTime: widget.data.dateCreated),
 
             const SizedBox(height: 20),
 
             /// 🔹 DESCRIPTION (HTML)
             Html(
-              data: data.pageDescription,
+              data: widget.data.pageDescription,
               style: {
                 "body": Style(
                   fontSize: FontSize(16),
@@ -98,7 +216,7 @@ class RecentInitiativeDetailScreen extends StatelessWidget {
             const SizedBox(height: 24),
 
             /// 🔹 IMAGE GALLERY
-            if (data.images.isNotEmpty) ...[
+            if (widget.data.images.isNotEmpty) ...[
               Text(
                 'Gallery',
                 style: theme.textTheme.titleMedium?.copyWith(
@@ -110,16 +228,16 @@ class RecentInitiativeDetailScreen extends StatelessWidget {
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: data.images.length,
+                itemCount: widget.data.images.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
                   crossAxisSpacing: 8,
                   mainAxisSpacing: 8,
                 ),
                 itemBuilder: (context, index) {
-                  final img = data.images[index];
-                  final fullUrl = '${ServerAssets.baseUrl}admin/$img';
-                  final heroTag = 'gallery_${data.id}_$index';
+                  final img = widget.data.images[index];
+                  final fullUrl = '${ServerAssets.recent2}$img';
+                  final heroTag = 'gallery_${widget.data.id}_$index';
 
                   return InkWell(
                     onTap: () {

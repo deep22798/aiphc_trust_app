@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:aiphc/model/aboutus.dart';
 import 'package:aiphc/model/contactus.dart';
 import 'package:aiphc/model/department.dart';
@@ -11,7 +13,8 @@ import 'package:aiphc/model/states.dart';
 import 'package:aiphc/utils/serverconstants.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart' hide FormData;
+import 'package:get/get.dart' hide FormData, MultipartFile;
+import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Globalcontroller extends GetxController {
@@ -42,10 +45,229 @@ class Globalcontroller extends GetxController {
 
   final Dio _dio = Dio();
 
+
+  final pensionTitleCtrl = TextEditingController();
+  final pensionAmountCtrl = TextEditingController();
+  final pensionDateCtrl = TextEditingController();
+  final pensionDescCtrl = TextEditingController();
+
+
+  Future<void> pickPensionMainImage() async {
+    final picker = ImagePicker();
+    final img = await picker.pickImage(source: ImageSource.gallery, imageQuality: 85);
+    if (img != null) {
+      pensionMainImage.value = File(img.path);
+    }
+  }
+
+  Future<void> pickPensionMultipleImages() async {
+    final picker = ImagePicker();
+    final imgs = await picker.pickMultiImage(imageQuality: 80);
+    if (imgs.isNotEmpty) {
+      pensionImages.addAll(imgs.map((e) => File(e.path)));
+    }
+  }
+  Future<void> addPensionHelp() async {
+    if (pensionTitleCtrl.text.isEmpty || pensionMainImage.value == null) {
+      Get.snackbar("Error", "Title & main image required");
+      return;
+    }
+
+    try {
+      pensionUploading.value = true;
+
+      final dio = Dio();
+
+      // 🔥 FORCE MULTIPART
+      dio.options.headers["Content-Type"] = "multipart/form-data";
+      dio.options.headers["Accept"] = "application/json";
+
+      final formData = FormData();
+
+      // ---------- FIELDS ----------
+      formData.fields.addAll([
+        MapEntry("title", pensionTitleCtrl.text),
+        MapEntry("amount", pensionAmountCtrl.text),
+        MapEntry("page_description", pensionDescCtrl.text),
+        MapEntry("date", pensionDateCtrl.text),
+        MapEntry("status", "1"),
+      ]);
+
+      // ---------- MAIN IMAGE ----------
+      formData.files.add(
+        MapEntry(
+          "image",
+          await MultipartFile.fromFile(
+            pensionMainImage.value!.path,
+            filename: pensionMainImage.value!.path.split('/').last,
+          ),
+        ),
+      );
+
+      // ---------- MULTIPLE IMAGES (🔥 THIS NOW WORKS) ----------
+      for (File img in pensionImages) {
+        formData.files.add(
+          MapEntry(
+            "images[]", // 👈 CI4 expects this
+            await MultipartFile.fromFile(
+              img.path,
+              filename: img.path.split('/').last,
+            ),
+          ),
+        );
+      }
+
+      final res = await dio.post(
+        ServerConstants.addPensionHelp,
+        data: formData,
+      );
+
+      pensionUploading.value = false;
+
+      if (res.data["status"] == true) {
+        clearPensionForm();
+        Get.back();
+        Get.snackbar("Success", res.data["message"]);
+      } else {
+        Get.snackbar("Failed", res.data["message"]);
+      }
+    } catch (e) {
+      pensionUploading.value = false;
+      Get.snackbar("Error", "Upload failed");
+    }
+  }
+  void clearPensionForm() {
+    pensionTitleCtrl.clear();
+    pensionAmountCtrl.clear();
+    pensionDateCtrl.clear();
+    pensionDescCtrl.clear();
+    pensionMainImage.value = null;
+    pensionImages.clear();
+  }
+
+  final Rx<File?> pensionMainImage = Rx<File?>(null);
+  final RxList<File> pensionImages = <File>[].obs;
+
+  final RxBool pensionUploading = false.obs;
+
+
+  final titleCtrl = TextEditingController();
+  final amountCtrl = TextEditingController();
+  final dateCtrl = TextEditingController();
+  final descCtrl = TextEditingController();
+
+  final Rx<File?> mainImage = Rx<File?>(null);
+  final RxList<File> multipleImages = <File>[].obs;
+
+  final RxBool initiativeUploading = false.obs;
+
   @override
   void onReady() {
     super.onReady();
     safeFetchAll();
+  }
+
+
+  Future<void> pickMainInitiativeImage() async {
+    final picker = ImagePicker();
+    final img = await picker.pickImage(source: ImageSource.gallery, imageQuality: 85);
+    if (img != null) {
+      mainImage.value = File(img.path);
+    }
+  }
+
+  Future<void> pickMultipleInitiativeImages() async {
+    final picker = ImagePicker();
+    final images = await picker.pickMultiImage(imageQuality: 80);
+    if (images.isNotEmpty) {
+      multipleImages.addAll(images.map((e) => File(e.path)));
+    }
+  }
+
+
+  Future<void> addRecentInitiative() async {
+    if (titleCtrl.text.trim().isEmpty) {
+      Get.snackbar("Error", "Title is required");
+      return;
+    }
+
+    if (mainImage.value == null) {
+      Get.snackbar("Error", "Main image is required");
+      return;
+    }
+
+    try {
+      initiativeUploading.value = true;
+
+      final dio = Dio();
+      final formData = FormData();
+
+      // ---------- NORMAL FIELDS ----------
+      formData.fields.addAll([
+        MapEntry("title", titleCtrl.text.trim()),
+        MapEntry("amount", amountCtrl.text.trim()),
+        MapEntry("page_description", descCtrl.text.trim()),
+        MapEntry("date", dateCtrl.text.trim()),
+        MapEntry("status", "1"),
+      ]);
+
+      // ---------- MAIN IMAGE ----------
+      formData.files.add(
+        MapEntry(
+          "image",
+          await MultipartFile.fromFile(
+            mainImage.value!.path,
+            filename: mainImage.value!.path.split('/').last,
+          ),
+        ),
+      );
+
+      // ---------- MULTIPLE IMAGES (IMPORTANT PART) ----------
+      for (File img in multipleImages) {
+        formData.files.add(
+          MapEntry(
+            "images[]", // 👈 MUST be images[]
+            await MultipartFile.fromFile(
+              img.path,
+              filename: img.path.split('/').last,
+            ),
+          ),
+        );
+      }
+
+      // ---------- API CALL ----------
+      final response = await dio.post(
+
+        "${ServerConstants.addRecentInitiative}",
+        data: formData,
+        options: Options(
+          headers: {"Accept": "application/json"},
+        ),
+      );
+
+      initiativeUploading.value = false;
+
+      if (response.data["status"] == true) {
+        clearInitiativeForm();
+        Get.back();
+        Get.snackbar("Success", response.data["message"]);
+      } else {
+        Get.snackbar("Failed", response.data["message"]);
+      }
+    } catch (e) {
+      initiativeUploading.value = false;
+      Get.snackbar("Error", "Upload failed");
+    }
+  }
+
+
+  void clearInitiativeForm() {
+    titleCtrl.clear();
+    amountCtrl.clear();
+    dateCtrl.clear();
+    descCtrl.clear();
+    mainImage.value = null;
+    multipleImages.clear();
   }
 
   /// Wrap all fetch calls to handle exceptions gracefully
@@ -369,6 +591,142 @@ class Globalcontroller extends GetxController {
       }
     } finally {
       contactLoading.value = false;
+    }
+  }
+
+
+
+
+
+  final RxList<File> images = <File>[].obs;
+  final RxBool uploading = false.obs;
+
+  Future<void> pickImages() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickMultiImage(imageQuality: 80);
+
+    if (picked.isNotEmpty) {
+      images.addAll(picked.map((e) => File(e.path)));
+    }
+  }
+
+  Future<void> uploadImages({required String id}) async {
+    if (images.isEmpty) {
+      Get.snackbar("Error", "Please select images");
+      return;
+    }
+
+    try {
+      uploading.value = true;
+
+      final dio = Dio();
+      final formData = FormData();
+
+      formData.fields.add(MapEntry("id", id));
+
+      // 🔥 IMPORTANT: images[]
+      for (File img in images) {
+        formData.files.add(
+          MapEntry(
+            "images[]",
+            await MultipartFile.fromFile(
+              img.path,
+              filename: img.path.split('/').last,
+            ),
+          ),
+        );
+      }
+
+      final res = await dio.post(
+        "${ServerConstants.updateRecentInitiative}",
+        data: formData,
+      );
+
+      uploading.value = false;
+
+      if (res.data["status"] == true) {
+
+        images.clear();
+        Get.back();
+        Get.snackbar("Success", res.data["message"]);
+      } else {
+        Get.snackbar("Failed", res.data["message"]);
+      }
+    } catch (e) {
+      uploading.value = false;
+      Get.snackbar("Error", "Upload failed");
+    }
+  }
+
+
+
+
+
+  final RxList<File> imagess = <File>[].obs;
+  final RxBool uploadingg = false.obs;
+
+  Future<void> pickImagess() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickMultiImage(imageQuality: 80);
+
+    if (picked.isNotEmpty) {
+      imagess.addAll(picked.map((e) => File(e.path)));
+    }
+  }
+
+  Future<void> uploadImagess(String pensionId) async {
+    if (imagess.isEmpty) {
+      Get.snackbar("Error", "Please select images");
+      return;
+    }
+
+    try {
+      uploadingg.value = true;
+
+      final dio = Dio();
+      dio.options.headers["Content-Type"] = "multipart/form-data";
+      dio.options.headers["Accept"] = "application/json";
+
+      final formData = FormData();
+
+      // REQUIRED ID
+      formData.fields.add(
+        MapEntry("id", pensionId),
+      );
+
+
+      // 🔥 MULTIPLE IMAGES — MUST BE images[]
+      for (File img in imagess) {
+        formData.files.add(
+          MapEntry(
+            "images[]",
+            await MultipartFile.fromFile(
+              img.path,
+              filename: img.path.split('/').last,
+            ),
+          ),
+        );
+      }
+
+
+      final res = await dio.post(
+        ServerConstants.updatePensionHelp,
+        data: formData,
+      );
+
+      uploadingg.value = false;
+
+      if (res.data["status"] == true) {
+        imagess.clear();
+        Get.back();
+
+        Get.snackbar("Success", res.data["message"]);
+      } else {
+        Get.snackbar("Failed", res.data["message"]);
+      }
+    } catch (e) {
+      uploadingg.value = false;
+      Get.snackbar("Error", "Upload failed");
     }
   }
 }
