@@ -390,12 +390,12 @@ class _PaymentsState extends State<Payments> {
     );
   }
   Widget _upiPaymentTab() {
-    final RxInt selectedAmount = 100.obs;
+    final RxInt selectedAmount = 1.obs;
     final TextEditingController amountController =
-    TextEditingController(text: '100');
+    TextEditingController(text: '1');
 
     /// 🔥 Added 100 here
-    final List<int> suggestedAmounts = [100, 500, 1000, 2000, 5000];
+    final List<int> suggestedAmounts = [1,100, 500, 1000, 2000, 5000];
 
     return GestureDetector(
       onTap: () {

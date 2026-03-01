@@ -55,7 +55,7 @@ class _LoginPageState extends State<LoginPage>
 
 
     // 👇 POPUP after build
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.initStatetance.addPostFrameCallback((_) {
       _showDonationPopup();
     });
   }

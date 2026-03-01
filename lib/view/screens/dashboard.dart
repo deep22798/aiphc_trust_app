@@ -2586,82 +2586,82 @@ Text("Team"),
                     SizedBox(height: 25),
 
                     /// Donate Button
-                    isload==true?CircularProgressIndicator():SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.pinkAccent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        onPressed: () async{
-                            setState(() {
-                              isload=true;
-                            });
-                            final payAmount = amountController.text;
-                            print("Proceed to pay ₹$payAmount");
-                            // startUpiPayment(payAmount);
-                            await phonePeAuthController.startTransaction(int.parse(payAmount.toString()));
-
-                            if(phonePeAuthController.paymentsuccess.value.toString()=="1"){
-
-                              if(authcontroller.enablerole!=0) {
-                                await phonePeAuthController.uploadPaymentData(
-                                    amount: payAmount.toString(),
-                                    orderId: phonePeAuthController.orderid
-                                        .toString(),
-                                    transactionId: phonePeAuthController.orderid
-                                        .value.toString(),
-                                    status: phonePeAuthController.paymentstatus
-                                        .value.toString(),
-                                    aadhar: authcontroller.usermodel.value
-                                        ?.aadhar.toString() ?? "",
-                                    screenshotPhoto: '',
-                                    mop: 'donation');
-                                phonePeAuthController.paymentsuccess.value.toString()=="0";
-                              }else{
-
-                                if (_formKey.currentState!.validate()) {
-                                  await controller.addDonationSimple(
-                                      nameController.text,
-                                      mobileController.text,
-                                      messageController.text,
-                                      phonePeAuthController.orderid
-                                          .toString(),
-                                      phonePeAuthController.orderid
-                                          .value.toString(),
-                                      phonePeAuthController.paymentstatus
-                                          .value.toString(),
-                                      amountController.text);
-                                  phonePeAuthController.paymentsuccess.value.toString()=="0";
-                                }
-                              }
-                              await paymentsController.fetchPayments(memberId: authcontroller.usermodel.value?.id.toString()??"");
-
-                              // Get.back();
-                            }
-                            // await controller.addDonationSimple();
-                            setState(() {
-                              isload=false;
-                            });
-                            Navigator.pop(context);
-                            // ScaffoldMessenger.of(context).showSnackBar(
-                            //   SnackBar(
-                            //     content: Text("Thank you for your donation ❤️"),
-                            //   ),
-                            // );
-                          },
-                        child: Text(
-                          "Donate Now\nअभी दान करें",
-                          style: TextStyle(
-                            fontSize: 16,color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
+                    // isload==true?CircularProgressIndicator():SizedBox(
+                    //   width: double.infinity,
+                    //   height: 50,
+                    //   child: ElevatedButton(
+                    //     style: ElevatedButton.styleFrom(
+                    //       backgroundColor: Colors.pinkAccent,
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(12),
+                    //       ),
+                    //     ),
+                    //     onPressed: () async{
+                    //         setState(() {
+                    //           isload=true;
+                    //         });
+                    //         final payAmount = amountController.text;
+                    //         print("Proceed to pay ₹$payAmount");
+                    //         // startUpiPayment(payAmount);
+                    //         await phonePeAuthController.startTransaction(int.parse(payAmount.toString()));
+                    //
+                    //         if(phonePeAuthController.paymentsuccess.value.toString()=="1"){
+                    //
+                    //           if(authcontroller.enablerole!=0) {
+                    //             await phonePeAuthController.uploadPaymentData(
+                    //                 amount: payAmount.toString(),
+                    //                 orderId: phonePeAuthController.orderid
+                    //                     .toString(),
+                    //                 transactionId: phonePeAuthController.orderid
+                    //                     .value.toString(),
+                    //                 status: phonePeAuthController.paymentstatus
+                    //                     .value.toString(),
+                    //                 aadhar: authcontroller.usermodel.value
+                    //                     ?.aadhar.toString() ?? "",
+                    //                 screenshotPhoto: '',
+                    //                 mop: 'donation');
+                    //             phonePeAuthController.paymentsuccess.value.toString()=="0";
+                    //           }else{
+                    //
+                    //             if (_formKey.currentState!.validate()) {
+                    //               await controller.addDonationSimple(
+                    //                   nameController.text,
+                    //                   mobileController.text,
+                    //                   messageController.text,
+                    //                   phonePeAuthController.orderid
+                    //                       .toString(),
+                    //                   phonePeAuthController.orderid
+                    //                       .value.toString(),
+                    //                   phonePeAuthController.paymentstatus
+                    //                       .value.toString(),
+                    //                   amountController.text);
+                    //               phonePeAuthController.paymentsuccess.value.toString()=="0";
+                    //             }
+                    //           }
+                    //           await paymentsController.fetchPayments(memberId: authcontroller.usermodel.value?.id.toString()??"");
+                    //
+                    //           // Get.back();
+                    //         }
+                    //         // await controller.addDonationSimple();
+                    //         setState(() {
+                    //           isload=false;
+                    //         });
+                    //         Navigator.pop(context);
+                    //         // ScaffoldMessenger.of(context).showSnackBar(
+                    //         //   SnackBar(
+                    //         //     content: Text("Thank you for your donation ❤️"),
+                    //         //   ),
+                    //         // );
+                    //       },
+                    //     child: Text(
+                    //       "Donate Now\nअभी दान करें",
+                    //       style: TextStyle(
+                    //         fontSize: 16,color: Colors.white,
+                    //         fontWeight: FontWeight.bold,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -2933,25 +2933,25 @@ Text("Team"),
       },
       child: Scaffold(
         bottomNavigationBar: _mobileBottomNav(context),
-        floatingActionButton: SizedBox(
-          height: 55,
-          child: FloatingActionButton.extended(
-            onPressed: () {
-              showDonateDialog(context);
-            },
-            backgroundColor: Colors.pinkAccent,
-            elevation: 8,
-            icon: Icon(Icons.favorite, color: Colors.white),
-            label: Text(
-              "Donate Now\nअभी दान करें",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
+        // floatingActionButton: SizedBox(
+        //   height: 55,
+        //   child: FloatingActionButton.extended(
+        //     onPressed: () {
+        //       showDonateDialog(context);
+        //     },
+        //     backgroundColor: Colors.pinkAccent,
+        //     elevation: 8,
+        //     icon: Icon(Icons.favorite, color: Colors.white),
+        //     label: Text(
+        //       "Donate Now\nअभी दान करें",
+        //       style: TextStyle(
+        //         fontSize: 16,
+        //         fontWeight: FontWeight.bold,
+        //         color: Colors.white,
+        //       ),
+        //     ),
+        //   ),
+        // ),
         // floatingActionButtonLocation: FloatingActionButtonLocation.right,
 
         body: LayoutBuilder(
