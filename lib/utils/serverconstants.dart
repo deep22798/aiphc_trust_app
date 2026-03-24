@@ -150,8 +150,8 @@ class ServerConstants {
 
   static const String updatekanyadaansts    = "${api}updatekanyadaansts";
 
-  // static const String payenvmainmode    = payenvmodetest;
-  static const String payenvmainmode    = payenvmodeprod;
+  static const String payenvmainmode    = payenvmodetest;
+  // static const String payenvmainmode    = payenvmodeprod;
 
 
   static const String payenvmode    = payenvmainmode=="SANDBOX"?"$payenvmodetest":"$payenvmodeprod";
@@ -180,6 +180,81 @@ class ServerConstants {
   static const String PHONEPE_BASE_URLprod    = "https://api.phonepe.com/apis/pg";
   static const String PHONEPE_AUTH_URLprod    = "https://api.phonepe.com/apis/identity-manager/v1/oauth/token";
   static const String PHONEPE_AUTH_URLProdorder =	"https://api.phonepe.com/apis/pg/checkout/v2/sdk/order";
+
+
+
+
+
+
+
+
+
+
+
+
+  static const String autopaypayenvmainmode    = autopaypayenvmodetest;
+  // static const String payenvmainmode    = payenvmodeprod;
+
+
+  // static const String autopaypayenvmode    = autopaypayenvmainmode=="SANDBOX"?"$autopaypayenvmodetest":"$autopaypayenvmodeprod";
+
+  static const String autopaymerchantid    = autopaypayenvmainmode=="SANDBOX"?"$testmerchantid":"$livemerchantid";
+  static const String autopayclientid    = autopaypayenvmainmode=="SANDBOX"?"$testclientid":"$liveclientid";
+  static const String autopaysecretid    = autopaypayenvmainmode=="SANDBOX"?"$testclientsecret":"$liveclientsecret";
+
+
+  static const String autopaytoken    = autopaypayenvmainmode=="SANDBOX"?"$testtoken":"$livetoken";
+  static const String autopayordertoken    = autopaypayenvmainmode=="SANDBOX"?"$testordertoken":"$liveordertoekn";
+  static const String autopayorderstatus    = autopaypayenvmainmode=="SANDBOX"?"$testorderstatus":"$liveorderstatus";
+  static const String autopaysubscriptionstatus    = autopaypayenvmainmode=="SANDBOX"?"$testsubscriptionstatus":"$livesubscriptionstatus";
+  static const String autopaynotifyredeem    = autopaypayenvmainmode=="SANDBOX"?"$testnotifyredeem":"$livenotifyredeem";
+  static const String autopayexecuteredem    = autopaypayenvmainmode=="SANDBOX"?"$testexecuteredem":"$liveexecuteredem";
+  static const String autopayredemstatus    = autopaypayenvmainmode=="SANDBOX"?"$testredemstatus":"$liveredeemstatus";
+  static const String autopaycancelsubscription    = autopaypayenvmainmode=="SANDBOX"?"$testcancelsubscription":"$livecancelsubscription";
+  static const String autopayinitialrefund    = autopaypayenvmainmode=="SANDBOX"?"$testinitialrefund":"$liveinitiaterefund";
+  static const String autopayrefundstatus    = autopaypayenvmainmode=="SANDBOX"?"$testrefundstatus":"$liverefundstatus";
+
+
+  static const String autopaypayenvmodetest    = "SANDBOX";
+
+
+  static const String testmerchantid    = "UATM22WT1JEYXRO5";
+  static const String testclientid    = "UATM22WT1JEYXRO5_2602041";
+  static const String testclientsecret    = "ZGU2ZmQ3ODctZTRiOS00ZjQ2LTgyZmMtMWViYjM4ZTIxZGEz";
+
+
+  static const String testtoken    = "https://api-preprod.phonepe.com/apis/pg-sandbox/v1/oauth/token";
+  static const String testordertoken    = "https://api-preprod.phonepe.com/apis/pg-sandbox/checkout/v2/sdk/order";
+  static const String testorderstatus = "https://api-preprod.phonepe.com/apis/pg-sandbox/checkout/v2/order/";
+  static const String testsubscriptionstatus = "https://api-preprod.phonepe.com/apis/pg-sandbox/checkout/v2/subscriptions/";
+  static const String testnotifyredeem = "https://api-preprod.phonepe.com/apis/pg-sandbox/checkout/v2/subscriptions/notify";
+  static const String testexecuteredem = "https://api-preprod.phonepe.com/apis/pg-sandbox/checkout/v2/subscriptions/redeem";
+  static const String testredemstatus = "https://api-preprod.phonepe.com/apis/pg-sandbox/checkout/v2/order/{merchantOrderId}/status";
+  static const String testcancelsubscription = "https://api-preprod.phonepe.com/apis/pg-sandbox/checkout/v2/subscriptions/{merchantSubscriptionId}/cancel";
+  static const String testinitialrefund = "https://api-preprod.phonepe.com/apis/pg-sandbox/payments/v2/refund";
+  static const String testrefundstatus = "https://api-preprod.phonepe.com/apis/pg-sandbox/payments/v2/refund/{merchantRefundId}/status";
+
+  static const String autopaypayenvmodeprod    = "PRODUCTION";
+
+
+
+  static const String livemerchantid    = "SU2508251710261230112223";
+  static const String liveclientid    = "M22WT1JEYXRO5";
+  static const String liveclientsecret    = "306c2ce3-373c-4bea-811f-12469a1b4d80";
+  static const String livetoken    = "https://api.phonepe.com/apis/identity-manager/v1/oauth/token";
+  static const String liveordertoekn    = "https://api.phonepe.com/apis/pg/checkout/v2/sdk/order";
+  static const String liveorderstatus =	"https://api.phonepe.com/apis/pg/checkout/v2/order/";
+  static const String livesubscriptionstatus =	"https://api.phonepe.com/apis/pg/checkout/v2/subscriptions/";
+  static const String livenotifyredeem =	"https://api.phonepe.com/apis/pg/checkout/v2/subscriptions/notify";
+  static const String liveexecuteredem =	"https://api.phonepe.com/apis/pg/checkout/v2/subscriptions/redeem";
+  static const String liveredeemstatus=	"https://api.phonepe.com/apis/pg/checkout/v2/order/{merchantOrderId}/status";
+  static const String livecancelsubscription=	"https://api.phonepe.com/apis/pg/checkout/v2/subscriptions/{merchantSubscriptionId}/cancel";
+  static const String liveinitiaterefund=	"https://api.phonepe.com/apis/pg/payments/v2/refund";
+  static const String liverefundstatus=	"https://api.phonepe.com/apis/pg/payments/v2/refund/{merchantRefundId}/status";
+
+
+
+
 
 
 

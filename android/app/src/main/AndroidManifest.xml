@@ -53,15 +53,29 @@
             </intent-filter>
 
             <!-- ✅ APP LINKS (PHONEPE RETURN) -->
+<!--            <intent-filter android:autoVerify="true">-->
+<!--                <action android:name="android.intent.action.VIEW"/>-->
+<!--                <category android:name="android.intent.category.DEFAULT"/>-->
+<!--                <category android:name="android.intent.category.BROWSABLE"/>-->
+<!--                <data-->
+<!--                    android:scheme="https"-->
+<!--                    android:host="trust.aiphc.in"-->
+<!--                    android:pathPrefix="/"/>-->
+<!--            </intent-filter>-->
+
+
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW"/>
+
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
+
                 <data
-                    android:scheme="https"
-                    android:host="trust.aiphc.in"
-                    android:pathPrefix="/"/>
+                    android:scheme="myapp"
+                    android:host="payment-success"/>
             </intent-filter>
+
+
 
 
             <meta-data

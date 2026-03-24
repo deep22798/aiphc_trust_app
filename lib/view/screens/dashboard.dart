@@ -15,6 +15,7 @@ import 'package:aiphc/view/donationsscreen.dart';
 import 'package:aiphc/view/screens/aboutus.dart';
 import 'package:aiphc/view/screens/adminprofile.dart';
 import 'package:aiphc/view/screens/autopay.dart';
+import 'package:aiphc/view/screens/autopayment.dart';
 import 'package:aiphc/view/screens/contactus.dart';
 import 'package:aiphc/view/screens/emergencymap.dart';
 import 'package:aiphc/view/screens/emergencyuserslist.dart';
@@ -1976,7 +1977,7 @@ Text("Team"),
                   child: InkWell(
                     onTap: (){
 
-                      Get.to(()=>Autopay());
+                      Get.to(()=>AutoPayment());
                     },
                     child: Container(
                       height: 120,
