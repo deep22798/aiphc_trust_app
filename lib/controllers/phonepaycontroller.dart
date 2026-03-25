@@ -26,6 +26,7 @@ class PhonePeController extends GetxController {
   }
 
 
+
   Future<void> initSdk()async{
     await PhonePePaymentSdk.init(ServerConstants.payenvmode.toString(), ServerConstants.PHONEPE_MERCHANT_ID.toString(), flowid.value.toString(),
         true).then((isInitialized)=> {
@@ -127,6 +128,7 @@ class PhonePeController extends GetxController {
 
   Future<void> startTransaction(int amount)async {
 
+    await initSdk();
     await getauthtoken();
     await createOrder(amount);
 
@@ -168,6 +170,7 @@ class PhonePeController extends GetxController {
     required String transactionId,
     required String status,
     required String mop,
+    required String type,
     String screenshotPhoto = "",
   }) async {
     try {
@@ -191,6 +194,7 @@ class PhonePeController extends GetxController {
           "year": year,
           "date": date,
           "mop": mop,
+          "type": type,
           "amount": amount,
           "screenshot_photo": screenshotPhoto,
           "order_id": orderId,

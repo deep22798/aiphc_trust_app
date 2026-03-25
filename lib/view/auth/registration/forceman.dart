@@ -785,7 +785,6 @@ class _ForceManRegistrationScreenState extends State<ForceManRegistrationScreen>
                         nomineeMobile: nomineeMobileC.text,
                         bankName: '',
                         ifscCode: '',
-
                         accountNo: '', type: 'pay', amount: payAmount, orderId: phonePeAuthController.orderid.toString(), transactionId: phonePeAuthController.orderid.value.toString(), status: phonePeAuthController.paymentstatus.value.toString());}
                     else{
 

@@ -1,3 +1,4 @@
+import 'package:aiphc/controllers/auth/login.dart';
 import 'package:aiphc/controllers/screens/gallery.dart';
 import 'package:aiphc/utils/routes/serverassets.dart';
 import 'package:aiphc/view/widgets/appbar.dart';
@@ -21,6 +22,8 @@ class GalleryImagesScreen extends StatefulWidget {
 
 class _GalleryImagesScreenState extends State<GalleryImagesScreen> {
   final controller = Get.put(GalleryController());
+
+  final authcontroller = Get.find<AuthController>();
 
   @override
   void initState() {
@@ -67,7 +70,7 @@ class _GalleryImagesScreenState extends State<GalleryImagesScreen> {
           itemCount: controller.galleryimages.length,
           itemBuilder: (context, index) {
             final image = controller.galleryimages[index];
-            final imageUrl = ServerAssets.gallery2 + image.image;
+            final imageUrl = ServerAssets.gallery + image.image;
 
             return GestureDetector(
               onTap: () {
@@ -88,7 +91,7 @@ class _GalleryImagesScreenState extends State<GalleryImagesScreen> {
       }),
 
 
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: authcontroller.enablerole.value == 2?SizedBox(): FloatingActionButton(
         onPressed: () {
           _openAddImageSheet(context);
         },

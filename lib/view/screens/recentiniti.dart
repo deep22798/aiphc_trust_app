@@ -1,3 +1,4 @@
+import 'package:aiphc/controllers/auth/login.dart';
 import 'package:aiphc/controllers/globalcontroller.dart';
 import 'package:aiphc/model/recentInitiativesList.dart';
 import 'package:aiphc/model/recenthelp.dart';
@@ -17,6 +18,8 @@ class RecentHelp extends StatefulWidget {
 }
 
 class _RecentHelpState extends State<RecentHelp> {
+
+
 
 
   Widget _dateField(BuildContext context, TextEditingController controller) {
@@ -218,9 +221,10 @@ class _RecentHelpState extends State<RecentHelp> {
   Widget build(BuildContext context) {
     final controller = Get.put(Globalcontroller());
 
+    final authcontroller = Get.find<AuthController>();
     return Scaffold(
       appBar: CustomeAppBar(title: "Vittiya Sahayata (वित्तीय सहायता)"),
-       floatingActionButton: FloatingActionButton(
+       floatingActionButton: authcontroller.enablerole.value == 2?SizedBox():  FloatingActionButton(
           onPressed: () {
             _openAddInitiativeSheet(context);
           },
@@ -290,11 +294,13 @@ class SuccessGridCard extends StatelessWidget {
         ),
         child: Column(
           children: [
+
+
             ClipRRect(
               borderRadius:
               const BorderRadius.vertical(top: Radius.circular(14)),
               child: Image.network(
-                '${ServerAssets.recent2}${data.image}',
+                '${ServerAssets.recent}${data.image}',
                 height: 180,
                 width: double.infinity,
                 fit: BoxFit.cover,

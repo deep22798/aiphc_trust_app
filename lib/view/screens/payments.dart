@@ -474,7 +474,7 @@ class _PaymentsState extends State<Payments> {
                     await phonePeAuthController.startTransaction(payAmount);
 
                     if(phonePeAuthController.paymentsuccess.value.toString()=="1"){
-                        await phonePeAuthController.uploadPaymentData( amount: payAmount.toString(), orderId: phonePeAuthController.orderid.toString(), transactionId: phonePeAuthController.orderid.value.toString(), status: phonePeAuthController.paymentstatus.value.toString(),aadhar: authController.usermodel.value?.aadhar.toString()??"",screenshotPhoto: '', mop: 'pg');
+                        await phonePeAuthController.uploadPaymentData( amount: payAmount.toString(), orderId: phonePeAuthController.orderid.toString(), transactionId: phonePeAuthController.orderid.value.toString(), status: phonePeAuthController.paymentstatus.value.toString(),aadhar: authController.usermodel.value?.aadhar.toString()??"",screenshotPhoto: '', mop: 'pg', type: 'MONTHLY');
                     await paymentsController.fetchPayments(memberId: authController.usermodel.value?.id.toString()??"");
                         Get.back();
                     }

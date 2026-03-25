@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:aiphc/controllers/auth/login.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:app_links/app_links.dart';
@@ -16,6 +17,8 @@ class _AutoPaymentState extends State<AutoPayment> {
 
   final controller = Get.put(Autopaymentcontroller());
 
+  final authcontroller = Get.find<AuthController>();
+
   late AppLinks _appLinks;
   StreamSubscription? _sub;
 
@@ -23,7 +26,9 @@ class _AutoPaymentState extends State<AutoPayment> {
   void initState() {
     super.initState();
     initDeepLink();
+    controller.AutopayStatus(authcontroller.enablerole.value == 2?authcontroller.usermodel.value?.subscriptionId.toString()??"":"");
   }
+
 
   /// 🔥 HANDLE DEEP LINK
   void initDeepLink() async {
@@ -50,13 +55,14 @@ class _AutoPaymentState extends State<AutoPayment> {
     if (uri.host == "payment-success") {
 
       await controller.pollOrderUntilComplete();
-      await controller.checkSubscriptionStatus();
+      // await controller.checkSubscriptionStatus(authcontroller.enablerole.value == 2?authcontroller.usermodel.value?.id??"":"");
     }
   }
 
   @override
   void dispose() {
     _sub?.cancel();
+
     super.dispose();
   }
 
@@ -70,6 +76,14 @@ class _AutoPaymentState extends State<AutoPayment> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
 
+
+            Obx(()=>Text("${controller.subscriptionstatus}")),
+
+
+            Obx(()=>Text("${authcontroller.enablerole.value == 2?authcontroller.usermodel.value?.id??"":""}")),
+            Obx(()=>Text("${controller.merchantSubId.value}")),
+            Obx(()=>Text("${controller.merchantOrderId.value}")),
+
             ElevatedButton(
               onPressed: () async {
                 await controller.generateToken();
@@ -81,7 +95,7 @@ class _AutoPaymentState extends State<AutoPayment> {
 
             ElevatedButton(
               onPressed: () async {
-                await controller.setupSubscription(100);
+                await controller.startTransaction(100,authcontroller.enablerole.value == 2?authcontroller.usermodel.value?.id??"":"",authcontroller.enablerole.value == 2?authcontroller.usermodel.value?.aadhar??"":"");
               },
               child: const Text("Setup Autopay"),
             ),
@@ -91,7 +105,7 @@ class _AutoPaymentState extends State<AutoPayment> {
             ElevatedButton(
               onPressed: () async {
                 await controller.pollOrderUntilComplete();
-                await controller.checkSubscriptionStatus();
+                // await controller.checkSubscriptionStatus(authcontroller.enablerole.value == 2?authcontroller.usermodel.value?.id??"":"");
               },
               child: const Text("Check Status"),
             ),

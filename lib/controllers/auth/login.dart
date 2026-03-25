@@ -485,7 +485,7 @@ class AuthController extends GetxController {
            } else {
 
           if(type=="pay"){
-            await phonePeAuthController.uploadPaymentData( amount: amount.toString(), orderId: orderId.toString(), transactionId: transactionId.toString(), status: status.toString(), aadhar: aadhar.toString(), mop: 'pg');
+            await phonePeAuthController.uploadPaymentData( amount: amount.toString(), orderId: orderId.toString(), transactionId: transactionId.toString(), status: status.toString(), aadhar: aadhar.toString(), mop: 'pg', type: 'MONTHLY');
             // 🔹 Normal numeric login
           await userLogin(
             aadhar: aadhar,
@@ -652,7 +652,7 @@ class AuthController extends GetxController {
 
           if(type=="pay"){
             await membersController.submitMemberDrivers(aadhar: aadhar);
-            await phonePeAuthController.uploadPaymentData( amount: amount.toString(), orderId: orderId.toString(), transactionId: transactionId.toString(), status: status.toString(), aadhar: aadhar.toString(),mop: 'pg');
+            await phonePeAuthController.uploadPaymentData( amount: amount.toString(), orderId: orderId.toString(), transactionId: transactionId.toString(), status: status.toString(), aadhar: aadhar.toString(),mop: 'pg',type: "MONTHLY");
             // 🔹 Normal numeric login
             await userLogin(
               aadhar: aadhar,

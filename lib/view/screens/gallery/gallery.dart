@@ -1,3 +1,4 @@
+import 'package:aiphc/controllers/auth/login.dart';
 import 'package:aiphc/controllers/screens/gallery.dart';
 import 'package:aiphc/utils/routes/serverassets.dart';
 import 'package:aiphc/view/screens/gallery/gallery_images_screen.dart';
@@ -11,6 +12,8 @@ class Gallery extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(GalleryController());
+
+    final authcontroller = Get.find<AuthController>();
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -77,7 +80,7 @@ class Gallery extends StatelessWidget {
                           top: Radius.circular(16),
                         ),
                         child: Image.network(
-                          ServerAssets.gallery2 + album.coverImage,
+                          ServerAssets.gallery + album.coverImage,
                           fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) =>
                           const Icon(Icons.broken_image),
@@ -102,7 +105,9 @@ class Gallery extends StatelessWidget {
             );
           },
         );
-      }),  floatingActionButton: FloatingActionButton(
+      }),
+
+      floatingActionButton:authcontroller.enablerole.value == 2?SizedBox(): FloatingActionButton(
       onPressed: () {
         _openAddAlbumSheet(context);
       },

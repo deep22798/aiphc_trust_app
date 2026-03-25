@@ -1,3 +1,4 @@
+import 'package:aiphc/controllers/auth/login.dart';
 import 'package:aiphc/controllers/globalcontroller.dart';
 import 'package:aiphc/model/recentInitiativesList.dart';
 import 'package:aiphc/utils/routes/serverassets.dart';
@@ -26,6 +27,9 @@ class _RecentInitiativeDetailScreenState extends State<RecentInitiativeDetailScr
 
   void _openAddMoreImagesSheet(BuildContext context) {
     final controller = Get.put(Globalcontroller());
+
+
+    final authcontroller = Get.find<AuthController>();
     final theme = Theme.of(context);
 
     Get.bottomSheet(
@@ -131,9 +135,10 @@ class _RecentInitiativeDetailScreenState extends State<RecentInitiativeDetailScr
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    final authcontroller = Get.find<AuthController>();
     return Scaffold(
       appBar: CustomeAppBar(title: widget.data.title),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: authcontroller.enablerole.value == 2?SizedBox():  FloatingActionButton(
         onPressed: () {
           _openAddMoreImagesSheet(context);
         },
@@ -149,7 +154,7 @@ class _RecentInitiativeDetailScreenState extends State<RecentInitiativeDetailScr
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: Image.network(
-                '${ServerAssets.recent2}${widget.data.image}',
+                '${ServerAssets.recent}${widget.data.image}',
                 width: double.infinity,height: 300,
                 fit: BoxFit.cover,
               ),
@@ -236,7 +241,7 @@ class _RecentInitiativeDetailScreenState extends State<RecentInitiativeDetailScr
                 ),
                 itemBuilder: (context, index) {
                   final img = widget.data.images[index];
-                  final fullUrl = '${ServerAssets.recent2}$img';
+                  final fullUrl = '${ServerAssets.recent}$img';
                   final heroTag = 'gallery_${widget.data.id}_$index';
 
                   return InkWell(

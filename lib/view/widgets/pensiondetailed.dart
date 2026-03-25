@@ -1,4 +1,5 @@
 
+import 'package:aiphc/controllers/auth/login.dart';
 import 'package:aiphc/controllers/globalcontroller.dart';
 import 'package:aiphc/model/pensionhelp.dart';
 import 'package:aiphc/utils/routes/serverassets.dart';
@@ -29,10 +30,13 @@ class _PensionDetailScreenState extends State<PensionDetailScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    final authcontroller = Get.find<AuthController>();
+
     void _openAddMorePensionImagesSheet(BuildContext context, String pensionId) {
 
       final controller = Get.put(Globalcontroller());
       final theme = Theme.of(context);
+
 
       // VERY IMPORTANT – clear old selection
       controller.imagess.clear();
@@ -136,7 +140,7 @@ class _PensionDetailScreenState extends State<PensionDetailScreen> {
 
     return Scaffold(
       appBar: CustomeAppBar(title: widget.data.title),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: authcontroller.enablerole.value == 2?SizedBox():  FloatingActionButton(
         onPressed: () {
           _openAddMorePensionImagesSheet(context, widget.data.id);
         },

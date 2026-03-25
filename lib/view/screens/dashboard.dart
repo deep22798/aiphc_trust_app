@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:aiphc/controllers/auth/login.dart';
+import 'package:aiphc/controllers/autopaymentcontroller.dart';
 import 'package:aiphc/controllers/emergencycontroller.dart';
 import 'package:aiphc/controllers/globalcontroller.dart';
 import 'package:aiphc/controllers/paymentcontroller.dart';
@@ -38,6 +40,7 @@ import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../controllers/screens/dashboardcontroller.dart';
 import '../../controllers/theme/theme_controller.dart';
@@ -63,6 +66,9 @@ class _DashboardState extends State<Dashboard> {
   final banner = Get.find<Bannerscontroller>();
 
   final paymentsController = Get.find<PaymentsController>();
+
+
+  final autopaycontroller = Get.put(Autopaymentcontroller());
 
   final phonePeAuthController = Get.find<PhonePeController>();
   final global = Get.find<Globalcontroller>();
@@ -1973,53 +1979,126 @@ Text("Team"),
                   // onTap: () => Get.to(() => const SettingsScreen()),
                 ),
                 const SizedBox(width: 16),
+                // Expanded(
+                //   child: InkWell(
+                //     onTap: (){
+                //
+                //       Get.to(()=>AutoPayment());
+                //     },
+                //     child: Container(
+                //       height: 120,
+                //       decoration: BoxDecoration(
+                //         color: theme.cardColor,
+                //         borderRadius: BorderRadius.circular(16),
+                //         border: Border.all(
+                //           color: isDark
+                //               ? Colors.white.withOpacity(0.08)
+                //               : Colors.black.withOpacity(0.06),
+                //         ),
+                //         boxShadow: isDark
+                //             ? []
+                //             : [
+                //           BoxShadow(
+                //             color: Colors.black.withOpacity(0.08),
+                //             blurRadius: 10,
+                //             offset: const Offset(0, 6),
+                //           ),
+                //         ],
+                //       ),
+                //
+                //       child: Column(
+                //         mainAxisAlignment: MainAxisAlignment.center,
+                //         children: [
+                //           CircleAvatar(
+                //             radius: 24,
+                //             backgroundColor: theme.colorScheme.primary
+                //                 .withOpacity(0.15),
+                //             child: Icon(
+                //               Icons.text_rotate_up,
+                //               color: theme.colorScheme.primary,
+                //               size: 26,
+                //             ),
+                //           ),
+                //           const SizedBox(height: 10),
+                //           Text("Autopay")
+                //         ],
+                //       ),
+                //     ),
+                //   ),
+                // ),
+
+
+
                 Expanded(
-                  child: InkWell(
-                    onTap: (){
-
-                      Get.to(()=>AutoPayment());
-                    },
-                    child: Container(
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: theme.cardColor,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: isDark
-                              ? Colors.white.withOpacity(0.08)
-                              : Colors.black.withOpacity(0.06),
+                  child: Container(
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: theme.cardColor,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: isDark
+                            ? Colors.white.withOpacity(0.08)
+                            : Colors.black.withOpacity(0.06),
+                      ),
+                      boxShadow: isDark
+                          ? []
+                          : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 10,
+                          offset: const Offset(0, 6),
                         ),
-                        boxShadow: isDark
-                            ? []
-                            : [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.08),
-                            blurRadius: 10,
-                            offset: const Offset(0, 6),
-                          ),
-                        ],
-                      ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
 
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CircleAvatar(
-                            radius: 24,
-                            backgroundColor: theme.colorScheme.primary
-                                .withOpacity(0.15),
-                            child: Icon(
-                              Icons.text_rotate_up,
-                              color: theme.colorScheme.primary,
-                              size: 26,
+                        Obx(() {
+                          bool isEnabled =
+                              autopaycontroller.subscriptionstatus.value == "ACTIVE";
+
+                          return Switch(
+                            value: isEnabled,
+
+
+                            onChanged: (value) async {
+                              if (value) {
+                                /// 🔥 ON karne pe (optional)
+                                await autopaycontroller.startTransaction(100, authcontroller.enablerole.value==2?authcontroller.usermodel.value?.id.toString()??"":"", authcontroller.enablerole.value==2?authcontroller.usermodel.value?.aadhar.toString()??"":"");
+                                // Get.to(()=>AutoPayment());
+                              } else {
+                                /// ❌ OFF karte hi function call
+                                // await autopaycontroller.cancelSubscription();
+                                // Get.to(()=>AutoPayment());
+                              }
+                            },
+
+
+                            activeColor: theme.colorScheme.primary,
+                            inactiveThumbColor: Colors.grey,
+                          );
+                        }),
+                        const SizedBox(height: 10),
+                        Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text("Autopay"),
+                            CircleAvatar(
+                              radius: 24,
+                              backgroundColor:
+                              theme.colorScheme.primary.withOpacity(0.15),
+                              child: Icon(
+                                Icons.text_rotate_up,
+                                color: theme.colorScheme.primary,
+                                size: 26,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text("Autopay")
-                        ],
-                      ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                ),
+                )
               ],
             ),
           ),
@@ -2372,7 +2451,23 @@ Text("Team"),
                                          child: Text("Verification \nPending....",style: TextStyle(color: Colors.yellow,fontWeight: FontWeight.bold),),
                                        )
                                         )
-                                            :SizedBox())
+                                            // :Text("${authcontroller.usermodel.value!.kanyadaan}"))
+                                            :MaterialButton(
+                                            onPressed:authcontroller.enablerole.value.toString()=="1"? ()async{
+                                              await controller.fetchKanyadaanMembers();
+                                              Get.to(()=>KanyadaanMembersScreen());
+
+                                            }:(){
+
+                                              showKanyadaanDialog(context);
+
+                                            },color: Colors.green.shade900,
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(4.0),
+                                              child:authcontroller.enablerole.value.toString()=="1"?Text("Open now",style: TextStyle(color: Colors.white),):Text("Register now\nअभी पंजीकरण करें",style: TextStyle(color: Colors.white),),
+                                            )
+                                        ))
                                       ],
                                     ),
                                   ),
@@ -2587,82 +2682,82 @@ Text("Team"),
                     SizedBox(height: 25),
 
                     /// Donate Button
-                    // isload==true?CircularProgressIndicator():SizedBox(
-                    //   width: double.infinity,
-                    //   height: 50,
-                    //   child: ElevatedButton(
-                    //     style: ElevatedButton.styleFrom(
-                    //       backgroundColor: Colors.pinkAccent,
-                    //       shape: RoundedRectangleBorder(
-                    //         borderRadius: BorderRadius.circular(12),
-                    //       ),
-                    //     ),
-                    //     onPressed: () async{
-                    //         setState(() {
-                    //           isload=true;
-                    //         });
-                    //         final payAmount = amountController.text;
-                    //         print("Proceed to pay ₹$payAmount");
-                    //         // startUpiPayment(payAmount);
-                    //         await phonePeAuthController.startTransaction(int.parse(payAmount.toString()));
-                    //
-                    //         if(phonePeAuthController.paymentsuccess.value.toString()=="1"){
-                    //
-                    //           if(authcontroller.enablerole!=0) {
-                    //             await phonePeAuthController.uploadPaymentData(
-                    //                 amount: payAmount.toString(),
-                    //                 orderId: phonePeAuthController.orderid
-                    //                     .toString(),
-                    //                 transactionId: phonePeAuthController.orderid
-                    //                     .value.toString(),
-                    //                 status: phonePeAuthController.paymentstatus
-                    //                     .value.toString(),
-                    //                 aadhar: authcontroller.usermodel.value
-                    //                     ?.aadhar.toString() ?? "",
-                    //                 screenshotPhoto: '',
-                    //                 mop: 'donation');
-                    //             phonePeAuthController.paymentsuccess.value.toString()=="0";
-                    //           }else{
-                    //
-                    //             if (_formKey.currentState!.validate()) {
-                    //               await controller.addDonationSimple(
-                    //                   nameController.text,
-                    //                   mobileController.text,
-                    //                   messageController.text,
-                    //                   phonePeAuthController.orderid
-                    //                       .toString(),
-                    //                   phonePeAuthController.orderid
-                    //                       .value.toString(),
-                    //                   phonePeAuthController.paymentstatus
-                    //                       .value.toString(),
-                    //                   amountController.text);
-                    //               phonePeAuthController.paymentsuccess.value.toString()=="0";
-                    //             }
-                    //           }
-                    //           await paymentsController.fetchPayments(memberId: authcontroller.usermodel.value?.id.toString()??"");
-                    //
-                    //           // Get.back();
-                    //         }
-                    //         // await controller.addDonationSimple();
-                    //         setState(() {
-                    //           isload=false;
-                    //         });
-                    //         Navigator.pop(context);
-                    //         // ScaffoldMessenger.of(context).showSnackBar(
-                    //         //   SnackBar(
-                    //         //     content: Text("Thank you for your donation ❤️"),
-                    //         //   ),
-                    //         // );
-                    //       },
-                    //     child: Text(
-                    //       "Donate Now\nअभी दान करें",
-                    //       style: TextStyle(
-                    //         fontSize: 16,color: Colors.white,
-                    //         fontWeight: FontWeight.bold,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
+                    isload==true?CircularProgressIndicator():SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.pinkAccent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: () async{
+                            setState(() {
+                              isload=true;
+                            });
+                            final payAmount = amountController.text;
+                            print("Proceed to pay ₹$payAmount");
+                            // startUpiPayment(payAmount);
+                            await phonePeAuthController.startTransaction(int.parse(payAmount.toString()));
+
+                            if(phonePeAuthController.paymentsuccess.value.toString()=="1"){
+
+                              if(authcontroller.enablerole!=0) {
+                                await phonePeAuthController.uploadPaymentData(type: 'DONATION',
+                                    amount: payAmount.toString(),
+                                    orderId: phonePeAuthController.orderid
+                                        .toString(),
+                                    transactionId: phonePeAuthController.orderid
+                                        .value.toString(),
+                                    status: phonePeAuthController.paymentstatus
+                                        .value.toString(),
+                                    aadhar: authcontroller.usermodel.value
+                                        ?.aadhar.toString() ?? "",
+                                    screenshotPhoto: '',
+                                    mop: 'donation');
+                                phonePeAuthController.paymentsuccess.value.toString()=="0";
+                              }else{
+
+                                if (_formKey.currentState!.validate()) {
+                                  await controller.addDonationSimple(
+                                      nameController.text,
+                                      mobileController.text,
+                                      messageController.text,
+                                      phonePeAuthController.orderid
+                                          .toString(),
+                                      phonePeAuthController.orderid
+                                          .value.toString(),
+                                      phonePeAuthController.paymentstatus
+                                          .value.toString(),
+                                      amountController.text);
+                                  phonePeAuthController.paymentsuccess.value.toString()=="0";
+                                }
+                              }
+                              await paymentsController.fetchPayments(memberId: authcontroller.usermodel.value?.id.toString()??"");
+
+                              // Get.back();
+                            }
+                            // await controller.addDonationSimple();
+                            setState(() {
+                              isload=false;
+                            });
+                            Navigator.pop(context);
+                            // ScaffoldMessenger.of(context).showSnackBar(
+                            //   SnackBar(
+                            //     content: Text("Thank you for your donation ❤️"),
+                            //   ),
+                            // );
+                          },
+                        child: Text(
+                          "Donate Now\nअभी दान करें",
+                          style: TextStyle(
+                            fontSize: 16,color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -2676,6 +2771,7 @@ Text("Team"),
 
   void showKanyadaanDialog(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
+
     TextEditingController nameController = TextEditingController();
     TextEditingController mobileController = TextEditingController();
     TextEditingController banknameController = TextEditingController();
@@ -2690,197 +2786,246 @@ Text("Team"),
     showDialog(
       context: context,
       builder: (context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Container(
-            padding: EdgeInsets.all(20),
-            child: SingleChildScrollView(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
+        File? selectedImage;
 
-                    /// Title
-                    Text(
-                      "Make a Donation ❤️",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+        return StatefulBuilder(
+            builder: (context, setState) {
+              return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Container(
+              padding: EdgeInsets.all(20),
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
 
-                    SizedBox(height: 20),
-
-                    /// Full Name
-                    TextFormField(
-                      controller: nameController,
-                      decoration: InputDecoration(
-                        labelText: "Daughter Name",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                      /// Title
+                      Text(
+                        "Kanyadaan Registration ❤️",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      validator: (value) =>
-                      value!.isEmpty ? "Enter your Daughter name" : null,
-                    ),
 
-                   SizedBox(height: 15),
+                      SizedBox(height: 20),
 
-
-                    /// Mobile Number
-                    TextFormField(
-                      controller: mobileController,
-                      keyboardType: TextInputType.phone,maxLength: 10,
-                      decoration: InputDecoration(
-                        labelText: "Daughter Mobile Number",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      validator: (value) =>
-                      value!.isEmpty ? "Enter Daughter's mobile number" : null,
-                    ),
-
-                    SizedBox(height: 15),
-
-                    /// Amount
-                    TextFormField(
-                      controller: banknameController,
-                      decoration: InputDecoration(
-                        labelText: "Bank name",
-                        // prefixText: "₹ ",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      validator: (value) =>
-                      value!.isEmpty ? "Enter Bank name" : null,
-                    ),
-
-                    SizedBox(height: 15),
-
-                    /// Message
-                    TextFormField(
-                      controller: accnoController,
-                      // maxLines: 3,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        labelText: "Account Number",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ), validator: (value) =>
-                    value!.isEmpty ? "Enter Account number" : null,
-                    ),
-
-                    SizedBox(height: 15),
-
-                    /// Message
-                    TextFormField(
-                      controller: accifscController,
-                      // maxLines: 3,
-                      decoration: InputDecoration(
-                        labelText: "Account IFSC code",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ), validator: (value) =>
-                    value!.isEmpty ? "Enter Bank IFSC code" : null,
-                    ),
-
-                    SizedBox(height: 15),
-                    Text("starts with.."),
-                    Wrap(
-                      spacing: 10,
-                      runSpacing: 10,
-                      children: suggestedAmounts.map((amount) {
-                        return Obx(
-                              () => ChoiceChip(
-                            label: Text("₹$amount"),
-                            selected: selectedAmount.value == amount,
-                            onSelected: (_) {
-                              selectedAmount.value = amount;
-                              amountController.text = amount.toString();
-                            },
-                            selectedColor: Get.theme.colorScheme.primary,
-                            labelStyle: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: selectedAmount.value == amount
-                                  ? Colors.white
-                                  : Get.theme.colorScheme.onSurface,
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-
-                    SizedBox(height: 25),
-
-                    /// Donate Button
-                    isload==true?CircularProgressIndicator():SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green.shade900,
-                          shape: RoundedRectangleBorder(
+                      /// Full Name
+                      TextFormField(
+                        controller: nameController,
+                        decoration: InputDecoration(
+                          labelText: "Daughter Name",
+                          border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        onPressed: () async{
+                        validator: (value) =>
+                        value!.isEmpty ? "Enter your Daughter name" : null,
+                      ),
+
+                      SizedBox(height: 15),
+
+
+                      /// Mobile Number
+                      TextFormField(
+                        controller: mobileController,
+                        keyboardType: TextInputType.phone,
+                        maxLength: 10,
+                        decoration: InputDecoration(
+                          labelText: "Daughter Mobile Number",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        validator: (value) =>
+                        value!.isEmpty
+                            ? "Enter Daughter's mobile number"
+                            : null,
+                      ),
+
+                      SizedBox(height: 15),
+
+                      /// Amount
+                      TextFormField(
+                        controller: banknameController,
+                        decoration: InputDecoration(
+                          labelText: "Bank name",
+                          // prefixText: "₹ ",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        validator: (value) =>
+                        value!.isEmpty ? "Enter Bank name" : null,
+                      ),
+
+                      SizedBox(height: 15),
+
+                      /// Message
+                      TextFormField(
+                        controller: accnoController,
+                        // maxLines: 3,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: "Account Number",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ), validator: (value) =>
+                      value!.isEmpty ? "Enter Account number" : null,
+                      ),
+
+                      SizedBox(height: 15),
+
+                      /// Message
+                      TextFormField(
+                        controller: accifscController,
+                        // maxLines: 3,
+                        decoration: InputDecoration(
+                          labelText: "Account IFSC code",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ), validator: (value) =>
+                      value!.isEmpty ? "Enter Bank IFSC code" : null,
+                      ),
+
+                      SizedBox(height: 15),
+                      if (selectedImage != null)
+                        Image.file(selectedImage!, height: 120),
+
+                      ElevatedButton(
+                        onPressed: () async {
+                          final picker = ImagePicker();
+                          final picked = await picker.pickImage(
+                              source: ImageSource.gallery);
+
+                          if (picked != null) {
                             setState(() {
-                              isload=true;
+                              selectedImage = File(picked.path);
+                            });
+                          }
+                        },
+                        child: Text("Upload Marriage Card"),
+                      ),
+                      SizedBox(height: 15),
+                      Text("starts with.."),
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: suggestedAmounts.map((amount) {
+                          return Obx(
+                                () =>
+                                ChoiceChip(
+                                  label: Text("₹$amount"),
+                                  selected: selectedAmount.value == amount,
+                                  onSelected: (_) {
+                                    selectedAmount.value = amount;
+                                    amountController.text = amount.toString();
+                                  },
+                                  selectedColor: Get.theme.colorScheme.primary,
+                                  labelStyle: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: selectedAmount.value == amount
+                                        ? Colors.white
+                                        : Get.theme.colorScheme.onSurface,
+                                  ),
+                                ),
+                          );
+                        }).toList(),
+                      ),
+
+                      SizedBox(height: 25),
+
+                      /// Donate Button
+                      isload == true ? CircularProgressIndicator() : SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green.shade900,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onPressed: () async {
+                            setState(() {
+                              isload = true;
                             });
 
                             final payAmount = selectedAmount.value;
                             print("Proceed to pay ₹$payAmount");
                             // startUpiPayment(payAmount);
-                                if (_formKey.currentState!.validate()) {
-                                  await phonePeAuthController.startTransaction(payAmount);
+                            if (_formKey.currentState!.validate()) {
+                              print("slfknsklfn");
+                              await phonePeAuthController.startTransaction(
+                                  payAmount);
 
-                                  if(phonePeAuthController.paymentsuccess.value.toString()=="1"){
-                                    await phonePeAuthController.uploadPaymentData( amount: payAmount.toString(), orderId: phonePeAuthController.orderid.toString(), transactionId: phonePeAuthController.orderid.value.toString(), status: phonePeAuthController.paymentstatus.value.toString(),aadhar: authcontroller.usermodel.value?.aadhar.toString()??"",screenshotPhoto: '', mop: 'kanyadaan');
-                                    await paymentsController.fetchPayments(memberId: authcontroller.usermodel.value?.id.toString()??"");
-                                    await controller.addKanyadaan(
-                                        authcontroller.usermodel.value?.id.toString()??"",
-                                        nameController.text,
-                                        mobileController.text,
-                                        banknameController.text,
-                                        accnoController.text,
-                                        accifscController.text,context);
-                                    SharedPreferences prefs= await SharedPreferences.getInstance();
-                                    var u= await prefs.getString("username");
-                                    var p= await prefs.getString("password");
-                                    await authcontroller.userLogintemp(aadhar: u.toString(), password: p.toString());
-                                    Get.back();
-                                  }
-
-                                }
+                              if (phonePeAuthController.paymentsuccess.value
+                                  .toString() == "1") {
+                                await phonePeAuthController.uploadPaymentData(
+                                    amount: payAmount.toString(),
+                                    orderId: phonePeAuthController.orderid
+                                        .toString(),
+                                    transactionId: phonePeAuthController.orderid
+                                        .value.toString(),
+                                    status: phonePeAuthController.paymentstatus
+                                        .value.toString(),
+                                    aadhar: authcontroller.usermodel.value
+                                        ?.aadhar.toString() ?? "",
+                                    screenshotPhoto: '',
+                                    mop: 'kanyadaan',
+                                    type: 'KANYADAAN');
+                                await paymentsController.fetchPayments(
+                                    memberId: authcontroller.usermodel.value?.id
+                                        .toString() ?? "");
+                                await controller.addKanyadaan(
+                                    authcontroller.usermodel.value?.id
+                                        .toString() ?? "",
+                                    nameController.text,
+                                    mobileController.text,
+                                    banknameController.text,
+                                    accnoController.text,
+                                    accifscController.text,
+                                    selectedImage,
+                                    context);
+                                SharedPreferences prefs = await SharedPreferences
+                                    .getInstance();
+                                var u = await prefs.getString("username");
+                                var p = await prefs.getString("password");
+                                await authcontroller.userLogintemp(
+                                    aadhar: u.toString(),
+                                    password: p.toString());
+                                Get.back();
+                              }
+                            }
                             //
                             // await controller.addDonationSimple();
                             setState(() {
-                              isload=false;
+                              isload = false;
                             });
                             // Navigator.pop(context);
 
                           },
-                        child: Text(
-                          "Register Now",
-                          style: TextStyle(
-                            fontSize: 16,color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                          child: Text(
+                            "Register Now",
+                            style: TextStyle(
+                              fontSize: 16, color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
+          );}
         );
       },
     );
@@ -2902,6 +3047,9 @@ Text("Team"),
       authcontroller.usermodel.value=null;
     }else{
       authcontroller.adminData.value=null;
+
+      autopaycontroller.AutopayStatus(authcontroller.enablerole.value == 2?authcontroller.usermodel.value?.subscriptionId.toString()??"":"");
+
     }
       if (authcontroller.usermodel.value?.is_emergency.toString() == "1") {
         emergencyController.isActive.value = true;
@@ -2934,26 +3082,27 @@ Text("Team"),
       },
       child: Scaffold(
         bottomNavigationBar: _mobileBottomNav(context),
-        // floatingActionButton: SizedBox(
-        //   height: 55,
-        //   child: FloatingActionButton.extended(
-        //     onPressed: () {
-        //       showDonateDialog(context);
-        //     },
-        //     backgroundColor: Colors.pinkAccent,
-        //     elevation: 8,
-        //     icon: Icon(Icons.favorite, color: Colors.white),
-        //     label: Text(
-        //       "Donate Now\nअभी दान करें",
-        //       style: TextStyle(
-        //         fontSize: 16,
-        //         fontWeight: FontWeight.bold,
-        //         color: Colors.white,
-        //       ),
-        //     ),
-        //   ),
-        // ),
-        // floatingActionButtonLocation: FloatingActionButtonLocation.right,
+        floatingActionButton: SizedBox(
+          height: 55,
+          child: FloatingActionButton.extended(
+            onPressed: () {
+              showDonateDialog(context);
+            },
+            backgroundColor: Colors.pinkAccent,
+            elevation: 8,
+            icon: Icon(Icons.favorite, color: Colors.white),
+            label: Text(
+              "Donate Now\nअभी दान करें",
+
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 
         body: LayoutBuilder(
           builder: (context, constraints) {

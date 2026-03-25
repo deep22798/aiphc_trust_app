@@ -1,11 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:aiphc/model/knyadaanmodel.dart';
 import 'package:aiphc/utils/serverconstants.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide MultipartFile, FormData;
 
 class DashboardController extends GetxController {
   RxInt currentPage = 0.obs;
@@ -175,6 +176,64 @@ class DashboardController extends GetxController {
       debugPrint("❌ Error: $e");
     }
   }
+  //
+  // Future<void> addKanyadaan(
+  //     String member_id,
+  //     String daughter_name,
+  //     String daughter_mobile,
+  //     String bank_name,
+  //     String account_no,
+  //     String account_ifsccode,
+  //     context
+  //     ) async {
+  //   try {
+  //
+  //     final response = await Dio().post(
+  //         ServerConstants.adddkanyaadaan,
+  //       data: jsonEncode({
+  //         "member_id": member_id,
+  //         "daughter_name": daughter_name,
+  //         "daughter_mobile": daughter_mobile,
+  //         "bank_name": bank_name,
+  //         "account_no": account_no,
+  //         "account_ifsccode": account_ifsccode
+  //       }),
+  //       options: Options(
+  //         contentType: Headers.jsonContentType, // application/json
+  //         responseType: ResponseType.json,
+  //       ),
+  //     );
+  //
+  //     print("✅ Donation API Response:");
+  //     debugPrint(response.data.toString());
+  //
+  //     if (response.data['status'] == true) {
+  //       await updateKanyadaanStatus(memberId: member_id, kanyadaan: "1");
+  //       Get.back();
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text("Registration done ❤️"),
+  //       ),
+  //
+  //
+  //     );
+  //
+  //       // Get.snackbar("Success", "Donation added successfully");
+  //     } else {
+  //       // Get.snackbar("Error", response.data['messages']?['error'] ?? "Failed");
+  //     }
+  //
+  //   } on DioException catch (e) {
+  //     debugPrint("❌ Status Code: ${e.response?.statusCode}");
+  //     debugPrint("❌ Response: ${e.response?.data}");
+  //     // Get.snackbar("Error", "Server error");
+  //   } catch (e) {
+  //     debugPrint("❌ Error: $e");
+  //     // Get.snackbar("Error", "Something went wrong");
+  //   } finally {
+  //     isLoading.value = false;
+  //   }
+  // }
 
   Future<void> addKanyadaan(
       String member_id,
@@ -183,54 +242,48 @@ class DashboardController extends GetxController {
       String bank_name,
       String account_no,
       String account_ifsccode,
-      context
+      File? imageFile,
+      context,
       ) async {
     try {
 
+      FormData formData = FormData.fromMap({
+        "member_id": member_id,
+        "daughter_name": daughter_name,
+        "daughter_mobile": daughter_mobile,
+        "bank_name": bank_name,
+        "account_no": account_no,
+        "account_ifsccode": account_ifsccode,
+
+        // 🔥 Image
+        if (imageFile != null)
+          "marriage_card": await MultipartFile.fromFile(
+            imageFile.path,
+            filename: imageFile.path.split('/').last,
+          ),
+      });
+
       final response = await Dio().post(
         ServerConstants.adddkanyaadaan,
-        data: jsonEncode({
-          "member_id": member_id,
-          "daughter_name": daughter_name,
-          "daughter_mobile": daughter_mobile,
-          "bank_name": bank_name,
-          "account_no": account_no,
-          "account_ifsccode": account_ifsccode
-        }),
+        data: formData,
         options: Options(
-          contentType: Headers.jsonContentType, // application/json
-          responseType: ResponseType.json,
+          contentType: "multipart/form-data",
         ),
       );
 
-      print("✅ Donation API Response:");
-      debugPrint(response.data.toString());
+      print("✅ Response: ${response.data}");
 
       if (response.data['status'] == true) {
         await updateKanyadaanStatus(memberId: member_id, kanyadaan: "1");
+
         Get.back();
         ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Registration done ❤️"),
-        ),
-
-
-      );
-
-        // Get.snackbar("Success", "Donation added successfully");
-      } else {
-        // Get.snackbar("Error", response.data['messages']?['error'] ?? "Failed");
+          SnackBar(content: Text("Registration done ❤️")),
+        );
       }
 
-    } on DioException catch (e) {
-      debugPrint("❌ Status Code: ${e.response?.statusCode}");
-      debugPrint("❌ Response: ${e.response?.data}");
-      // Get.snackbar("Error", "Server error");
     } catch (e) {
-      debugPrint("❌ Error: $e");
-      // Get.snackbar("Error", "Something went wrong");
-    } finally {
-      isLoading.value = false;
+      print("❌ Error: $e");
     }
   }
 

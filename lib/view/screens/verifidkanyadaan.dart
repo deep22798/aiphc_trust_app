@@ -441,7 +441,7 @@ class _VerifidkanyadaanState extends State<Verifidkanyadaan> {
 
 
                             if(phonePeAuthController.paymentsuccess.value.toString()=="1"){
-                              await phonePeAuthController.uploadPaymentData( amount: payAmount.toString(), orderId: phonePeAuthController.orderid.toString(), transactionId: phonePeAuthController.orderid.value.toString(), status: phonePeAuthController.paymentstatus.value.toString(),aadhar: authcontroller.usermodel.value?.aadhar.toString()??"",screenshotPhoto: '', mop: 'kanyadaan');
+                              await phonePeAuthController.uploadPaymentData( amount: payAmount.toString(), orderId: phonePeAuthController.orderid.toString(), transactionId: phonePeAuthController.orderid.value.toString(), status: phonePeAuthController.paymentstatus.value.toString(),aadhar: authcontroller.usermodel.value?.aadhar.toString()??"",screenshotPhoto: '', mop: 'kanyadaan', type: 'KANYADAAN');
                               await paymentsController.fetchPayments(memberId: authcontroller.usermodel.value?.id.toString()??"");
                               // await controller.addKanyadaan(
                               //     authcontroller.usermodel.value?.id.toString()??"",

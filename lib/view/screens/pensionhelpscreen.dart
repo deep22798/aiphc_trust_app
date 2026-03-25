@@ -1,3 +1,4 @@
+import 'package:aiphc/controllers/auth/login.dart';
 import 'package:aiphc/controllers/globalcontroller.dart';
 import 'package:aiphc/model/pensionhelp.dart';
 import 'package:aiphc/model/recentInitiativesList.dart';
@@ -206,9 +207,13 @@ class _PensionHelpScreeenState extends State<PensionHelpScreeen> {
   Widget build(BuildContext context) {
     final controller = Get.put(Globalcontroller());
 
+
+
+    final authcontroller = Get.find<AuthController>();
     return Scaffold(
       appBar: CustomeAppBar(title: "Pension Help(पेंशन सहायता)"),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton:
+    authcontroller.enablerole.value == 2?SizedBox(): FloatingActionButton(
         onPressed: () {
           _openAddPensionHelpSheet(context);
         },
