@@ -26,7 +26,7 @@ class _AutoPaymentState extends State<AutoPayment> {
   void initState() {
     super.initState();
     initDeepLink();
-    controller.AutopayStatus(authcontroller.enablerole.value == 2?authcontroller.usermodel.value?.subscriptionId.toString()??"":"");
+    controller.AutopayStatus(authcontroller.enablerole.value != 1?authcontroller.usermodel.value?.subscriptionId.toString()??"":"");
   }
 
 
@@ -55,7 +55,7 @@ class _AutoPaymentState extends State<AutoPayment> {
     if (uri.host == "payment-success") {
 
       await controller.pollOrderUntilComplete();
-      // await controller.checkSubscriptionStatus(authcontroller.enablerole.value == 2?authcontroller.usermodel.value?.id??"":"");
+      // await controller.checkSubscriptionStatus(authcontroller.enablerole.value != 1?authcontroller.usermodel.value?.id??"":"");
     }
   }
 
@@ -80,7 +80,7 @@ class _AutoPaymentState extends State<AutoPayment> {
             Obx(()=>Text("${controller.subscriptionstatus}")),
 
 
-            Obx(()=>Text("${authcontroller.enablerole.value == 2?authcontroller.usermodel.value?.id??"":""}")),
+            Obx(()=>Text("${authcontroller.enablerole.value != 1?authcontroller.usermodel.value?.id??"":""}")),
             Obx(()=>Text("${controller.merchantSubId.value}")),
             Obx(()=>Text("${controller.merchantOrderId.value}")),
 
@@ -95,7 +95,7 @@ class _AutoPaymentState extends State<AutoPayment> {
 
             ElevatedButton(
               onPressed: () async {
-                await controller.startTransaction(100,authcontroller.enablerole.value == 2?authcontroller.usermodel.value?.id??"":"",authcontroller.enablerole.value == 2?authcontroller.usermodel.value?.aadhar??"":"");
+                await controller.startTransaction(100,authcontroller.enablerole.value != 1?authcontroller.usermodel.value?.id??"":"",authcontroller.enablerole.value != 1?authcontroller.usermodel.value?.aadhar??"":"");
               },
               child: const Text("Setup Autopay"),
             ),
@@ -105,7 +105,7 @@ class _AutoPaymentState extends State<AutoPayment> {
             ElevatedButton(
               onPressed: () async {
                 await controller.pollOrderUntilComplete();
-                // await controller.checkSubscriptionStatus(authcontroller.enablerole.value == 2?authcontroller.usermodel.value?.id??"":"");
+                // await controller.checkSubscriptionStatus(authcontroller.enablerole.value != 1?authcontroller.usermodel.value?.id??"":"");
               },
               child: const Text("Check Status"),
             ),

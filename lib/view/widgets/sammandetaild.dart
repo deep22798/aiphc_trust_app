@@ -1,6 +1,7 @@
 
 import 'package:aiphc/controllers/auth/login.dart';
 import 'package:aiphc/controllers/globalcontroller.dart';
+import 'package:aiphc/model/ammanmodel.dart';
 import 'package:aiphc/model/pensionhelp.dart';
 import 'package:aiphc/utils/routes/serverassets.dart';
 import 'package:aiphc/view/widgets/appbar.dart';
@@ -11,19 +12,19 @@ import 'package:get/get.dart';
 
 import 'full_screen_image.dart';
 
-class PensionDetailScreen extends StatefulWidget {
-  final PensionHelpModel data;
+class Sammandetailed extends StatefulWidget {
+  final SammanModel data;
 
-  const PensionDetailScreen({
+  const Sammandetailed({
     super.key,
     required this.data,
   });
 
   @override
-  State<PensionDetailScreen> createState() => _PensionDetailScreenState();
+  State<Sammandetailed> createState() => _SammandetailedState();
 }
 
-class _PensionDetailScreenState extends State<PensionDetailScreen> {
+class _SammandetailedState extends State<Sammandetailed> {
 
 
   @override
@@ -119,9 +120,10 @@ class _PensionDetailScreenState extends State<PensionDetailScreen> {
                     onPressed: controller.uploadingg.value
                         ? null
                         : () async {
-                      await controller.uploadImagess(pensionId);
-                      await controller.fetchsucespension();
+                      await controller.uploadsammanImagess(pensionId);
+                      await controller.fetchsamman();
                     },
+
                     child: controller.uploadingg.value
                         ? const CircularProgressIndicator(color: Colors.white)
                         : const Text(

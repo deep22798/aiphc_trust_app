@@ -1,6 +1,6 @@
 import 'package:aiphc/controllers/auth/login.dart';
 import 'package:aiphc/controllers/globalcontroller.dart';
-import 'package:aiphc/model/pensionhelp.dart';
+import 'package:aiphc/model/ammanmodel.dart';
 import 'package:aiphc/model/recentInitiativesList.dart';
 import 'package:aiphc/utils/routes/serverassets.dart';
 import 'package:aiphc/utils/serverconstants.dart';
@@ -8,17 +8,18 @@ import 'package:aiphc/view/widgets/appbar.dart';
 import 'package:aiphc/view/widgets/llivetimer.dart';
 import 'package:aiphc/view/widgets/pensiondetailed.dart';
 import 'package:aiphc/view/widgets/recent_initiative_detail_screen.dart';
+import 'package:aiphc/view/widgets/sammandetaild.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class PensionHelpScreeen extends StatefulWidget {
-  const PensionHelpScreeen({super.key});
+class SammanHelpScreen extends StatefulWidget {
+  const SammanHelpScreen({super.key});
 
   @override
-  State<PensionHelpScreeen> createState() => _PensionHelpScreeenState();
+  State<SammanHelpScreen> createState() => _SammanHelpScreenState();
 }
 
-class _PensionHelpScreeenState extends State<PensionHelpScreeen> {
+class _SammanHelpScreenState extends State<SammanHelpScreen> {
 
   Widget _input(
       String label,
@@ -72,7 +73,7 @@ class _PensionHelpScreeenState extends State<PensionHelpScreeen> {
       ),
     );
   }
-  void _openAddPensionHelpSheet(BuildContext context) {
+  void _openAddSammanSheet(BuildContext context) {
     final controller = Get.find<Globalcontroller>();
     final theme = Theme.of(context);
 
@@ -104,7 +105,7 @@ class _PensionHelpScreeenState extends State<PensionHelpScreeen> {
                 ),
 
                 const Text(
-                  "Add Pension Help",
+                  "Add Samman Story",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
 
@@ -174,6 +175,7 @@ class _PensionHelpScreeenState extends State<PensionHelpScreeen> {
 
                 const SizedBox(height: 20),
 
+
                 SizedBox(
                   width: double.infinity,
                   height: 48,
@@ -181,8 +183,8 @@ class _PensionHelpScreeenState extends State<PensionHelpScreeen> {
                     onPressed: controller.pensionUploading.value
                         ? null
                         : () async {
-                      await controller.addPensionHelp();
-                      await controller.fetchsucespension();
+                      await controller.addSamman();
+                      await controller.fetchsamman();
                     },
                     child: controller.pensionUploading.value
                         ? const CircularProgressIndicator(color: Colors.white)
@@ -211,19 +213,18 @@ class _PensionHelpScreeenState extends State<PensionHelpScreeen> {
 
     final authcontroller = Get.find<AuthController>();
     return Scaffold(
-      appBar: CustomeAppBar(title: "Pension Help(पेंशन सहायता)"),
+      appBar: CustomeAppBar(title: "Samman Stories (सम्मान)"),
       floatingActionButton:
-    authcontroller.enablerole.value != 1?SizedBox(): FloatingActionButton(
+      authcontroller.enablerole.value != 1?SizedBox(): FloatingActionButton(
         onPressed: () {
-          _openAddPensionHelpSheet(context);
+          _openAddSammanSheet(context);
         },
         child: const Icon(Icons.add),
       ),
       body: RefreshIndicator(
         onRefresh: ()async{
-          await controller.fetchsucespension();
+          await controller.fetchsamman();
         },
-
         child: Obx(() {
           if (controller.contactLoading.value) {
             return const Center(child: CircularProgressIndicator());
@@ -247,10 +248,10 @@ class _PensionHelpScreeenState extends State<PensionHelpScreeen> {
                   mainAxisSpacing: 5,
                   childAspectRatio: 0.65,
                 ),
-                itemCount: controller.pensionlist.length,
+                itemCount: controller.sammanlist.length,
                 itemBuilder: (context, index) {
-                  return PensionHelpScreeenGrid(
-                    data: controller.pensionlist[index],
+                  return SammanHelpScreenGrid(
+                    data: controller.sammanlist[index],
                   );
                 },
               );
@@ -262,10 +263,10 @@ class _PensionHelpScreeenState extends State<PensionHelpScreeen> {
   }
 }
 
-class PensionHelpScreeenGrid extends StatelessWidget {
-  final PensionHelpModel data;
+class SammanHelpScreenGrid extends StatelessWidget {
+  final SammanModel data;
 
-  const PensionHelpScreeenGrid({
+  const SammanHelpScreenGrid({
     super.key,
     required this.data,
   });
@@ -278,7 +279,7 @@ class PensionHelpScreeenGrid extends StatelessWidget {
       borderRadius: BorderRadius.circular(14),
       onTap: () {
         Get.to(
-              () => PensionDetailScreen(data: data),
+              () => Sammandetailed(data: data),
         );
       },
       child: Card(
@@ -323,11 +324,10 @@ class PensionHelpScreeenGrid extends StatelessWidget {
 }
 
 
+class SammanHelpScreenGrid2 extends StatelessWidget {
+  final SammanModel data;
 
-class PensionHelpScreeenGrid2 extends StatelessWidget {
-  final PensionHelpModel data;
-
-  const PensionHelpScreeenGrid2({
+  const SammanHelpScreenGrid2({
     super.key,
     required this.data,
   });
@@ -340,7 +340,7 @@ class PensionHelpScreeenGrid2 extends StatelessWidget {
       borderRadius: BorderRadius.circular(14),
       onTap: () {
         Get.to(
-              () => PensionDetailScreen(data: data),
+              () => Sammandetailed(data: data),
         );
       },
       child: Card(

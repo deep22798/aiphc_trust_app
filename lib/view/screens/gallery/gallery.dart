@@ -20,94 +20,99 @@ class Gallery extends StatelessWidget {
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: CustomeAppBar(title: "Gallery (गैलरी)"),
 
-      body: Obx(() {
-        if (controller.albumLoading.value) {
-          return Center(
-            child: CircularProgressIndicator(
-              color: theme.colorScheme.primary,
-            ),
-          );
-        }
-
-        if (controller.gallery.isEmpty) {
-          return Center(
-            child: Text(
-              'कोई गैलरी उपलब्ध नहीं है',
-              style: theme.textTheme.bodyMedium,
-            ),
-          );
-        }
-
-        return GridView.builder(
-          padding: const EdgeInsets.all(16),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 16,
-            crossAxisSpacing: 16,
-            childAspectRatio: 0.9,
-          ),
-          itemCount: controller.gallery.length,
-          itemBuilder: (context, index) {
-            final album = controller.gallery[index];
-
-            return InkWell(
-              borderRadius: BorderRadius.circular(16),
-              onTap: () {
-                Get.to(
-                      () => GalleryImagesScreen(
-                    albumId: album.id,
-                    albumTitle: album.title,
-                  ),
-                );
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: theme.cardColor,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: theme.shadowColor.withOpacity(0.12),
-                      blurRadius: 6,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(16),
-                        ),
-                        child: Image.network(
-                          ServerAssets.gallery + album.coverImage,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) =>
-                          const Icon(Icons.broken_image),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Text(
-                        album.title,
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+      body: RefreshIndicator(
+        onRefresh: ()async{
+          await controller.fetchGallery();
+        },
+        child: Obx(() {
+          if (controller.albumLoading.value) {
+            return Center(
+              child: CircularProgressIndicator(
+                color: theme.colorScheme.primary,
               ),
             );
-          },
-        );
-      }),
+          }
 
-      floatingActionButton:authcontroller.enablerole.value == 2?SizedBox(): FloatingActionButton(
+          if (controller.gallery.isEmpty) {
+            return Center(
+              child: Text(
+                'कोई गैलरी उपलब्ध नहीं है',
+                style: theme.textTheme.bodyMedium,
+              ),
+            );
+          }
+
+          return GridView.builder(
+            padding: const EdgeInsets.all(16),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              childAspectRatio: 0.9,
+            ),
+            itemCount: controller.gallery.length,
+            itemBuilder: (context, index) {
+              final album = controller.gallery[index];
+
+              return InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: () {
+                  Get.to(
+                        () => GalleryImagesScreen(
+                      albumId: album.id,
+                      albumTitle: album.title,
+                    ),
+                  );
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: theme.cardColor,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: theme.shadowColor.withOpacity(0.12),
+                        blurRadius: 6,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(16),
+                          ),
+                          child: Image.network(
+                            ServerAssets.gallery + album.coverImage,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) =>
+                            const Icon(Icons.broken_image),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          album.title,
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        }),
+      ),
+
+      floatingActionButton:authcontroller.enablerole.value != 1?SizedBox(): FloatingActionButton(
       onPressed: () {
         _openAddAlbumSheet(context);
       },

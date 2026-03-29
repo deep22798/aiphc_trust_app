@@ -87,6 +87,20 @@ class ServerConstants {
   static const String updatePensionHelp    = "${api}updatePensionHelp";
   static const String deletePensionHelp    = "${api}deletePensionHelp";
 
+
+  // 👴 Pension Help
+  static const String sammanList      = "${api}sammanList";
+  static const String addsamman       = "${api}addsamman";
+  static const String updatesamman    = "${api}updatesamman";
+  static const String deletesamman    = "${api}deletesamman";
+
+
+  // 👴 Pension Help
+  static const String protsahanList      = "${api}protsahanList";
+  static const String addprotsahan       = "${api}addprotsahan";
+  static const String updateprotsahan    = "${api}updateprotsahan";
+  static const String deleteprotsahan    = "${api}deleteprotsahan";
+
   // ✅ Success Stories
   static const String successList      = "${api}successList";
   static const String addSuccess       = "${api}addSuccess";

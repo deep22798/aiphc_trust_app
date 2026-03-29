@@ -1,16 +1,19 @@
 import 'dart:io';
 
 import 'package:aiphc/model/aboutus.dart';
+import 'package:aiphc/model/ammanmodel.dart';
 import 'package:aiphc/model/contactus.dart';
 import 'package:aiphc/model/department.dart';
 import 'package:aiphc/model/districtmodel.dart';
 import 'package:aiphc/model/donation.dart';
 import 'package:aiphc/model/myteam.dart';
 import 'package:aiphc/model/pensionhelp.dart';
+import 'package:aiphc/model/protsahanmodel.dart';
 import 'package:aiphc/model/recentInitiativesList.dart';
 import 'package:aiphc/model/recenthelp.dart';
 import 'package:aiphc/model/states.dart';
 import 'package:aiphc/utils/serverconstants.dart';
+import 'package:aiphc/view/screens/protsahan.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
@@ -29,6 +32,9 @@ class Globalcontroller extends GetxController {
   final RxList<SuccessModel> successlist = <SuccessModel>[].obs;
   final RxList<RecentInitiativeModel> recentiniti = <RecentInitiativeModel>[].obs;
   final RxList<PensionHelpModel> pensionlist = <PensionHelpModel>[].obs;
+
+  final RxList<SammanModel> sammanlist = <SammanModel>[].obs;
+  final RxList<ProtsahanModel>protsahanlist = <ProtsahanModel>[].obs;
   final RxList<TeamMemberModel> myteamlist = <TeamMemberModel>[].obs;
 
   final Rx<DepartmentModel?> selectedDepartment =
@@ -67,6 +73,8 @@ class Globalcontroller extends GetxController {
       pensionImages.addAll(imgs.map((e) => File(e.path)));
     }
   }
+
+
   Future<void> addPensionHelp() async {
     if (pensionTitleCtrl.text.isEmpty || pensionMainImage.value == null) {
       Get.snackbar("Error", "Title & main image required");
@@ -136,6 +144,152 @@ class Globalcontroller extends GetxController {
       Get.snackbar("Error", "Upload failed");
     }
   }
+
+
+
+  Future<void> addSamman() async {
+    if (pensionTitleCtrl.text.isEmpty || pensionMainImage.value == null) {
+      Get.snackbar("Error", "Title & main image required");
+      return;
+    }
+
+    try {
+      pensionUploading.value = true;
+
+      final dio = Dio();
+
+      // 🔥 FORCE MULTIPART
+      dio.options.headers["Content-Type"] = "multipart/form-data";
+      dio.options.headers["Accept"] = "application/json";
+
+      final formData = FormData();
+
+      // ---------- FIELDS ----------
+      formData.fields.addAll([
+        MapEntry("title", pensionTitleCtrl.text),
+        MapEntry("amount", pensionAmountCtrl.text),
+        MapEntry("page_description", pensionDescCtrl.text),
+        MapEntry("date", pensionDateCtrl.text),
+        MapEntry("status", "1"),
+      ]);
+
+      // ---------- MAIN IMAGE ----------
+      formData.files.add(
+        MapEntry(
+          "image",
+          await MultipartFile.fromFile(
+            pensionMainImage.value!.path,
+            filename: pensionMainImage.value!.path.split('/').last,
+          ),
+        ),
+      );
+
+      // ---------- MULTIPLE IMAGES (🔥 THIS NOW WORKS) ----------
+      for (File img in pensionImages) {
+        formData.files.add(
+          MapEntry(
+            "images[]", // 👈 CI4 expects this
+            await MultipartFile.fromFile(
+              img.path,
+              filename: img.path.split('/').last,
+            ),
+          ),
+        );
+      }
+
+      final res = await dio.post(
+        ServerConstants.addsamman,
+        data: formData,
+      );
+
+      pensionUploading.value = false;
+
+      if (res.data["status"] == true) {
+        clearPensionForm();
+        Get.back();
+        Get.snackbar("Success", res.data["message"]);
+      } else {
+        Get.snackbar("Failed", res.data["message"]);
+      }
+    } catch (e) {
+      pensionUploading.value = false;
+      Get.snackbar("Error", "Upload failed");
+    }
+  }
+
+
+  Future<void> addprotsahan() async {
+    if (pensionTitleCtrl.text.isEmpty || pensionMainImage.value == null) {
+      Get.snackbar("Error", "Title & main image required");
+      return;
+    }
+
+    try {
+      pensionUploading.value = true;
+
+      final dio = Dio();
+
+      // 🔥 FORCE MULTIPART
+      dio.options.headers["Content-Type"] = "multipart/form-data";
+      dio.options.headers["Accept"] = "application/json";
+
+      final formData = FormData();
+
+      // ---------- FIELDS ----------
+      formData.fields.addAll([
+        MapEntry("title", pensionTitleCtrl.text),
+        MapEntry("amount", pensionAmountCtrl.text),
+        MapEntry("page_description", pensionDescCtrl.text),
+        MapEntry("date", pensionDateCtrl.text),
+        MapEntry("status", "1"),
+      ]);
+
+      // ---------- MAIN IMAGE ----------
+      formData.files.add(
+        MapEntry(
+          "image",
+          await MultipartFile.fromFile(
+            pensionMainImage.value!.path,
+            filename: pensionMainImage.value!.path.split('/').last,
+          ),
+        ),
+      );
+
+      // ---------- MULTIPLE IMAGES (🔥 THIS NOW WORKS) ----------
+      for (File img in pensionImages) {
+        formData.files.add(
+          MapEntry(
+            "images[]", // 👈 CI4 expects this
+            await MultipartFile.fromFile(
+              img.path,
+              filename: img.path.split('/').last,
+            ),
+          ),
+        );
+      }
+
+      final res = await dio.post(
+        ServerConstants.addprotsahan,
+        data: formData,
+      );
+
+      pensionUploading.value = false;
+
+      if (res.data["status"] == true) {
+        clearPensionForm();
+        Get.back();
+        Get.snackbar("Success", res.data["message"]);
+      } else {
+        Get.snackbar("Failed", res.data["message"]);
+      }
+    } catch (e) {
+      pensionUploading.value = false;
+      Get.snackbar("Error", "Upload failed");
+    }
+  }
+
+
+
   void clearPensionForm() {
     pensionTitleCtrl.clear();
     pensionAmountCtrl.clear();
@@ -280,6 +434,8 @@ class Globalcontroller extends GetxController {
     await fetchsucessstories();
     await fetchsucesrecentini();
     await fetchsucespension();
+    await fetchsamman();
+    await fetchprotashan();
     await fetchStates();
   }
 
@@ -545,6 +701,7 @@ class Globalcontroller extends GetxController {
     }
   }
 
+
   Future<void> fetchsucespension() async {
     contactLoading.value = true;
     pensionlist.clear();
@@ -553,6 +710,39 @@ class Globalcontroller extends GetxController {
       if (data != null && data['status'] == true) {
         pensionlist.value = (data['data'] as List)
             .map((e) => PensionHelpModel.fromJson(e))
+            .toList();
+      }
+    } finally {
+      contactLoading.value = false;
+    }
+  }
+
+
+
+  Future<void> fetchsamman() async {
+    contactLoading.value = true;
+    sammanlist.clear();
+    try {
+      final data = await _safeGet(ServerConstants.sammanList);
+      if (data != null && data['status'] == true) {
+        sammanlist.value = (data['data'] as List)
+            .map((e) => SammanModel.fromJson(e))
+            .toList();
+      }
+    } finally {
+      contactLoading.value = false;
+    }
+  }
+
+
+  Future<void> fetchprotashan() async {
+    contactLoading.value = true;
+    protsahanlist.clear();
+    try {
+      final data = await _safeGet(ServerConstants.protsahanList);
+      if (data != null && data['status'] == true) {
+        protsahanlist.value = (data['data'] as List)
+            .map((e) => ProtsahanModel.fromJson(e))
             .toList();
       }
     } finally {
@@ -729,6 +919,123 @@ class Globalcontroller extends GetxController {
       Get.snackbar("Error", "Upload failed");
     }
   }
+
+
+  Future<void> uploadsammanImagess(String pensionId) async {
+    if (imagess.isEmpty) {
+      Get.snackbar("Error", "Please select images");
+      return;
+    }
+
+    try {
+      uploadingg.value = true;
+
+      final dio = Dio();
+      dio.options.headers["Content-Type"] = "multipart/form-data";
+      dio.options.headers["Accept"] = "application/json";
+
+      final formData = FormData();
+
+      // REQUIRED ID
+      formData.fields.add(
+        MapEntry("id", pensionId),
+      );
+
+
+      // 🔥 MULTIPLE IMAGES — MUST BE images[]
+      for (File img in imagess) {
+        formData.files.add(
+          MapEntry(
+            "images[]",
+            await MultipartFile.fromFile(
+              img.path,
+              filename: img.path.split('/').last,
+            ),
+          ),
+        );
+      }
+
+
+      final res = await dio.post(
+        ServerConstants.updatesamman,
+        data: formData,
+      );
+
+      uploadingg.value = false;
+
+      if (res.data["status"] == true) {
+        imagess.clear();
+        Get.back();
+
+        Get.snackbar("Success", res.data["message"]);
+      } else {
+        Get.snackbar("Failed", res.data["message"]);
+      }
+    } catch (e) {
+      uploadingg.value = false;
+      Get.snackbar("Error", "Upload failed");
+    }
+  }
+
+
+
+  Future<void> uploadprotasahanImagess(String pensionId) async {
+    if (imagess.isEmpty) {
+      Get.snackbar("Error", "Please select images");
+      return;
+    }
+
+    try {
+      uploadingg.value = true;
+
+      final dio = Dio();
+      dio.options.headers["Content-Type"] = "multipart/form-data";
+      dio.options.headers["Accept"] = "application/json";
+
+      final formData = FormData();
+
+      // REQUIRED ID
+      formData.fields.add(
+        MapEntry("id", pensionId),
+      );
+
+
+      // 🔥 MULTIPLE IMAGES — MUST BE images[]
+      for (File img in imagess) {
+        formData.files.add(
+          MapEntry(
+            "images[]",
+            await MultipartFile.fromFile(
+              img.path,
+              filename: img.path.split('/').last,
+            ),
+          ),
+        );
+      }
+
+
+      final res = await dio.post(
+        ServerConstants.updateprotsahan,
+        data: formData,
+      );
+
+      uploadingg.value = false;
+
+      if (res.data["status"] == true) {
+        imagess.clear();
+        Get.back();
+
+        Get.snackbar("Success", res.data["message"]);
+      } else {
+        Get.snackbar("Failed", res.data["message"]);
+      }
+    } catch (e) {
+      uploadingg.value = false;
+      Get.snackbar("Error", "Upload failed");
+    }
+  }
+
+
 }
 
 

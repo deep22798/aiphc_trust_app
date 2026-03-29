@@ -40,7 +40,8 @@ class _MembersState extends State<Members> {
           child: Obx(()=>Column(
               children: [
                 _header(),
-                authController.enablerole.value.toString()!="1"?SizedBox():_searchBar(),
+                // authController.enablerole.value.toString()!="1"?SizedBox():_searchBar(),
+                _searchBar(),
                 authController.enablerole.value.toString()!="1"?SizedBox(): _filtersAndTotal(),
                 Text("Total Members: ${_filteredMembers().length}",style: TextStyle(fontWeight: FontWeight.bold),),SizedBox(height: 10,),
                 Expanded(child: _memberList()),
@@ -230,15 +231,39 @@ class _MembersState extends State<Members> {
 
   // ================= AVATAR =================
   Widget _avatar(String photo) {
-    return CircleAvatar(
-      radius: 30,
-      backgroundColor: Colors.green.withOpacity(0.2),
-      backgroundImage: photo.isNotEmpty
-          ? NetworkImage("${ServerAssets.users}$photo")
-          : null,
-      child: photo.isEmpty
-          ? const Icon(Icons.person, size: 32, color: Colors.green)
-          : null,
+    return GestureDetector(
+      onTap: () {
+        if (photo.isNotEmpty) {
+          showDialog(
+            context: context,
+            builder: (_) => Dialog(
+              backgroundColor: Colors.transparent,
+              child: GestureDetector(
+                onTap: () => Navigator.pop(context), // close on tap
+                child: InteractiveViewer(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(
+                      "${ServerAssets.users}$photo",
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+      },
+      child: CircleAvatar(
+        radius: 30,
+        backgroundColor: Colors.green.withOpacity(0.2),
+        backgroundImage: photo.isNotEmpty
+            ? NetworkImage("${ServerAssets.users}$photo")
+            : null,
+        child: photo.isEmpty
+            ? const Icon(Icons.person, size: 32, color: Colors.green)
+            : null,
+      ),
     );
   }
 
@@ -277,7 +302,7 @@ class _MembersState extends State<Members> {
 
         // _infoRow(Icons.family_restroom, m.fatherHusband),
         _infoRow(Icons.work,"Category: ${m.category_name}"),
-        _infoRow(Icons.work,"work: ${m.occupation}"),
+        _infoRow(Icons.work,"Occupation: ${m.occupation}"),
         _infoRow(Icons.location_on, "State: ${m.state_name}"),
         // _infoRow(Icons.location_on, "District: ${m.district_name}"),
         // _infoRow(Icons.call, m.mobile),

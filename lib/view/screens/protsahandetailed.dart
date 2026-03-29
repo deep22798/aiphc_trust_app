@@ -2,28 +2,30 @@
 import 'package:aiphc/controllers/auth/login.dart';
 import 'package:aiphc/controllers/globalcontroller.dart';
 import 'package:aiphc/model/pensionhelp.dart';
+import 'package:aiphc/model/protsahanmodel.dart';
 import 'package:aiphc/utils/routes/serverassets.dart';
 import 'package:aiphc/view/widgets/appbar.dart';
+import 'package:aiphc/view/widgets/full_screen_image.dart';
 import 'package:aiphc/view/widgets/llivetimer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 
-import 'full_screen_image.dart';
 
-class PensionDetailScreen extends StatefulWidget {
-  final PensionHelpModel data;
+class ProtsahanDetailed extends StatefulWidget {
+  final ProtsahanModel data;
 
-  const PensionDetailScreen({
+
+  const ProtsahanDetailed({
     super.key,
     required this.data,
   });
 
   @override
-  State<PensionDetailScreen> createState() => _PensionDetailScreenState();
+  State<ProtsahanDetailed> createState() => _ProtsahanDetailedState();
 }
 
-class _PensionDetailScreenState extends State<PensionDetailScreen> {
+class _ProtsahanDetailedState extends State<ProtsahanDetailed> {
 
 
   @override
@@ -119,7 +121,7 @@ class _PensionDetailScreenState extends State<PensionDetailScreen> {
                     onPressed: controller.uploadingg.value
                         ? null
                         : () async {
-                      await controller.uploadImagess(pensionId);
+                      await controller.uploadprotasahanImagess(pensionId);
                       await controller.fetchsucespension();
                     },
                     child: controller.uploadingg.value

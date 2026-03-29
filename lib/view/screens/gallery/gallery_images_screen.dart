@@ -91,7 +91,7 @@ class _GalleryImagesScreenState extends State<GalleryImagesScreen> {
       }),
 
 
-      floatingActionButton: authcontroller.enablerole.value == 2?SizedBox(): FloatingActionButton(
+      floatingActionButton: authcontroller.enablerole.value != 1?SizedBox(): FloatingActionButton(
         onPressed: () {
           _openAddImageSheet(context);
         },

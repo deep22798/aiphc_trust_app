@@ -224,45 +224,51 @@ class _RecentHelpState extends State<RecentHelp> {
     final authcontroller = Get.find<AuthController>();
     return Scaffold(
       appBar: CustomeAppBar(title: "Vittiya Sahayata (वित्तीय सहायता)"),
-       floatingActionButton: authcontroller.enablerole.value == 2?SizedBox():  FloatingActionButton(
+       floatingActionButton: authcontroller.enablerole.value != 1?SizedBox():  FloatingActionButton(
           onPressed: () {
             _openAddInitiativeSheet(context);
           },
           child: const Icon(Icons.add),
         ),
-      body: Obx(() {
-        if (controller.contactLoading.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
+      body: RefreshIndicator(
+        onRefresh: ()async{
+          await controller.fetchsucesrecentini();
+        },
 
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            int columns = 1;
+        child: Obx(() {
+          if (controller.contactLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-            if (constraints.maxWidth >= 1200) {
-              columns = 3;
-            } else if (constraints.maxWidth >= 700) {
-              columns = 2;
-            }
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              int columns = 1;
 
-            return GridView.builder(
-              padding: const EdgeInsets.all(16),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 5,
-                mainAxisSpacing: 5,
-                childAspectRatio: 0.65,
-              ),
-              itemCount: controller.recentiniti.length,
-              itemBuilder: (context, index) {
-                return SuccessGridCard(
-                  data: controller.recentiniti[index],
-                );
-              },
-            );
-          },
-        );
-      }),
+              if (constraints.maxWidth >= 1200) {
+                columns = 3;
+              } else if (constraints.maxWidth >= 700) {
+                columns = 2;
+              }
+
+              return GridView.builder(
+                padding: const EdgeInsets.all(16),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 5,
+                  mainAxisSpacing: 5,
+                  childAspectRatio: 0.65,
+                ),
+                itemCount: controller.recentiniti.length,
+                itemBuilder: (context, index) {
+                  return SuccessGridCard(
+                    data: controller.recentiniti[index],
+                  );
+                },
+              );
+            },
+          );
+        }),
+      ),
     );
   }
 }
@@ -320,6 +326,69 @@ class SuccessGridCard extends StatelessWidget {
             const SizedBox(height: 8),
 
             LiveTimer(startTime: data.dateCreated),
+          ],
+        ),
+      ),
+    );
+
+  }
+}
+
+
+
+class SuccessGridCard2 extends StatelessWidget {
+  final RecentInitiativeModel data;
+
+  const SuccessGridCard2({
+    super.key,
+    required this.data,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(14),
+      onTap: () {
+        Get.to(
+              () => RecentInitiativeDetailScreen(data: data),
+        );
+      },
+      child: Card(
+        color: theme.cardColor,
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Column(
+          children: [
+
+
+            ClipRRect(
+              borderRadius:
+              const BorderRadius.vertical(top: Radius.circular(14)),
+              child: Image.network(
+                '${ServerAssets.recent}${data.image}',
+                height: 80,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            Text(
+              data.title,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,fontSize: 13
+              ),
+            ),
+
+            const SizedBox(height: 8),
+
+            // LiveTimer(startTime: data.dateCreated),
           ],
         ),
       ),

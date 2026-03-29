@@ -7,6 +7,7 @@ import 'package:aiphc/controllers/globalcontroller.dart';
 import 'package:aiphc/controllers/paymentcontroller.dart';
 import 'package:aiphc/controllers/phonepaycontroller.dart';
 import 'package:aiphc/controllers/screens/bannercontroller.dart';
+import 'package:aiphc/controllers/screens/gallery.dart';
 import 'package:aiphc/controllers/screens/memberscontroller.dart';
 import 'package:aiphc/controllers/trackcontroller.dart';
 import 'package:aiphc/model/myteam.dart';
@@ -22,6 +23,7 @@ import 'package:aiphc/view/screens/contactus.dart';
 import 'package:aiphc/view/screens/emergencymap.dart';
 import 'package:aiphc/view/screens/emergencyuserslist.dart';
 import 'package:aiphc/view/screens/gallery/gallery.dart';
+import 'package:aiphc/view/screens/gallery/gallery_images_screen.dart';
 import 'package:aiphc/view/screens/kanyadaanscreen.dart';
 import 'package:aiphc/view/screens/kanyaddan.dart';
 import 'package:aiphc/view/screens/members/member.dart';
@@ -29,7 +31,9 @@ import 'package:aiphc/view/screens/payments.dart';
 import 'package:aiphc/view/screens/pensionhelpscreen.dart';
 import 'package:aiphc/view/screens/process/process.dart';
 import 'package:aiphc/view/screens/profile.dart';
+import 'package:aiphc/view/screens/protsahan.dart';
 import 'package:aiphc/view/screens/recentiniti.dart';
+import 'package:aiphc/view/screens/sammanscreeen.dart';
 import 'package:aiphc/view/screens/supportquries.dart';
 import 'package:aiphc/view/screens/verifidkanyadaan.dart';
 import 'package:aiphc/view/widgets/marquee.dart';
@@ -72,6 +76,7 @@ class _DashboardState extends State<Dashboard> {
 
   final phonePeAuthController = Get.find<PhonePeController>();
   final global = Get.find<Globalcontroller>();
+  final gallerycontroller = Get.find<GalleryController>();
 
   final EmergencyController emergencyController =
   Get.put(EmergencyController());
@@ -250,7 +255,7 @@ class _DashboardState extends State<Dashboard> {
                       child: Text(
                         "${authcontroller.enablerole.value == 1
                             ? "Welcome, ${authcontroller.adminData.value?.name}\nआपका स्वागत है, ${authcontroller.adminData.value?.name}"
-                            : authcontroller.enablerole.value == 2
+                            : authcontroller.enablerole.value != 1
                             ? "Welcome, ${authcontroller.usermodel.value?.name}\nआपका स्वागत है, ${authcontroller.usermodel.value?.name}"
                             : ""}",
                         style: TextStyle(
@@ -834,7 +839,17 @@ class _DashboardState extends State<Dashboard> {
                   Get.to(() => RecentHelp());
                 } else if (item["icon"] == "help") {
                   Get.to(() => PensionHelpScreeen());
-                } else if (item["icon"] == "donate") {
+                } else if (item["icon"] == "Samman") {
+                  print("djkbvjksdbjkvsdjkvjkbv");
+                  Get.to(()=>SammanHelpScreen());
+                  // await authcontroller.updateFcmToken("dfkjsdbjkjkbjkbjKBJBJBJBJKBjkbBKJBjkbKBkbJKKJbk");
+                }
+                else if (item["icon"] == "protsahan") {
+                  print("djkbvjksdbjkvsdjkvjkbv");
+                  Get.to(()=>Protsahan());
+                  // await authcontroller.updateFcmToken("dfkjsdbjkjkbjkbjKBJBJBJBJKBjkbBKJBjkbKBkbJKKJbk");
+                }
+                else if (item["icon"] == "donate") {
                   print("djkbvjksdbjkvsdjkvjkbv");
                   Get.to(()=>DonationList());
                   // await authcontroller.updateFcmToken("dfkjsdbjkjkbjkbjKBJBJBJBJKBjkbBKJBjkbKBkbJKKJbk");
@@ -1266,14 +1281,6 @@ class _DashboardState extends State<Dashboard> {
               return matchesSearch && matchesStatus;
             }).toList();
 
-            if (filteredList.isEmpty) {
-              return Center(
-                child: Text(
-                  'कोई टीम सदस्य उपलब्ध नहीं है',
-                  style: theme.textTheme.bodyMedium,
-                ),
-              );
-            }
 
             return Padding(
               padding: EdgeInsets.symmetric(
@@ -1283,12 +1290,7 @@ class _DashboardState extends State<Dashboard> {
               child: Column(
                 children: [
                   // 📊 STATS
-                  authcontroller.enablerole.value.toString()!="1"?SizedBox():_statsHeader(theme, controller.myteamlist),
-
-                  authcontroller.enablerole.value.toString()!="1"?SizedBox():const SizedBox(height: 16),
-
-                  // 🔍 SEARCH + FILTER
-                authcontroller.enablerole.value.toString()!="1"?SizedBox():Row(
+                  authcontroller.enablerole.value.toString()!="1"?SizedBox():Row(
                     children: [
                       Expanded(
                         child: TextField(
@@ -1306,7 +1308,8 @@ class _DashboardState extends State<Dashboard> {
                         ),
                       ),
                       authcontroller.enablerole.value.toString()!="1"?SizedBox():const SizedBox(width: 12),
-                      authcontroller.enablerole.value.toString()!="1"?SizedBox():DropdownButton<String>(
+                      authcontroller.enablerole.value.toString()!="1"?SizedBox():
+                      DropdownButton<String>(
                         value: controller.statusFilter.value,
                         underline: const SizedBox(),
                         items: const [
@@ -1325,9 +1328,25 @@ class _DashboardState extends State<Dashboard> {
                     ],
                   ),
 
-                  authcontroller.enablerole.value.toString()!="1"?SizedBox():const SizedBox(height: 16),
-Text("Team"),
+                  authcontroller.enablerole.value.toString()!="1"?SizedBox():_statsHeader(theme, controller.myteamlist),
+
+                  authcontroller.enablerole.value.toString()!="1"?SizedBox():const SizedBox(height: 0),
+
+                  // 🔍 SEARCH + FILTER
+
+
+                  authcontroller.enablerole.value.toString()!="1"?SizedBox():const SizedBox(height: 0),
+Text("Our Team"),
                   // 📋 LIST / GRID
+
+                  filteredList.isEmpty?Expanded(
+                    child: Center(
+                      child: Text(
+                        'कोई टीम सदस्य उपलब्ध नहीं है',
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                    ),
+                  ):
                   Expanded(
                     child: isWeb
                         ? GridView.builder(
@@ -1396,23 +1415,41 @@ Text("Team"),
           ),
           child: Row(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  "${ServerAssets.baseUrl}/admin/${m.image}",
-                  width: 60,
-                  height: 60,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) =>
-                      Container(
-                        width: 60,
-                        height: 60,
-                        color: theme.colorScheme.primary.withOpacity(0.15),
-                        child: Icon(
-                            Icons.person, color: theme.colorScheme.primary),
-                      ),
-                ),
+              GestureDetector(
+              onTap: () {
+        showDialog(
+        context: context,
+        builder: (_) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: InteractiveViewer(
+        child: Image.network(
+        "${ServerAssets.baseUrl}/admin/${m.image}",
+        fit: BoxFit.contain,
+        errorBuilder: (_, __, ___) => const Icon(Icons.error),
+        ),
+        ),
+        ),
+        ),
+        );
+        },
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.network(
+              "${ServerAssets.baseUrl}/admin/${m.image}",
+              width: 60,
+              height: 60,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Container(
+                width: 60,
+                height: 60,
+                color: theme.colorScheme.primary.withOpacity(0.15),
+                child: Icon(Icons.person, color: theme.colorScheme.primary),
               ),
+            ),
+          ),
+        ),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
@@ -1624,25 +1661,25 @@ Text("Team"),
                   padding: const EdgeInsets.all(20),
                   child: Column(
                     children: [
-                      _detailTile(theme, Icons.map, 'State', m.stateId),
+                      _detailTile(theme, Icons.map, 'State', m.state_name),
                       _detailTile(
                         theme,
                         Icons.location_city,
                         'District',
-                        m.districtId,
+                        m.district_name,
                       ),
-                      _detailTile(
-                        theme,
-                        Icons.calendar_today,
-                        'Created',
-                        m.dateCreated.toString(),
-                      ),
-                      _detailTile(
-                        theme,
-                        Icons.update,
-                        'Updated',
-                        m.dateUpdated.toString(),
-                      ),
+                      // _detailTile(
+                      //   theme,
+                      //   Icons.calendar_today,
+                      //   'Created',
+                      //   m.dateCreated.toString(),
+                      // ),
+                      // _detailTile(
+                      //   theme,
+                      //   Icons.update,
+                      //   'Updated',
+                      //   m.dateUpdated.toString(),
+                      // ),
                     ],
                   ),
                 ),
@@ -2057,11 +2094,8 @@ Text("Team"),
                         Obx(() {
                           bool isEnabled =
                               autopaycontroller.subscriptionstatus.value == "ACTIVE";
-
                           return Switch(
                             value: isEnabled,
-
-
                             onChanged: (value) async {
                               if (value) {
                                 /// 🔥 ON karne pe (optional)
@@ -2475,7 +2509,437 @@ Text("Team"),
                               ),
                             ),
                           ),
-                          _list(context),
+
+
+                          Container(
+                            color: Colors.green.shade900,
+                            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+
+                                  padding: const EdgeInsets.only(left: 15),
+                                  child: Text("वित्तीय सहायता (Vittiya Sahayata)",style: TextStyle(color: Colors.white),),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: MaterialButton(color: Colors.white,onPressed: (){Get.to(()=>RecentHelp());},child: Text("See All (सभी देखें)",style: TextStyle(color: Colors.green.shade900))),
+                                ),
+
+                              ],
+                            ),
+                          ),
+
+                          Obx(() {
+                            if (global.contactLoading.value) {
+                              return const Center(child: CircularProgressIndicator());
+                            }
+
+                            return LayoutBuilder(
+                              builder: (context, constraints) {
+                                int columns = 1;
+
+                                if (constraints.maxWidth >= 1200) {
+                                  columns = 3;
+                                } else if (constraints.maxWidth >= 700) {
+                                  columns = 2;
+                                }
+
+                                return GridView.builder(
+                                  padding: const EdgeInsets.all(16),physics: NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3,
+                                    crossAxisSpacing: 5,
+                                    mainAxisSpacing: 5,
+                                    childAspectRatio: 1,
+                                  ),
+                                  itemCount: 3,
+                                  itemBuilder: (context, index) {
+
+                                    return SuccessGridCard2(
+                                      data: global.recentiniti[index],
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          }),
+
+                          Container(
+                            color: Colors.green.shade900,
+                            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+
+                                  padding: const EdgeInsets.only(left: 15),
+                                  child: Text("पेंशन सहायता (Pension Sahayata)",style: TextStyle(color: Colors.white),),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: MaterialButton(color:Colors.white,onPressed: (){Get.to(()=>PensionHelpScreeen());},child: Text("See All (सभी देखें)",style: TextStyle(color: Colors.green.shade900))),
+                                ),
+
+                              ],
+                            ),
+                          ),
+
+                          Obx(() {
+                            if (global.contactLoading.value) {
+                              return const Center(child: CircularProgressIndicator());
+                            }
+
+                            return LayoutBuilder(
+                              builder: (context, constraints) {
+                                int columns = 1;
+
+                                if (constraints.maxWidth >= 1200) {
+                                  columns = 3;
+                                } else if (constraints.maxWidth >= 700) {
+                                  columns = 2;
+                                }
+
+                                return GridView.builder(
+                                  padding: const EdgeInsets.all(16),physics: NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount:  3,
+                                    crossAxisSpacing: 5,
+                                    mainAxisSpacing: 5,
+                                    childAspectRatio: 1,
+                                  ),
+                                  itemCount: global.pensionlist.length>3?3:global.pensionlist.length,
+                                  itemBuilder: (context, index) {
+                                    return PensionHelpScreeenGrid2(
+                                      data: global.pensionlist[index],
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          }),
+
+                          Container(
+                            color: Colors.green.shade900,
+                            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+
+                                  padding: const EdgeInsets.only(left: 15),
+                                  child: Text("सम्मान (Samman)",style: TextStyle(color: Colors.white),),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: MaterialButton(color:Colors.white,onPressed: (){Get.to(()=>SammanHelpScreen());},child: Text("See All (सभी देखें)",style: TextStyle(color: Colors.green.shade900))),
+                                ),
+
+                              ],
+                            ),
+                          ),
+
+                          Obx(() {
+                            if (global.contactLoading.value) {
+                              return const Center(child: CircularProgressIndicator());
+                            }
+
+                            return LayoutBuilder(
+                              builder: (context, constraints) {
+                                int columns = 1;
+
+                                if (constraints.maxWidth >= 1200) {
+                                  columns = 3;
+                                } else if (constraints.maxWidth >= 700) {
+                                  columns = 2;
+                                }
+
+                                return GridView.builder(
+                                  padding: const EdgeInsets.all(16),physics: NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount:  3,
+                                    crossAxisSpacing: 5,
+                                    mainAxisSpacing: 5,
+                                    childAspectRatio: 1,
+                                  ),
+                                  itemCount: global.sammanlist.length>3?3:global.sammanlist.length,
+                                  itemBuilder: (context, index) {
+                                    return SammanHelpScreenGrid2(
+                                      data: global.sammanlist[index],
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          }),
+
+
+                          Container(
+                            color: Colors.green.shade900,
+                            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+
+                                  padding: const EdgeInsets.only(left: 15),
+                                  child: Text("प्रोत्साहन (Protsahan)",style: TextStyle(color: Colors.white),),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: MaterialButton(color:Colors.white,onPressed: (){Get.to(()=>Protsahan());},child: Text("See All (सभी देखें)",style: TextStyle(color: Colors.green.shade900))),
+                                ),
+
+                              ],
+                            ),
+                          ),
+
+                          Obx(() {
+                            if (global.contactLoading.value) {
+                              return const Center(child: CircularProgressIndicator());
+                            }
+
+                            return LayoutBuilder(
+                              builder: (context, constraints) {
+                                int columns = 1;
+
+                                if (constraints.maxWidth >= 1200) {
+                                  columns = 3;
+                                } else if (constraints.maxWidth >= 700) {
+                                  columns = 2;
+                                }
+
+                                return GridView.builder(
+                                  padding: const EdgeInsets.all(16),physics: NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount:  3,
+                                    crossAxisSpacing: 5,
+                                    mainAxisSpacing: 5,
+                                    childAspectRatio: 1,
+                                  ),
+                                  itemCount: global.protsahanlist.length>3?3:global.protsahanlist.length,
+                                  itemBuilder: (context, index) {
+                                    return ProtsahanGrid2(
+                                      data: global.protsahanlist[index],
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          }),
+
+                          Container(
+                            color: Colors.green.shade900,
+                            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+
+                                  padding: const EdgeInsets.only(left: 15),
+                                  child: Text("गैलरी (Gallery)",style: TextStyle(color: Colors.white),),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: MaterialButton(onPressed: (){Get.to(()=>Gallery());},child: Text("See All (सभी देखें)",style: TextStyle(color: Colors.green.shade900)),color: Colors.white,),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          Obx(() {
+                            if (global.contactLoading.value) {
+                              return const Center(child: CircularProgressIndicator());
+                            }
+
+                            return LayoutBuilder(
+                              builder: (context, constraints) {
+                                int columns = 1;
+
+                                if (constraints.maxWidth >= 1200) {
+                                  columns = 3;
+                                } else if (constraints.maxWidth >= 700) {
+                                  columns = 2;
+                                }
+                                return GridView.builder(
+                                  padding: const EdgeInsets.all(16),
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3,
+                                    mainAxisSpacing: 16,
+                                    crossAxisSpacing: 16,
+                                    childAspectRatio: 0.9,
+                                  ),
+                                  itemCount: gallerycontroller.gallery.length>3?3:gallerycontroller.gallery.length,
+                                  itemBuilder: (context, index) {
+                                    final album = gallerycontroller.gallery[index];
+
+
+                                    return InkWell(
+                                      borderRadius: BorderRadius.circular(16),
+                                      onTap: () {
+                                        Get.to(
+                                              () => GalleryImagesScreen(
+                                            albumId: album.id,
+                                            albumTitle: album.title,
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context).cardColor,
+                                          borderRadius: BorderRadius.circular(16),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Theme.of(context).shadowColor.withOpacity(0.12),
+                                              blurRadius: 6,
+                                              offset: const Offset(0, 4),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Expanded(
+                                              child: ClipRRect(
+                                                borderRadius: const BorderRadius.vertical(
+                                                  top: Radius.circular(16),
+                                                ),
+                                                child: Image.network(
+                                                  ServerAssets.gallery + album.coverImage,
+                                                  fit: BoxFit.cover,
+                                                  errorBuilder: (_, __, ___) =>
+                                                  const Icon(Icons.broken_image),
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(10),
+                                              child: Text(
+                                                album.title,
+                                                textAlign: TextAlign.center,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          }),
+                          Container(
+                            color: Colors.green.shade900,
+                            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+
+                                  padding: const EdgeInsets.only(left: 15),
+                                  child: Text("Our Members",style: TextStyle(color: Colors.white),),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(right:8.0),
+                                  child: MaterialButton(color:Colors.white,onPressed: (){Get.to(()=>Members());},child: Text("See All (सभी देखें)",style: TextStyle(color: Colors.green.shade900))),
+                                ),
+
+                              ],
+                            ),
+                          ),
+
+                          Obx(() {
+                            if (mebercn.isLoading.value) {
+                              return const Center(child: CircularProgressIndicator());
+                            }
+
+                            return LayoutBuilder(
+                              builder: (context, constraints) {
+                                int columns = 1;
+
+                                if (constraints.maxWidth >= 1200) {
+                                  columns = 3;
+                                } else if (constraints.maxWidth >= 700) {
+                                  columns = 2;
+                                }
+                                return GridView.builder(
+                                  padding: const EdgeInsets.all(16),
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3,
+                                    mainAxisSpacing: 16,
+                                    crossAxisSpacing: 16,
+                                    childAspectRatio: 0.9,
+                                  ),
+                                  itemCount: mebercn.members.length>9?9:mebercn.members.length,
+                                  itemBuilder: (context, index) {
+                                    final album = mebercn.members[index];
+                                    return InkWell(
+                                      borderRadius: BorderRadius.circular(16),
+                                      onTap: () {
+                                        Get.to(
+                                              () => Members(),
+                                        );
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context).cardColor,
+                                          borderRadius: BorderRadius.circular(16),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Theme.of(context).shadowColor.withOpacity(0.12),
+                                              blurRadius: 6,
+                                              offset: const Offset(0, 4),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Expanded(
+                                              child: ClipRRect(
+                                                borderRadius: const BorderRadius.vertical(
+                                                  top: Radius.circular(16),
+                                                ),
+                                                child: Image.network(
+
+                                                  ServerAssets.users + album.userPhoto,
+                                                  fit: BoxFit.cover,
+                                                  errorBuilder: (_, __, ___) =>
+                                                  const Icon(Icons.broken_image),
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(10),
+                                              child: Text(
+                                                album.name,
+                                                textAlign: TextAlign.center,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          }),
+                          // _memberList()
+
+
+                          // _list(context),
+
+
+
+
+
+
 
                           // authcontroller.enablerole.value!=0?_list2(context):_list(context),
                         ],
@@ -2494,6 +2958,168 @@ Text("Team"),
     );
   }
 
+
+  // ================= AVATAR =================
+  Widget _avatar(String photo) {
+    return GestureDetector(
+      onTap: () {
+        if (photo.isNotEmpty) {
+          showDialog(
+            context: context,
+            builder: (_) => Dialog(
+              backgroundColor: Colors.transparent,
+              child: GestureDetector(
+                onTap: () => Navigator.pop(context), // close on tap
+                child: InteractiveViewer(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(
+                      "${ServerAssets.users}$photo",
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+      },
+      child: CircleAvatar(
+        radius: 30,
+        backgroundColor: Colors.green.withOpacity(0.2),
+        backgroundImage: photo.isNotEmpty
+            ? NetworkImage("${ServerAssets.users}$photo")
+            : null,
+        child: photo.isEmpty
+            ? const Icon(Icons.person, size: 32, color: Colors.green)
+            : null,
+      ),
+    );
+  }
+
+
+
+  Widget _memberList() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Obx(() {
+      if (mebercn.bannerloading.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      final filtered = mebercn.members;
+
+      if (filtered.isEmpty) {
+        return const Center(child: Text("No members found"));
+      }
+
+      return ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: filtered.length,
+        itemBuilder: (_, index) {
+          final m = filtered[index];
+
+          return Container(
+            margin: const EdgeInsets.only(bottom: 14),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              color: theme.cardColor,
+              boxShadow: [
+                BoxShadow(
+                  color: isDark
+                      ? Colors.black.withOpacity(0.6)
+                      : Colors.black.withOpacity(0.12),
+                  blurRadius: 14,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(14),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _avatar(m.userPhoto),
+                  const SizedBox(width: 14),
+                  // Expanded(child: _memberInfo(m)),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    });
+  }
+
+
+  Widget _memberInfo(dynamic m) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                "Name: "+ m.name,
+                style: const TextStyle(
+                    fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+            Column(
+              children: [
+                // _statusBadge(m.status),
+                // authController.enablerole.toString()!="1"?SizedBox(): IconButton(onPressed: ()=>Get.to(()=>EditMemberDetails(member: m)), icon: Icon(Icons.edit))
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text("F/H. name: ${m.fatherHusband}",
+            style:
+            const TextStyle(fontWeight: FontWeight.w600, color: Colors.black)),
+        const SizedBox(height: 4),
+        Text("ID: AIPVST${m.id}",
+            style:
+            const TextStyle(fontWeight: FontWeight.w600, color: Colors.green)),
+
+        const SizedBox(height: 4),
+
+        // _infoRow(Icons.family_restroom, m.fatherHusband),
+        _infoRow(Icons.work,"Category: ${m.category_name}"),
+        _infoRow(Icons.work,"Occupation: ${m.occupation}"),
+        _infoRow(Icons.location_on, "State: ${m.state_name}"),
+        // _infoRow(Icons.location_on, "District: ${m.district_name}"),
+        // _infoRow(Icons.call, m.mobile),
+        _infoRow(
+          Icons.calendar_today,
+          _formatDate(m.dateCreated),
+        ),
+
+      ],
+    );
+  }
+  Widget _infoRow(IconData icon, String text) {
+    if (text.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: Row(
+        children: [
+          Icon(icon, size: 14, color: Colors.green),
+          const SizedBox(width: 6),
+          Expanded(child: Text(text)),
+        ],
+      ),
+    );
+  }
+
+  String _formatDate(String date) {
+    final dt = DateTime.parse(date);
+    return "${dt.day.toString().padLeft(2, '0')}-"
+        "${dt.month.toString().padLeft(2, '0')}-"
+        "${dt.year}";
+  }
   void _showImagePopup(BuildContext context, String imageUrl, TeamMemberModel m) {
     showDialog(
       context: context,
@@ -2589,6 +3215,7 @@ Text("Team"),
     TextEditingController nameController = TextEditingController();
     TextEditingController mobileController = TextEditingController();
     TextEditingController messageController = TextEditingController();
+    TextEditingController purposeController = TextEditingController();
     TextEditingController amountController = TextEditingController();
 
 
@@ -2668,6 +3295,18 @@ Text("Team"),
                     SizedBox(height: 15),
 
                     /// Message
+                    TextFormField(
+                      controller: purposeController,
+                      // maxLines: 3,
+                      decoration: InputDecoration(
+                        labelText: "Purpose",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),SizedBox(height: 15),
+
+                    /// Message
                     authcontroller.enablerole!=0?SizedBox():TextFormField(
                       controller: messageController,
                       maxLines: 3,
@@ -2693,6 +3332,7 @@ Text("Team"),
                           ),
                         ),
                         onPressed: () async{
+
                             setState(() {
                               isload=true;
                             });
@@ -2702,9 +3342,9 @@ Text("Team"),
                             await phonePeAuthController.startTransaction(int.parse(payAmount.toString()));
 
                             if(phonePeAuthController.paymentsuccess.value.toString()=="1"){
-
-                              if(authcontroller.enablerole!=0) {
+                              // if(authcontroller.enablerole!=0) {
                                 await phonePeAuthController.uploadPaymentData(type: 'DONATION',
+
                                     amount: payAmount.toString(),
                                     orderId: phonePeAuthController.orderid
                                         .toString(),
@@ -2717,23 +3357,46 @@ Text("Team"),
                                     screenshotPhoto: '',
                                     mop: 'donation');
                                 phonePeAuthController.paymentsuccess.value.toString()=="0";
-                              }else{
+                              // }else{
 
-                                if (_formKey.currentState!.validate()) {
-                                  await controller.addDonationSimple(
-                                      nameController.text,
-                                      mobileController.text,
-                                      messageController.text,
-                                      phonePeAuthController.orderid
-                                          .toString(),
-                                      phonePeAuthController.orderid
-                                          .value.toString(),
-                                      phonePeAuthController.paymentstatus
-                                          .value.toString(),
-                                      amountController.text);
-                                  phonePeAuthController.paymentsuccess.value.toString()=="0";
-                                }
-                              }
+
+if(authcontroller.enablerole==0) {
+  if (_formKey.currentState!.validate()) {
+    await controller.addDonationSimple(
+       nameController.text,
+        mobileController.text,
+        messageController.text,
+        phonePeAuthController.orderid
+            .toString(),
+        phonePeAuthController.orderid
+            .value.toString(),
+        phonePeAuthController.paymentstatus
+            .value.toString(),
+        amountController.text,
+        purposeController.text
+
+    );
+    phonePeAuthController.paymentsuccess.value.toString() == "0";
+  }
+}else {
+  await controller.addDonationSimple(
+      authcontroller.usermodel.value?.name ?? "",
+      authcontroller.usermodel.value?.mobile ?? "",
+      messageController.text ?? "",
+      phonePeAuthController.orderid
+          .toString(),
+      phonePeAuthController.orderid
+          .value.toString(),
+      phonePeAuthController.paymentstatus
+          .value.toString(),
+      amountController.text,
+      purposeController.text
+
+  );
+}
+
+
+                              // }
                               await paymentsController.fetchPayments(memberId: authcontroller.usermodel.value?.id.toString()??"");
 
                               // Get.back();
@@ -3048,7 +3711,7 @@ Text("Team"),
     }else{
       authcontroller.adminData.value=null;
 
-      autopaycontroller.AutopayStatus(authcontroller.enablerole.value == 2?authcontroller.usermodel.value?.subscriptionId.toString()??"":"");
+      autopaycontroller.AutopayStatus(authcontroller.enablerole.value != 1?authcontroller.usermodel.value?.subscriptionId.toString()??"":"");
 
     }
       if (authcontroller.usermodel.value?.is_emergency.toString() == "1") {
@@ -3116,12 +3779,17 @@ Text("Team"),
 }
 
 // ================= PREVIEW =================
-class BannerPreview extends StatelessWidget {
+class BannerPreview extends StatefulWidget {
   final String image;
   final String tag;
 
   const BannerPreview({super.key, required this.image, required this.tag});
 
+  @override
+  State<BannerPreview> createState() => _BannerPreviewState();
+}
+
+class _BannerPreviewState extends State<BannerPreview> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -3130,8 +3798,10 @@ class BannerPreview extends StatelessWidget {
         onTap: () => Navigator.pop(context),
         child: Center(
           child: Hero(
-            tag: tag,
-            child: Image.network(image, fit: BoxFit.contain),
+            tag:"",
+
+            // tag: widget.tag,
+            child: Image.network(widget.image, fit: BoxFit.contain),
           ),
         ),
       ),

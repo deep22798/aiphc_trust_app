@@ -499,9 +499,10 @@ var orderstatus="".obs;
       print("Subscription State: $state");
       // print("SubscriptionId: $subscriptionId");
 
+
       if(state.toString()=="ACTIVE"){
-        await updateSubscription(memberId: memberId,merchantsubscriptionid: subscriptionId.toString(), subscriptionId: merchantSubId.value, autopayStatus: state.toString());
-        await uploadPaymentData(aadhar: aadhar.toString(), amount: amount.toString(), orderId: orderId.value.toString(), transactionId: transactionid.value.toString(), status: state.toString(), mop: 'autopay_subscription');
+        await updateSubscription(memberId: memberId,merchantsubscriptionid: subscriptionId.toString(), subscriptionId: merchantSubId.value, autopayStatus: state.toString()=="ACTIVE"?"1":"0");
+        await uploadPaymentData(aadhar: aadhar.toString(), amount: amount.toString(), orderId: orderId.value.toString(), transactionId: transactionid.value.toString(), status: state.toString()=="ACTIVE"?"SUCCESS":"", mop: 'autopay_subscription');
 
       }
 
@@ -510,6 +511,9 @@ var orderstatus="".obs;
       print("Subscription Error: $e");
     }
   }
+
+
+
 
 
 
@@ -660,7 +664,7 @@ var orderstatus="".obs;
           "year": year,
           "date": date,
           "mop": mop,
-          "type": "AUTOPAY",
+          "type": "SETUP",
           "amount": amount,
           "screenshot_photo": screenshotPhoto,
           "order_id": orderId,

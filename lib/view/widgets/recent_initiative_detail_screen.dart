@@ -138,7 +138,7 @@ class _RecentInitiativeDetailScreenState extends State<RecentInitiativeDetailScr
     final authcontroller = Get.find<AuthController>();
     return Scaffold(
       appBar: CustomeAppBar(title: widget.data.title),
-      floatingActionButton: authcontroller.enablerole.value == 2?SizedBox():  FloatingActionButton(
+      floatingActionButton: authcontroller.enablerole.value != 1?SizedBox():  FloatingActionButton(
         onPressed: () {
           _openAddMoreImagesSheet(context);
         },

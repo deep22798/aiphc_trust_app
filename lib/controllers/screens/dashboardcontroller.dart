@@ -110,9 +110,11 @@ class DashboardController extends GetxController {
       String txnid,
       String status,
       String amount,
+      String purpose,
       ) async {
     try {
 
+      print('objectdsglkndskgnl : ${name.toString()}  ${mobile.toString()}  ${message.toString()}  ${orderid.toString()}  ${txnid.toString()}  ${status.toString()}  ${amount.toString()}  ${purpose.toString()}     ');
       final response = await Dio().post(
         ServerConstants.adddonations,
         data: jsonEncode({
@@ -122,6 +124,7 @@ class DashboardController extends GetxController {
           "message": message,
           "amount": amount,
           "status": status,
+          "purpose": purpose,
           "transaction_id": txnid,
         }),
         options: Options(
@@ -302,7 +305,8 @@ class DashboardController extends GetxController {
   final listItems = const [
     {"icon": "vhelp", "label": "वित्तीय सहायता\nVittiya Sahayata"},
     {"icon": "help", "label": "पेंशन सहायता\nPension Help"},
-    // {"icon": "donate", "label": "दान\nDonation"},
+    {"icon": "Samman", "label": "सम्मान\Samman"},
+    {"icon": "protsahan", "label": "प्रोत्साहनx`\Protsahan"},
   ];
 
   final listItems2 = const [
