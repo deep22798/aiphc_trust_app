@@ -82,8 +82,8 @@ android {
         applicationId = "com.wintechwings.aipvst"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = 4
-        versionName = "3.0.0"
+        versionCode = 5
+        versionName = "4.0.0"
     }
 
 

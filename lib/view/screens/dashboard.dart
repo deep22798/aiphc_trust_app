@@ -3767,11 +3767,13 @@ if(authcontroller.enablerole==0) {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 
-        body: LayoutBuilder(
-          builder: (context, constraints) {
-            final isWeb = constraints.maxWidth >= 1000;
-            return _bodyByIndex(context, isWeb);
-          },
+        body: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final isWeb = constraints.maxWidth >= 1000;
+              return _bodyByIndex(context, isWeb);
+            },
+          ),
         ),
       ),
     );
