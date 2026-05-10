@@ -20,6 +20,7 @@ class _MembersState extends State<Members> {
   final TextEditingController searchController = TextEditingController();
   final RxString searchQuery = ''.obs;
   final RxInt statusFilter = 0.obs; // 0=All, 1=Active, 2=Inactive
+  RxInt autoPayFilter = 0.obs; // 0=All, 1=Active, 2=Inactive
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +43,7 @@ class _MembersState extends State<Members> {
                 _header(),
                 // authController.enablerole.value.toString()!="1"?SizedBox():_searchBar(),
                 _searchBar(),
+                authController.enablerole.value.toString()!="1"?SizedBox():_statsRow(),
                 authController.enablerole.value.toString()!="1"?SizedBox(): _filtersAndTotal(),
                 Text("Total Members: ${_filteredMembers().length}",style: TextStyle(fontWeight: FontWeight.bold),),SizedBox(height: 10,),
                 Expanded(child: _memberList()),
@@ -195,12 +197,12 @@ class _MembersState extends State<Members> {
               ],
             ),
             child: Padding(
-              padding: const EdgeInsets.all(14),
+              padding: const EdgeInsets.all(10),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _avatar(m.userPhoto),
-                  const SizedBox(width: 14),
+                  const SizedBox(width: 10),
                   Expanded(child: _memberInfo(m)),
                 ],
               ),
@@ -212,21 +214,165 @@ class _MembersState extends State<Members> {
   }
 
   // ================= FILTER LOGIC (SINGLE SOURCE OF TRUTH) =================
+  // List<dynamic> _filteredMembers() {
+  //   final query = searchQuery.value.toLowerCase();
+  //
+  //   return controller.members.where((m) {
+  //     final matchesSearch =
+  //         m.name.toLowerCase().contains(query) ||
+  //             m.mobile.toLowerCase().contains(query) ||
+  //             m.id.toString().contains(query);
+  //
+  //     final matchesStatus = statusFilter.value == 0 ||
+  //         (statusFilter.value == 1 && m.status == 1) ||
+  //         (statusFilter.value == 2 && m.status != 1);
+  //
+  //     return matchesSearch && matchesStatus;
+  //   }).toList();
+  // }
+
   List<dynamic> _filteredMembers() {
     final query = searchQuery.value.toLowerCase();
 
     return controller.members.where((m) {
+      final idString = m.id.toString();
+      final fullId = "aipvst$idString";
+
       final matchesSearch =
           m.name.toLowerCase().contains(query) ||
               m.mobile.toLowerCase().contains(query) ||
-              m.id.toString().contains(query);
+              idString.contains(query) ||
+              fullId.contains(query);
 
       final matchesStatus = statusFilter.value == 0 ||
           (statusFilter.value == 1 && m.status == 1) ||
           (statusFilter.value == 2 && m.status != 1);
 
-      return matchesSearch && matchesStatus;
+      final isAutoPayActive = m.autoPayStatus.toString() == "1";
+
+      final matchesAutoPay = autoPayFilter.value == 0 ||
+          (autoPayFilter.value == 1 && isAutoPayActive) ||
+          (autoPayFilter.value == 2 && !isAutoPayActive);
+
+      return matchesSearch && matchesStatus && matchesAutoPay;
     }).toList();
+  }
+
+  Map<String, int> _memberStats() {
+    final all = controller.members;
+
+    int total = all.length;
+
+    // int active = all.where((m) => m.status == 1).length;
+    // int inactive = all.where((m) => m.status != 1).length;
+
+    int autopayactive = all.where((m) => m.autoPayStatus.toString()=="1").length;
+
+    print("dsfkjbdsjkfsd :${autopayactive.toString()}");
+    int autopayoff = total - autopayactive;
+
+    print("dsfkjbdsjkfsd :${autopayoff.toString()}");
+
+
+    return {
+      "total": total,
+      "active": autopayactive,
+      "inactive": autopayoff,
+      // "autopayActive": autopayActive,
+      // "autopayOff": autopayOff,
+    };
+  }
+
+  Widget _statsRow() {
+    return Obx(() {
+      final stats = _memberStats();
+
+      return Container(
+decoration: BoxDecoration(color: Colors.green.shade200),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Text("Autopay Status"),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Row(
+                  children: [
+                    Expanded(child: _statCard("Total", stats["total"]??0, Colors.blue, 0)),
+                    Expanded(child: _statCard("Active", stats["active"]??0, Colors.green, 1)),
+                    Expanded(child: _statCard("Inactive", stats["inactive"]??0, Colors.red, 2)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget _statCard(String title, int value, Color color, int filterValue) {
+    return Obx(() {
+      final isSelected = autoPayFilter.value == filterValue;
+
+      return GestureDetector(
+        onTap: () {
+          autoPayFilter.value = filterValue;
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            gradient: LinearGradient(
+              colors: [
+                color.withOpacity(isSelected ? 1 : 0.7),
+                color.withOpacity(isSelected ? 0.8 : 0.4),
+              ],
+            ),
+
+            // 🔥 Selected border
+            border: isSelected
+                ? Border.all(color: Colors.white, width: 2)
+                : null,
+
+            // 🔥 Shadow highlight
+            boxShadow: [
+              BoxShadow(
+                color: isSelected
+                    ? color.withOpacity(0.6)
+                    : Colors.black.withOpacity(0.1),
+                blurRadius: isSelected ? 12 : 4,
+                offset: const Offset(0, 4),
+              )
+            ],
+          ),
+
+          // 🔥 Slight zoom effect
+          transform: Matrix4.identity()
+            ..scale(isSelected ? 1.05 : 1.0),
+
+          child: Column(
+            children: [
+              Text(
+                value.toString(),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                title,
+                style: const TextStyle(color: Colors.white70),
+              ),
+            ],
+          ),
+        ),
+      );
+    });
   }
 
   // ================= AVATAR =================
@@ -270,7 +416,7 @@ class _MembersState extends State<Members> {
   // ================= MEMBER INFO =================
   Widget _memberInfo(dynamic m) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Row(
           children: [
@@ -281,7 +427,7 @@ class _MembersState extends State<Members> {
                     fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
-            Column(
+            Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _statusBadge(m.status),
                 authController.enablerole.toString()!="1"?SizedBox(): IconButton(onPressed: ()=>Get.to(()=>EditMemberDetails(member: m)), icon: Icon(Icons.edit))
@@ -289,6 +435,11 @@ class _MembersState extends State<Members> {
             ),
           ],
         ),
+        // authController.enablerole.toString()!="1"?SizedBox():const SizedBox(height: 4),
+        authController.enablerole.toString()!="1"?SizedBox():Text("Autopay status: ${m.autoPayStatus.toString()==""||m.autoPayStatus.toString()=="0"||m.autoPayStatus==null||m.autoPayStatus.toString()=="null"?"NO":"Active"}",
+            style:
+            const TextStyle(fontWeight: FontWeight.w600, color: Colors.black)),
+        // const SizedBox(height: 4),
         const SizedBox(height: 4),
         Text("F/H. name: ${m.fatherHusband}",
             style:

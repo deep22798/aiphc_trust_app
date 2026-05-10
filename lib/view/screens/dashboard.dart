@@ -43,6 +43,7 @@ import 'package:aiphc/view/widgets/willlpop.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -254,14 +255,14 @@ class _DashboardState extends State<Dashboard> {
                       padding: const EdgeInsets.only(left: 20),
                       child: Text(
                         "${authcontroller.enablerole.value == 1
-                            ? "Welcome, ${authcontroller.adminData.value?.name}\nआपका स्वागत है, ${authcontroller.adminData.value?.name}"
+                            ? "Welcome, ${authcontroller.adminData.value?.name??""}\nआपका स्वागत है, ${authcontroller.adminData.value?.name??""}"
                             : authcontroller.enablerole.value != 1
-                            ? "Welcome, ${authcontroller.usermodel.value?.name}\nआपका स्वागत है, ${authcontroller.usermodel.value?.name}"
+                            ? "Welcome, ${authcontroller.usermodel.value?.name??""}\nआपका स्वागत है, ${authcontroller.usermodel.value?.name??""}"
                             : ""}",
                         style: TextStyle(
                           color: isDark ? Colors.green : Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 18,
+                          fontSize: 15,
                         ),
                         textAlign: TextAlign.start,
                       ),
@@ -298,6 +299,8 @@ class _DashboardState extends State<Dashboard> {
 
                 // MaterialButton(onPressed: (){},child: Text("HELP"),)
               ],
+
+
             ),
           ),
         ],
@@ -2098,8 +2101,10 @@ Text("Our Team"),
                             value: isEnabled,
                             onChanged: (value) async {
                               if (value) {
+
                                 /// 🔥 ON karne pe (optional)
-                                await autopaycontroller.startTransaction(100, authcontroller.enablerole.value==2?authcontroller.usermodel.value?.id.toString()??"":"", authcontroller.enablerole.value==2?authcontroller.usermodel.value?.aadhar.toString()??"":"");
+                                ///
+                                await autopaycontroller.startTransaction(int.parse(global.profile.first.autopay_amount??"100"), authcontroller.enablerole.value==2?authcontroller.usermodel.value?.id.toString()??"":"", authcontroller.enablerole.value==2?authcontroller.usermodel.value?.aadhar.toString()??"":"");
                                 // Get.to(()=>AutoPayment());
                               } else {
                                 /// ❌ OFF karte hi function call
@@ -2110,7 +2115,7 @@ Text("Our Team"),
 
 
                             activeColor: theme.colorScheme.primary,
-                            inactiveThumbColor: Colors.grey,
+                            inactiveThumbColor: Colors.red,
                           );
                         }),
                         const SizedBox(height: 10),
@@ -2147,6 +2152,7 @@ Text("Our Team"),
                   title: 'Logout\nलॉग आउट',
                   onTap: () async {
                     await authcontroller.logout();
+                    authcontroller.usermodel.value=null;
                     emergencyController.isActive.value=false;
 
                   },
@@ -2861,24 +2867,149 @@ Text("Our Team"),
                                 } else if (constraints.maxWidth >= 700) {
                                   columns = 2;
                                 }
+                                // return GridView.builder(
+                                //   padding: const EdgeInsets.all(16),
+                                //   shrinkWrap: true,
+                                //   physics: NeverScrollableScrollPhysics(),
+                                //   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                //     crossAxisCount: 3,
+                                //     mainAxisSpacing: 16,
+                                //     crossAxisSpacing: 16,
+                                //     childAspectRatio: 0.9,
+                                //   ),
+                                //   itemCount: mebercn.members.length>9?9:mebercn.members.length,
+                                //   itemBuilder: (context, index) {
+                                //     final album = mebercn.members[index];
+                                //     return InkWell(
+                                //       borderRadius: BorderRadius.circular(16),
+                                //       onTap: () {
+                                //         Get.to(
+                                //               () => Members(),
+                                //         );
+                                //       },
+                                //       child: Container(
+                                //         decoration: BoxDecoration(
+                                //           color: Theme.of(context).cardColor,
+                                //           borderRadius: BorderRadius.circular(16),
+                                //           boxShadow: [
+                                //             BoxShadow(
+                                //               color: Theme.of(context).shadowColor.withOpacity(0.12),
+                                //               blurRadius: 6,
+                                //               offset: const Offset(0, 4),
+                                //             ),
+                                //           ],
+                                //         ),
+                                //         child: Column(
+                                //           children: [
+                                //             Expanded(
+                                //               child: ClipRRect(
+                                //                 borderRadius: const BorderRadius.vertical(
+                                //                   top: Radius.circular(16),
+                                //                 ),
+                                //                 child: Image.network(
+                                //
+                                //                   ServerAssets.users + album.userPhoto,
+                                //                   fit: BoxFit.cover,
+                                //                   errorBuilder: (_, __, ___) =>
+                                //                   const Icon(Icons.broken_image),
+                                //                 ),
+                                //               ),
+                                //             ),
+                                //             Padding(
+                                //               padding: const EdgeInsets.all(10),
+                                //               child: Text(
+                                //                 album.name,
+                                //                 textAlign: TextAlign.center,
+                                //                 maxLines: 2,
+                                //                 overflow: TextOverflow.ellipsis,
+                                //                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                //                   fontWeight: FontWeight.w600,
+                                //                 ),
+                                //               ),
+                                //             ),
+                                //           ],
+                                //         ),
+                                //       ),
+                                //     );
+                                //   },
+                                // );
+
+
                                 return GridView.builder(
                                   padding: const EdgeInsets.all(16),
                                   shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
+                                  physics: const NeverScrollableScrollPhysics(),
                                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 3,
                                     mainAxisSpacing: 16,
                                     crossAxisSpacing: 16,
                                     childAspectRatio: 0.9,
                                   ),
-                                  itemCount: mebercn.members.length>9?9:mebercn.members.length,
+                                  itemCount:
+                                  mebercn.members.length > 9 ? 9 : mebercn.members.length,
                                   itemBuilder: (context, index) {
                                     final album = mebercn.members[index];
+
+                                    final imageUrl = ServerAssets.users + album.userPhoto;
+
                                     return InkWell(
                                       borderRadius: BorderRadius.circular(16),
                                       onTap: () {
-                                        Get.to(
-                                              () => Members(),
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return Dialog(
+                                              // backgroundColor: Colors.black,
+                                              // insetPadding: const EdgeInsets.all(10),
+                                              child: Container(height: MediaQuery.sizeOf(context).height/2,
+                                                child: Stack(
+                                                  children: [
+                                                    Center(
+                                                      child: Hero(
+                                                        tag: imageUrl,
+                                                        child: InteractiveViewer(
+                                                          minScale: 1,
+                                                          maxScale: 4,
+                                                          child: Image.network(
+                                                            imageUrl,
+                                                            fit: BoxFit.contain,
+                                                            loadingBuilder:
+                                                                (context, child, progress) {
+                                                              if (progress == null) return child;
+                                                              return const Center(
+                                                                child:
+                                                                CircularProgressIndicator(),
+                                                              );
+                                                            },
+                                                            errorBuilder: (_, __, ___) =>
+                                                            const Icon(
+                                                              Icons.broken_image,
+                                                              color: Colors.white,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+
+                                                    // ❌ Close button
+                                                    Positioned(
+                                                      top: 10,
+                                                      right: 10,
+                                                      child: IconButton(
+                                                        icon: const Icon(
+                                                          Icons.close,
+                                                          color: Colors.white,
+                                                          size: 28,
+                                                        ),
+                                                        onPressed: () =>
+                                                            Navigator.pop(context),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          },
                                         );
                                       },
                                       child: Container(
@@ -2887,7 +3018,9 @@ Text("Our Team"),
                                           borderRadius: BorderRadius.circular(16),
                                           boxShadow: [
                                             BoxShadow(
-                                              color: Theme.of(context).shadowColor.withOpacity(0.12),
+                                              color: Theme.of(context)
+                                                  .shadowColor
+                                                  .withOpacity(0.12),
                                               blurRadius: 6,
                                               offset: const Offset(0, 4),
                                             ),
@@ -2900,12 +3033,15 @@ Text("Our Team"),
                                                 borderRadius: const BorderRadius.vertical(
                                                   top: Radius.circular(16),
                                                 ),
-                                                child: Image.network(
-
-                                                  ServerAssets.users + album.userPhoto,
-                                                  fit: BoxFit.cover,
-                                                  errorBuilder: (_, __, ___) =>
-                                                  const Icon(Icons.broken_image),
+                                                child: Hero(
+                                                  tag: imageUrl,
+                                                  child: Image.network(
+                                                    imageUrl,
+                                                    fit: BoxFit.fill,
+                                                    width: double.infinity,
+                                                    errorBuilder: (_, __, ___) =>
+                                                    const Icon(Icons.broken_image),
+                                                  ),
                                                 ),
                                               ),
                                             ),
@@ -2916,7 +3052,10 @@ Text("Our Team"),
                                                 textAlign: TextAlign.center,
                                                 maxLines: 2,
                                                 overflow: TextOverflow.ellipsis,
-                                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium
+                                                    ?.copyWith(
                                                   fontWeight: FontWeight.w600,
                                                 ),
                                               ),
@@ -3180,29 +3319,31 @@ Text("Our Team"),
 
     return Obx(
           () =>
-          BottomNavigationBar(
-            currentIndex: controller.currentIndex.value,
-            onTap: controller.changeTab,
-            type: BottomNavigationBarType.fixed,
-            items:  [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home\nमुख्य पृष्ठ"),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.location_on_sharp),
-                label: "Live Help\nलाइव सहायता",
-                activeIcon: Stack(
-                  children: [
-                    Center(child: Icon(Icons.circle,color: int.parse(ctrackontroller.emergencyList.length.toString())<1?Colors.green:Colors.red,)),
-                    Center(child: Text(ctrackontroller.emergencyList.length.toString(),style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),))
-                  ],
-                )
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.people_outline),
-                label: "Our Team\nहमारी टीम",
-              ),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.person), label: "Profile\nरूपरेखा"),
-            ],
+          SafeArea(
+            child: BottomNavigationBar(
+              currentIndex: controller.currentIndex.value,
+              onTap: controller.changeTab,
+              type: BottomNavigationBarType.fixed,
+              items:  [
+                BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home\nमुख्य पृष्ठ"),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.location_on_sharp),
+                  label: "Live Help\nलाइव सहायता",
+                  activeIcon: Stack(
+                    children: [
+                      Center(child: Icon(Icons.circle,color: int.parse(ctrackontroller.emergencyList.length.toString())<1?Colors.green:Colors.red,)),
+                      Center(child: Text(ctrackontroller.emergencyList.length.toString(),style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),))
+                    ],
+                  )
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.people_outline),
+                  label: "Our Team\nहमारी टीम",
+                ),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.person), label: "Profile\nरूपरेखा"),
+              ],
+            ),
           ),
     );
   }
@@ -3740,7 +3881,8 @@ if(authcontroller.enablerole==0) {
 
         final shouldExit = await onWillPop();
         if (shouldExit) {
-          Get.back(); // closes app / page
+          // Get.back(); // closes app / page
+          SystemNavigator.pop();
         }
       },
       child: Scaffold(
@@ -3767,13 +3909,11 @@ if(authcontroller.enablerole==0) {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 
-        body: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final isWeb = constraints.maxWidth >= 1000;
-              return _bodyByIndex(context, isWeb);
-            },
-          ),
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            final isWeb = constraints.maxWidth >= 1000;
+            return _bodyByIndex(context, isWeb);
+          },
         ),
       ),
     );

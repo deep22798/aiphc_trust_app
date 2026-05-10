@@ -218,7 +218,7 @@ class Autopaymentcontroller extends GetxController {
   ///
   ///
 
-  var flowid="PRODUCTION2026".obs;
+  var flowid="PROD".obs;
 
   Future<void> initSdk()async{
     await PhonePePaymentSdk.init(ServerConstants.autopaypayenvmainmode.toString(), ServerConstants.autopaymerchantid.toString(), flowid.value.toString(),
@@ -266,7 +266,7 @@ await initSdk();
   /// 🔹 STEP 2: Create Order Token (Autopay)
   ///
   ///
-  Future<void> createOrder(int amount) async {
+  Future<void> createOrder(int amount,member) async {
 
     if (accessToken.value.isEmpty) {
       print("Access token missing, generating...");
@@ -274,12 +274,15 @@ await initSdk();
     }
 
     isLoading.value = true;
-
     try {
-
+      merchantOrderId.value="";
+      merchantSubId.value="";
        merchantOrderId.value = await "MO${DateTime.now().millisecondsSinceEpoch}";
        merchantSubId.value = await "MS${DateTime.now().millisecondsSinceEpoch}";
 
+       final now = DateTime.now();
+
+       // "expireAt":
 
       final response = await _dio.post(
         "${ServerConstants.autopayordertoken}",
@@ -297,13 +300,23 @@ await initSdk();
               "maxAmount": amount,
               "frequency": "ON_DEMAND",
               "productType": "UPI_MANDATE",
-              "expireAt": DateTime.now().millisecondsSinceEpoch + 86400000, // +1 day
+              // "expireAt": DateTime.now().millisecondsSinceEpoch + 86400000, // +1 day
+              "expireAt": DateTime(
+                now.year + 20,
+                now.month,
+                now.day,
+                now.hour,
+                now.minute,
+                now.second,
+              ).millisecondsSinceEpoch, // +1 day
             }
           },
+
           "expireAfter": 3000,
           "metaInfo": {
-            "udf1": "test1",
-            "udf2": "test2",
+            "udf1": "ammount : ${amount.toString()}",
+            "udf2": "memberid ${member.toString()}",
+            "udf3": "subscriptionid ${merchantSubId.value.toString()}",
           }
         },
         options: Options(
@@ -331,10 +344,12 @@ await initSdk();
 
 
 
+
   Future<void> startTransaction(int amount,String memberId,aadhar)async {
     await initSdk();
     await generateToken();
-    await createOrder(amount*100);
+    // await createOrder(amount,memberId);
+    await createOrder(amount*100,memberId);
 
     await PhonePePaymentSdk.startTransaction(jsonEncode({
       "orderId": "${OrderId.value}",
@@ -352,8 +367,8 @@ await initSdk();
         String error = response['error'].toString();
         if (status == 'SUCCESS') {
           paymentsuccess.value = "1";
-          await pollOrderUntilComplete();   // ✅ wait properly
-          await checkSubscriptionStatus(memberId,aadhar,amount);  // ✅ now safe
+          await pollOrderUntilComplete(memberId,aadhar,amount);   // ✅ wait properly
+            // ✅ now safe
         } else {
           print("failed");
           // showPaymentFailedPopup();
@@ -412,7 +427,7 @@ await initSdk();
 
 
 var orderstatus="".obs;
-  Future<void> pollOrderUntilComplete() async {
+  Future<void> pollOrderUntilComplete(memberId,aadhar,amount) async {
 
     String state = "";
 
@@ -447,12 +462,12 @@ var orderstatus="".obs;
 
       print("Polling Order State: $state");
 
-      if (state == "COMPLETED") {
+      // if (state == "COMPLETED") {
         print("✅ Order Completed");
-        return;
-      }
+        // return;
+        await checkSubscriptionStatus(memberId,aadhar,amount);
+      // }
     }
-
     print("❌ Order not completed after polling");
   }
 
@@ -499,14 +514,14 @@ var orderstatus="".obs;
       print("Subscription State: $state");
       // print("SubscriptionId: $subscriptionId");
 
-
       if(state.toString()=="ACTIVE"){
         await updateSubscription(memberId: memberId,merchantsubscriptionid: subscriptionId.toString(), subscriptionId: merchantSubId.value, autopayStatus: state.toString()=="ACTIVE"?"1":"0");
         await uploadPaymentData(aadhar: aadhar.toString(), amount: amount.toString(), orderId: orderId.value.toString(), transactionId: transactionid.value.toString(), status: state.toString()=="ACTIVE"?"SUCCESS":"", mop: 'autopay_subscription');
-
+        await AutopayStatus(merchantSubId.value.toString());
+      }else{
+        state="PENDING";
+        await uploadPaymentData(aadhar: aadhar.toString(), amount: amount.toString(), orderId: orderId.value.toString(), transactionId: transactionid.value.toString(), status: state.toString()=="ACTIVE"?"SUCCESS":"PENDING", mop: 'autopay_subscription');
       }
-
-
     } catch (e) {
       print("Subscription Error: $e");
     }

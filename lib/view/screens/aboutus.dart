@@ -1,5 +1,6 @@
 import 'package:aiphc/controllers/globalcontroller.dart';
 import 'package:aiphc/controllers/screens/memberscontroller.dart';
+import 'package:aiphc/view/screens/gloabwebview.dart';
 import 'package:aiphc/view/widgets/appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -83,7 +84,6 @@ class Aboutus extends StatelessWidget {
                   ],
                 ),
 
-              const SizedBox(height: 16),
               Container(
                 margin: const EdgeInsets.all(12),
                 padding: const EdgeInsets.all(16),
@@ -100,7 +100,60 @@ class Aboutus extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade50,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: IntrinsicHeight(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            MaterialButton(
+                              onPressed: () {
+                                Get.to(() => WebViewPage(
+                                  url: "https://aiphc.in/termcondition",
+                                  title: "Term and condition",
+                                ));
+                              },
+                              child: const Text("Term and condition"),
+                            ),
 
+                            const VerticalDivider(
+                              width: 10,
+                              thickness: 1,
+                              color: Colors.black12,
+                            ),
+
+                            MaterialButton(
+                              onPressed: () {
+                                Get.to(() => WebViewPage(
+                                  url: "https://aiphc.in/privacy_policy",
+                                  title: "Privacy Policy",
+                                ));
+                              },
+                              child: const Text("Privacy Policy"),
+                            ),const VerticalDivider(
+                              width: 10,
+                              thickness: 1,
+                              color: Colors.black12,
+                            ),
+
+                            MaterialButton(
+                              onPressed: () {
+                                Get.to(() => WebViewPage(
+                                  url: "https://aiphc.in/refundpolicy",
+                                  title: "Refund Policy",
+                                ));
+                              },
+                              child: const Text("Refund Policy"),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
                     // Trust Reg No
                     Row(
                       children: [

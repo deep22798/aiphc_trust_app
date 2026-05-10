@@ -253,12 +253,13 @@ class _SammandetailedState extends State<Sammandetailed> {
                         context,
                         PageRouteBuilder(
                           opaque: false,
-                          pageBuilder: (_, __, ___) => FullScreenImage(
+                          pageBuilder: (_, __, ___) => FullImageViewer(
                             imageUrl: fullUrl,
                             tag: heroTag,
 
                           ),
                         ),
+
                       );
                     },
                     child: Hero(

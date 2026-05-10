@@ -493,7 +493,12 @@ Mobile : $mobile
                           child: Container(
                             height: 150,
                             width: double.infinity,
-                            color:Color(0xFFD8EFB4),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(topRight: Radius.circular(10)),
+
+                              color:Color(0xFFD8EFB4),
+
+                            ),
                           ),
                         ),
                         ClipPath(
@@ -502,7 +507,12 @@ Mobile : $mobile
                             height: 110,
 
                             width: double.infinity,
-                            color: Color(0xFFE89A08),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(topRight: Radius.circular(10)),
+
+                              color: Color(0xFFE89A08),
+
+                            ),
                           ),
                         ),
                         ClipPath(
@@ -510,7 +520,11 @@ Mobile : $mobile
                           child: Container(
                             height: 100,
                             width: double.infinity,
-                            color:Color(0xFF026F06),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.only(topRight: Radius.circular(10)),
+                              color:Color(0xFF026F06),
+
+                            ),
                           ),
                         ),
                       ],
@@ -655,8 +669,10 @@ Mobile : $mobile
               _sectionTitle(context, 'Personal Information'),
               _infoCard(context, [
                 _infoRow(context, Icons.badge, 'Aadhaar', user.aadhar),
+                user.dlNo==null||user.dlNo==''?SizedBox():_infoRow(context, Icons.badge, 'DL no', user.dlNo),
                 _infoRow(context, Icons.person, 'Father / Husband', user.fatherHusband),
-                _infoRow(context, Icons.cake, 'Date of Birth', user.birthday),
+                _infoRow(context, Icons.cake, 'Date of Birth', DateFormat('dd-MM-yyyy')
+                    .format(DateTime.parse(user.birthday))),
                 _infoRow(context, Icons.wc, 'Gender', user.gender),
                 _infoRow(context, Icons.email, 'Email', user.email),
                 _infoRow(context, Icons.work, 'Occupation', user.occupation),
@@ -680,10 +696,11 @@ Mobile : $mobile
 
               _sectionTitle(context, 'Account Status'),
               _infoCard(context, [
-                _infoRow(context, Icons.verified_user, 'Status', user.status),
-                _infoRow(context, Icons.lock, 'Locked', user.locked),
-                _infoRow(context, Icons.autorenew, 'Autopay', user.autopayStatus),
-                _infoRow(context, Icons.calendar_today, 'Joined On', user.dateCreated),
+                _infoRow(context, Icons.verified_user, 'Account Status', user.status.toString()=="1"?"Active":"Not active"),
+                // _infoRow(context, Icons.lock, 'Locked', user.locked),
+                _infoRow(context, Icons.autorenew, 'Autopay', user.autopayStatus.toString()=="1"?"Active":"Not active"),
+                _infoRow(context, Icons.calendar_today, 'Joined On', DateFormat('dd-MM-yyyy')
+                    .format(DateTime.parse(user.dateCreated))),
               ]),
 
               const SizedBox(height: 30),
@@ -747,6 +764,12 @@ Mobile : $mobile
                     ),
                   ),
                   const SizedBox(height: 4),
+                  Text(
+                    "AIPVST"+user.id,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: Colors.black,
+                    ),
+                  ), const SizedBox(height: 4),
                   Text(
                     user.mobile,
                     style: theme.textTheme.bodyMedium?.copyWith(

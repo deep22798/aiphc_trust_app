@@ -251,7 +251,7 @@ class _PensionDetailScreenState extends State<PensionDetailScreen> {
                         context,
                         PageRouteBuilder(
                           opaque: false,
-                          pageBuilder: (_, __, ___) => FullScreenImage(
+                          pageBuilder: (_, __, ___) => FullImageViewer(
                             imageUrl: fullUrl,
                             tag: heroTag,
 

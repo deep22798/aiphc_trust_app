@@ -9,6 +9,7 @@ class ContactusModelMprofile {
   final String darpanId;
   final String address;
   final String logo;
+  final String autopay_amount;
   final String photo;
   final String facebookLink;
   final String twitterLink;
@@ -31,6 +32,7 @@ class ContactusModelMprofile {
     required this.photo,
     required this.facebookLink,
     required this.twitterLink,
+    required this.autopay_amount,
     required this.instagramLink,
     required this.linkedinLink,
     required this.youtubeLink,
@@ -50,6 +52,7 @@ class ContactusModelMprofile {
       address: json['address'] ?? '',
       logo: json['logo'] ?? '',
       photo: json['photo'] ?? '',
+      autopay_amount: json['autopay_amount'] ?? '',
       facebookLink: json['facebook_link'] ?? '',
       twitterLink: json['twitter_link'] ?? '',
       instagramLink: json['instagram_link'] ?? '',
@@ -74,6 +77,7 @@ class ContactusModelMprofile {
       'photo': photo,
       'facebook_link': facebookLink,
       'twitter_link': twitterLink,
+      'autopay_amount': autopay_amount,
       'instagram_link': instagramLink,
       'linkedin_link': linkedinLink,
       'youtube_link': youtubeLink,

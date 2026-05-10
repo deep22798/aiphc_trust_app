@@ -250,7 +250,7 @@ class _RecentInitiativeDetailScreenState extends State<RecentInitiativeDetailScr
                         context,
                         PageRouteBuilder(
                           opaque: false,
-                          pageBuilder: (_, __, ___) => FullScreenImage(
+                          pageBuilder: (_, __, ___) => FullImageViewer(
                             imageUrl: fullUrl,
                             tag: heroTag,
                           ),

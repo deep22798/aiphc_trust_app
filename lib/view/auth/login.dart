@@ -3,6 +3,7 @@ import 'package:aiphc/view/auth/registration/drivers.dart';
 import 'package:aiphc/view/auth/registration/forceman.dart';
 import 'package:aiphc/view/auth/registration/transport.dart';
 import 'package:aiphc/view/screens/dashboard.dart';
+import 'package:aiphc/view/screens/gloabwebview.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:aiphc/controllers/auth/login.dart';
@@ -309,7 +310,63 @@ class _LoginPageState extends State<LoginPage>
                             ),
                           ),
                         )),
-                      ),SizedBox(height: 20,),
+                      ),
+                      SizedBox(height: 20,),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.green.shade50,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: IntrinsicHeight(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                MaterialButton(
+                                  onPressed: () {
+                                    Get.to(() => WebViewPage(
+                                      url: "https://aiphc.in/termcondition",
+                                      title: "Term and condition",
+                                    ));
+                                  },
+                                  child: const Text("Term and condition"),
+                                ),
+
+                                const VerticalDivider(
+                                  width: 10,
+                                  thickness: 1,
+                                  color: Colors.black12,
+                                ),
+                                MaterialButton(
+                                  onPressed: () {
+                                    Get.to(() => WebViewPage(
+                                      url: "https://aiphc.in/privacy_policy",
+                                      title: "Privacy Policy",
+                                    ));
+                                  },
+                                  child: const Text("Privacy Policy"),
+                                ),const VerticalDivider(
+                                  width: 10,
+                                  thickness: 1,
+                                  color: Colors.black12,
+                                ),
+                                MaterialButton(
+                                  onPressed: () {
+                                    Get.to(() => WebViewPage(
+                                      url: "https://aiphc.in/refundpolicy",
+                                      title: "Refund Policy",
+                                    ));
+                                  },
+                                  child: const Text("Refund Policy"),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20,),
+
                       SizedBox(
                         width: MediaQuery.sizeOf(context).width/4,
                         height: 40,

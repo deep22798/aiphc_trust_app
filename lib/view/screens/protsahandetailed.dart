@@ -253,7 +253,7 @@ class _ProtsahanDetailedState extends State<ProtsahanDetailed> {
                         context,
                         PageRouteBuilder(
                           opaque: false,
-                          pageBuilder: (_, __, ___) => FullScreenImage(
+                          pageBuilder: (_, __, ___) => FullImageViewer(
                             imageUrl: fullUrl,
                             tag: heroTag,
 

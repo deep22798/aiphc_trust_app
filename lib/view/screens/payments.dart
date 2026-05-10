@@ -5,6 +5,7 @@ import 'package:aiphc/controllers/phonepaycontroller.dart';
 import 'package:aiphc/model/paymentmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import '../widgets/appbar.dart';
 
 class Payments extends StatefulWidget {
@@ -176,6 +177,11 @@ class _PaymentsState extends State<Payments> {
                                   payment.month, payment.year),
                               style: Get.textTheme.bodySmall
                                   ?.copyWith(color: Colors.grey),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                                DateFormat('dd-MM-yyyy')
+                                    .format(DateTime.parse(payment.dateCreated))
                             ),
 
                             const SizedBox(height: 10),

@@ -1,6 +1,7 @@
 import 'package:aiphc/controllers/auth/login.dart';
 import 'package:aiphc/utils/routes/routes.dart';
 import 'package:get/get.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashController extends GetxController {
@@ -20,7 +21,7 @@ class SplashController extends GetxController {
       var a= prefs.getBool("onboard");
       var u= prefs.getString("username");
       var p= prefs.getString("password");
-
+      await checkForUpdate();
       print("dflklkwefbewfebw ${a.toString()}");
       if(a==true){
         if(u==null||u.toString()==""){
@@ -43,6 +44,19 @@ class SplashController extends GetxController {
       }else{
        Get.offAllNamed(Routes.onboarding);
       }
+    });
+  }
+
+  Future<void> checkForUpdate() async {
+    print("Error during updatescjkjshj:");
+    InAppUpdate.checkForUpdate().then((info) {
+      if (info.updateAvailability == UpdateAvailability.updateAvailable) {
+        InAppUpdate.performImmediateUpdate().catchError((e) {
+          print("Error during update: $e");
+        });
+      }
+    }).catchError((e) {
+      print("Error checking for update: $e");
     });
   }
 
