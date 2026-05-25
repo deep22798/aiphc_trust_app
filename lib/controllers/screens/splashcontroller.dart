@@ -12,52 +12,105 @@ class SplashController extends GetxController {
     if (value.isEmpty) return false;
     return RegExp(r'^[A-Za-z]').hasMatch(value[0]);
   }
-
   @override
-  void onInit(){
+  void onInit() {
     super.onInit();
-    Future.delayed(const Duration(seconds: 3), () async{
-      final prefs = await SharedPreferences.getInstance();
-      var a= prefs.getBool("onboard");
-      var u= prefs.getString("username");
-      var p= prefs.getString("password");
+
+    Future.delayed(const Duration(seconds: 3), () async {
+
+      // First check update
       await checkForUpdate();
+
+      final prefs = await SharedPreferences.getInstance();
+
+      var a = prefs.getBool("onboard");
+      var u = prefs.getString("username");
+      var p = prefs.getString("password");
+
       print("dflklkwefbewfebw ${a.toString()}");
-      if(a==true){
-        if(u==null||u.toString()==""){
+
+      if (a == true) {
+
+        if (u == null || u.isEmpty) {
+
           Get.offAllNamed(Routes.login);
-        }else{
+
+        } else {
+
           if (startsWithLetter(u)) {
-            // 🔹 Call ANOTHER function
+
             authController.adminLogin(
-              username: u.toString(),
-              password: p.toString(),
+              username: u,
+              password: p ?? "",
             );
+
           } else {
-            // 🔹 Normal numeric login
+
             authController.userLogin(
-              aadhar: u.toString(),
-              password: p.toString(),
+              aadhar: u,
+              password: p ?? "",
             );
+
           }
         }
-      }else{
-       Get.offAllNamed(Routes.onboarding);
+
+      } else {
+
+        Get.offAllNamed(Routes.onboarding);
+
       }
     });
   }
-
+  // @override
+  // void onInit(){
+  //   super.onInit();
+  //   Future.delayed(const Duration(seconds: 3), () async{
+  //     final prefs = await SharedPreferences.getInstance();
+  //     var a= prefs.getBool("onboard");
+  //     var u= prefs.getString("username");
+  //     var p= prefs.getString("password");
+  //     await checkForUpdate();
+  //     print("dflklkwefbewfebw ${a.toString()}");
+  //     if(a==true){
+  //       if(u==null||u.toString()==""){
+  //         Get.offAllNamed(Routes.login);
+  //       }else{
+  //         if (startsWithLetter(u)) {
+  //           // 🔹 Call ANOTHER function
+  //           authController.adminLogin(
+  //             username: u.toString(),
+  //             password: p.toString(),
+  //           );
+  //         } else {
+  //           // 🔹 Normal numeric login
+  //           authController.userLogin(
+  //             aadhar: u.toString(),
+  //             password: p.toString(),
+  //           );
+  //         }
+  //       }
+  //     }else{
+  //      Get.offAllNamed(Routes.onboarding);
+  //     }
+  //   });
+  // }
   Future<void> checkForUpdate() async {
-    print("Error during updatescjkjshj:");
-    InAppUpdate.checkForUpdate().then((info) {
+    try {
+      AppUpdateInfo info = await InAppUpdate.checkForUpdate();
+
       if (info.updateAvailability == UpdateAvailability.updateAvailable) {
-        InAppUpdate.performImmediateUpdate().catchError((e) {
-          print("Error during update: $e");
-        });
+
+        // Immediate update
+        await InAppUpdate.performImmediateUpdate();
+
+        // Flexible update ke liye:
+        // await InAppUpdate.startFlexibleUpdate();
+        // await InAppUpdate.completeFlexibleUpdate();
+
       }
-    }).catchError((e) {
+    } catch (e) {
       print("Error checking for update: $e");
-    });
+    }
   }
 
 

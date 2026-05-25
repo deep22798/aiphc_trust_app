@@ -5,11 +5,14 @@ class Payment {
   final String year;
   final String date;
   final String amount;
+  final String type;
   final String orderId;
   final String transactionId;
   final String status;
   final String dateCreated;
   final String mop;
+  final String name;
+  final String mobile;
 
   Payment({
     required this.id,
@@ -17,12 +20,15 @@ class Payment {
     required this.month,
     required this.year,
     required this.date,
+    required this.type,
     required this.amount,
     required this.orderId,
     required this.transactionId,
     required this.status,
     required this.dateCreated,
     required this.mop,
+    required this.name,
+    required this.mobile,
   });
 
   factory Payment.fromJson(Map<String, dynamic> json) {
@@ -38,6 +44,9 @@ class Payment {
       status: json['status'] ?? '',
       dateCreated: json['date_created'] ?? '',
       mop: json['mop'] ?? '',
+      name: json['name'] ?? '',
+      mobile: json['mobile'] ?? '',
+      type: json['type'] ?? '',
     );
   }
 }

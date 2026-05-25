@@ -3,6 +3,7 @@ import 'package:aiphc/controllers/auth/login.dart';
 import 'package:aiphc/controllers/screens/memberscontroller.dart';
 import 'package:aiphc/utils/routes/serverassets.dart';
 import 'package:aiphc/view/screens/members/memberdetails.dart';
+import 'package:aiphc/view/screens/payments.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -461,6 +462,9 @@ decoration: BoxDecoration(color: Colors.green.shade200),
           Icons.calendar_today,
           _formatDate(m.dateCreated),
         ),
+        authController.enablerole.value.toString()!=1?SizedBox():MaterialButton(onPressed: (){
+Get.to(()=>Payments(member_id: m.id.toString(),));
+        },child: Text("Show Payments",style: TextStyle(color: Colors.white),),color: Colors.green.shade800,)
 
       ],
     );

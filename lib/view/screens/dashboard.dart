@@ -214,7 +214,7 @@ class _DashboardState extends State<Dashboard> {
                       "ALL INDIA POLICE\nVITTIYA SAHAYATA\nTRUST",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 15,
+                        fontSize: 13,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
@@ -224,7 +224,7 @@ class _DashboardState extends State<Dashboard> {
                     Image.asset(Appconstants.applogo, scale: 6),
                     const SizedBox(width: 10),
                     const Text(
-                      "ऑल इंडिया पुलिस\nवित्तीय सहायता \nट्रस्ट",
+                      "ऑल इंडिया पुलिस\nवित्तीय सहायता\n ट्रस्ट",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 15,
@@ -1946,6 +1946,86 @@ Text("Our Team"),
             padding: const EdgeInsets.all(20),
             child: Row(
               children: [
+
+              authcontroller
+                    .enablerole
+                    .value
+                    .toString() ==
+                    "0"||authcontroller
+                    .enablerole
+                    .value
+                    .toString() ==
+                    ""
+                    ? const SizedBox():Expanded(
+                  child: Container(
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: isDark
+                            ? Colors.white.withOpacity(0.08)
+                            : Colors.black.withOpacity(0.06),
+                      ),
+                      boxShadow: isDark
+                          ? []
+                          : [
+                        BoxShadow(
+                          color: Colors.white,
+                          blurRadius: 10,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+
+                        Obx(() {
+                          bool isEnabled =
+                              autopaycontroller.subscriptionstatus.value == "ACTIVE";
+                          return Switch(
+                            value: isEnabled,
+                            onChanged: (value) async {
+                              if (value) {
+
+                                /// 🔥 ON karne pe (optional)
+                                ///
+                                await autopaycontroller.startTransaction(int.parse(global.profile.first.autopay_amount??"100"), authcontroller.enablerole.value==2?authcontroller.usermodel.value?.id.toString()??"":"", authcontroller.enablerole.value==2?authcontroller.usermodel.value?.aadhar.toString()??"":"");
+                                // Get.to(()=>AutoPayment());
+                              } else {
+                                /// ❌ OFF karte hi function call
+                                // await autopaycontroller.cancelSubscription();
+                                // Get.to(()=>AutoPayment());
+                              }
+                            },
+
+
+                            activeColor: Colors.white,
+                            inactiveThumbColor: Colors.red,
+                          );
+                        }),
+                        const SizedBox(height: 10),
+                        Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text("Autopay"),
+                            CircleAvatar(
+                              radius: 24,
+                              backgroundColor:
+                              Colors.white,
+                              child: Icon(
+                                Icons.text_rotate_up,
+                                color: theme.colorScheme.primary,
+                                size: 26,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
                 _card(
                   icon: Icons.person_outline,
                   title: 'Profile\nपहचान',
@@ -1975,12 +2055,7 @@ Text("Our Team"),
                   //       : UserProfile(),
                   // ),
                 ),
-                const SizedBox(width: 16),
-                _card(
-                  icon: Icons.info_outline,
-                  title: 'About Us\nहमारे बारे में',
-                  onTap: () => Get.to(() => const Aboutus()),
-                ),
+
               ],
             ),
           ),
@@ -1989,18 +2064,19 @@ Text("Our Team"),
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               children: [
-                _card(
-                  icon: Icons.contact_mail_outlined,
-                  title: 'Contact Us\nहमसे संपर्क करें',
-                  onTap: () => Get.to(() => const ContactUs()),
-                ),
-                const SizedBox(width: 16),
+
                 authcontroller.enablerole==0?SizedBox():  _card(
                   icon: Icons.help_outline,
                   title: 'Support Queries\nसमर्थन प्रश्न',
                   onTap: () => Get.to(() => supportquries(
 
                   )),
+                ),
+                const SizedBox(width: 16),
+                _card(
+                  icon: Icons.contact_mail_outlined,
+                  title: 'Contact Us\nहमसे संपर्क करें',
+                  onTap: () => Get.to(() => const ContactUs()),
                 ),
               ],
             ),
@@ -2068,79 +2144,86 @@ Text("Our Team"),
                 // ),
 
 
+                //
+                // Expanded(
+                //   child: Container(
+                //     height: 120,
+                //     decoration: BoxDecoration(
+                //       color: theme.cardColor,
+                //       borderRadius: BorderRadius.circular(16),
+                //       border: Border.all(
+                //         color: isDark
+                //             ? Colors.white.withOpacity(0.08)
+                //             : Colors.black.withOpacity(0.06),
+                //       ),
+                //       boxShadow: isDark
+                //           ? []
+                //           : [
+                //         BoxShadow(
+                //           color: Colors.black.withOpacity(0.08),
+                //           blurRadius: 10,
+                //           offset: const Offset(0, 6),
+                //         ),
+                //       ],
+                //     ),
+                //     child: Column(
+                //       mainAxisAlignment: MainAxisAlignment.center,
+                //       children: [
+                //
+                //         Obx(() {
+                //           bool isEnabled =
+                //               autopaycontroller.subscriptionstatus.value == "ACTIVE";
+                //           return Switch(
+                //             value: isEnabled,
+                //             onChanged: (value) async {
+                //               if (value) {
+                //
+                //                 /// 🔥 ON karne pe (optional)
+                //                 ///
+                //                 await autopaycontroller.startTransaction(int.parse(global.profile.first.autopay_amount??"100"), authcontroller.enablerole.value==2?authcontroller.usermodel.value?.id.toString()??"":"", authcontroller.enablerole.value==2?authcontroller.usermodel.value?.aadhar.toString()??"":"");
+                //                 // Get.to(()=>AutoPayment());
+                //               } else {
+                //                 /// ❌ OFF karte hi function call
+                //                 // await autopaycontroller.cancelSubscription();
+                //                 // Get.to(()=>AutoPayment());
+                //               }
+                //             },
+                //
+                //
+                //             activeColor: theme.colorScheme.primary,
+                //             inactiveThumbColor: Colors.red,
+                //           );
+                //         }),
+                //         const SizedBox(height: 10),
+                //         Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //           children: [
+                //             Text("Autopay"),
+                //             CircleAvatar(
+                //               radius: 24,
+                //               backgroundColor:
+                //               theme.colorScheme.primary.withOpacity(0.15),
+                //               child: Icon(
+                //                 Icons.text_rotate_up,
+                //                 color: theme.colorScheme.primary,
+                //                 size: 26,
+                //               ),
+                //             ),
+                //           ],
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // )
 
-                Expanded(
-                  child: Container(
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color: theme.cardColor,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: isDark
-                            ? Colors.white.withOpacity(0.08)
-                            : Colors.black.withOpacity(0.06),
-                      ),
-                      boxShadow: isDark
-                          ? []
-                          : [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
-                          blurRadius: 10,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-
-                        Obx(() {
-                          bool isEnabled =
-                              autopaycontroller.subscriptionstatus.value == "ACTIVE";
-                          return Switch(
-                            value: isEnabled,
-                            onChanged: (value) async {
-                              if (value) {
-
-                                /// 🔥 ON karne pe (optional)
-                                ///
-                                await autopaycontroller.startTransaction(int.parse(global.profile.first.autopay_amount??"100"), authcontroller.enablerole.value==2?authcontroller.usermodel.value?.id.toString()??"":"", authcontroller.enablerole.value==2?authcontroller.usermodel.value?.aadhar.toString()??"":"");
-                                // Get.to(()=>AutoPayment());
-                              } else {
-                                /// ❌ OFF karte hi function call
-                                // await autopaycontroller.cancelSubscription();
-                                // Get.to(()=>AutoPayment());
-                              }
-                            },
-
-
-                            activeColor: theme.colorScheme.primary,
-                            inactiveThumbColor: Colors.red,
-                          );
-                        }),
-                        const SizedBox(height: 10),
-                        Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text("Autopay"),
-                            CircleAvatar(
-                              radius: 24,
-                              backgroundColor:
-                              theme.colorScheme.primary.withOpacity(0.15),
-                              child: Icon(
-                                Icons.text_rotate_up,
-                                color: theme.colorScheme.primary,
-                                size: 26,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                )
+                _card(
+                  icon: Icons.info_outline,
+                  title: 'About Us\nहमारे बारे में',
+                  onTap: () => Get.to(() => const Aboutus()),
+                ),
               ],
             ),
           ),
+
 
 
           Padding(
@@ -3319,32 +3402,223 @@ Text("Our Team"),
 
     return Obx(
           () =>
+          // SafeArea(
+          //   child: BottomNavigationBar(
+          //     currentIndex: controller.currentIndex.value,
+          //     onTap: controller.changeTab,
+          //     type: BottomNavigationBarType.fixed,
+          //     items:  [
+          //       BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home\nमुख्य पृष्ठ"),
+          //       BottomNavigationBarItem(
+          //         icon: Icon(Icons.location_on_sharp),
+          //         label: "Live Help\nलाइव सहायता",
+          //         activeIcon: Stack(
+          //           children: [
+          //             Center(child: Icon(Icons.circle,color: int.parse(ctrackontroller.emergencyList.length.toString())<1?Colors.green:Colors.red,)),
+          //             Center(child: Text(ctrackontroller.emergencyList.length.toString(),style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),))
+          //           ],
+          //         )
+          //       ),
+          //       BottomNavigationBarItem(
+          //         icon: Icon(Icons.people_outline),
+          //         label: "Our Team\nहमारी टीम",
+          //       ),
+          //       BottomNavigationBarItem(
+          //           icon: Icon(Icons.person), label: "Profile\nरूपरेखा"),
+          //     ],
+          //   ),
+          // ),
           SafeArea(
-            child: BottomNavigationBar(
-              currentIndex: controller.currentIndex.value,
-              onTap: controller.changeTab,
-              type: BottomNavigationBarType.fixed,
-              items:  [
-                BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home\nमुख्य पृष्ठ"),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.location_on_sharp),
-                  label: "Live Help\nलाइव सहायता",
-                  activeIcon: Stack(
-                    children: [
-                      Center(child: Icon(Icons.circle,color: int.parse(ctrackontroller.emergencyList.length.toString())<1?Colors.green:Colors.red,)),
-                      Center(child: Text(ctrackontroller.emergencyList.length.toString(),style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),))
-                    ],
-                  )
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.people_outline),
-                  label: "Our Team\nहमारी टीम",
-                ),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.person), label: "Profile\nरूपरेखा"),
-              ],
+            child: Container(
+              height: 78,
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.green.shade700,
+                borderRadius: BorderRadius.circular(22),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.15),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+
+                  /// HOME
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => controller.changeTab(0),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 250),
+                        margin: const EdgeInsets.symmetric(horizontal: 3),
+                        decoration: BoxDecoration(
+                          color: controller.currentIndex.value == 0
+                              ? Colors.blueAccent
+                              : Colors.blue,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.home, color: Colors.white, size: 15),
+                            SizedBox(height: 2),
+                            Text(
+                              "Home\nमुख्य पृष्ठ",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                height: 1.1,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  /// LIVE HELP
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => controller.changeTab(1),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 250),
+                        margin: const EdgeInsets.symmetric(horizontal: 3),
+                        decoration: BoxDecoration(
+                          color: controller.currentIndex.value == 1
+                              ? Colors.redAccent
+                              : Colors.red,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                const Icon(
+                                  Icons.location_on,
+                                  color: Colors.white,
+                                  size: 15,
+                                ),
+
+                                if (ctrackontroller.emergencyList.isNotEmpty)
+                                  Positioned(
+                                    right: -10,
+                                    top: -6,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(3),
+                                      decoration: const BoxDecoration(
+                                        color: Colors.yellow,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Text(
+                                        ctrackontroller.emergencyList.length
+                                            .toString(),
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 8,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+
+                            const SizedBox(height: 2),
+
+                            const Text(
+                              "Live Help\nलाइव सहायता",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                height: 1.1,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  /// TEAM
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => controller.changeTab(2),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 250),
+                        margin: const EdgeInsets.symmetric(horizontal: 3),
+                        decoration: BoxDecoration(
+                          color: controller.currentIndex.value == 2
+                              ? Colors.purpleAccent
+                              : Colors.purple,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.people, color: Colors.white, size: 15),
+                            SizedBox(height: 2),
+                            Text(
+                              "Our Team\nहमारी टीम",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                height: 1.1,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  /// PROFILE
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => controller.changeTab(3),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 250),
+                        margin: const EdgeInsets.symmetric(horizontal: 3),
+                        decoration: BoxDecoration(
+                          color: controller.currentIndex.value == 3
+                              ? Colors.orangeAccent
+                              : Colors.orange,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.person, color: Colors.white, size: 15),
+                            SizedBox(height: 2),
+                            Text(
+                              "Profile\nरूपरेखा",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                height: 1.1,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
+          )
     );
   }
 

@@ -328,8 +328,290 @@ class _UserProfileState extends State<UserProfile> {
     }
   }
 
-  Widget idcard(String image,name,id,dob,mobile) {
+//   Widget idcard(String image,name,id,dob,mobile) {
+//
+//     String buildQrData({
+//       required String name,
+//       required String id,
+//       required String dob,
+//       required String mobile,
+//     }) {
+//       return '''
+// AIPVST MEMBER CARD
+// -------------------
+// Name   : $name
+// ID     : AIPVST$id
+// DOB    : $dob
+// Mobile : $mobile
+// ''';
+//     }
+//
+//
+//
+//
+//
+//
+//     return AspectRatio(
+//       aspectRatio: 297 / 210,
+//       child: Container(
+//         decoration: BoxDecoration(
+//           color: Colors.white,
+//           borderRadius: BorderRadius.circular(12),
+//           boxShadow: [
+//             BoxShadow(
+//               color: Colors.black.withOpacity(0.08),
+//               blurRadius: 10,
+//               offset: const Offset(0, 4),
+//             ),
+//           ],
+//         ),
+//         child: Row(
+//           children: [
+//
+//             /// BACK SIDE
+//             Expanded(
+//               child: Container(
+//                 // padding: const EdgeInsets.all(14),
+//                 decoration: BoxDecoration(
+//                   border: Border.all(color: Colors.green.shade800, width: 1.5),
+//                   borderRadius: const BorderRadius.horizontal(
+//                     left: Radius.circular(12),
+//                   ),
+//                 ),
+//                 child: Stack(
+//                   children: [
+//                     Align(
+//                       alignment: Alignment.bottomCenter,
+//                       child: Stack(
+//                         children: [
+//                           ClipPath(
+//                             clipper: TopDiagonalClipper(),
+//                             child: Container(
+//                               height: 50,
+//                               width: double.infinity,
+//                               decoration: BoxDecoration(
+//
+//                                   color:  Color(0xFFFFD700),
+//                                   borderRadius: BorderRadius.only(
+//                                       bottomLeft: Radius.circular(10)
+//                                   )
+//                               ),
+//                             ),
+//                           ),
+//                           ClipPath(
+//                             clipper: TopLeftDiagonalClipper(),
+//                             child: Container(
+//                               height: 50,
+//
+//                               width: double.infinity,
+//                               decoration: BoxDecoration(
+//
+//                                 color: Color(0xFF026F06),
+//                                 borderRadius: BorderRadius.only(
+//                                   bottomLeft: Radius.circular(10)
+//                                 )
+//                               ),
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//
+//
+//                     Padding(
+//                       padding: const EdgeInsets.all(8.0),
+//                       child: Column(
+//                         children: [
+//                           Row(mainAxisAlignment: MainAxisAlignment.center,
+//                             children: [
+//                               Text("PAN No.\nAALTA4598E",style: TextStyle(color: Colors.black,fontSize: 8,fontWeight: FontWeight.bold),),Spacer(),
+//                               Image.asset("${Appconstants.applogo}",width: MediaQuery.sizeOf(context).width/9),Spacer(),
+//                               Text("Reg No.\nUP-71/2025",style: TextStyle(color: Colors.black,fontSize: 8,fontWeight: FontWeight.bold),)
+//                             ],
+//                           ),
+//                           Text("ऑल इंडिया पुलिस वित्तीय सहायता ट्रस्ट (रजिO.)",style: TextStyle(fontSize: 9,color: Colors.green,fontWeight: FontWeight.bold),),
+//                           Text("ALL INDIA POLICE VITTIYA SAHAYATA TRUST [REGI.]" ,style: TextStyle(fontSize: 7,color: Colors.green,fontWeight: FontWeight.bold),),
+//                           SizedBox(height: 5,),
+//
+//                           const SizedBox(height: 10),
+//                           Center(
+//                               child: Container(
+//                                 padding: const EdgeInsets.all(2),
+//                                 decoration: BoxDecoration(
+//                                   color: Colors.white,
+//                                   border: Border.all(color: Colors.green),
+//                                   borderRadius: BorderRadius.circular(10),
+//                                 ),
+//                                 child: QrImageView(
+//                                   data: buildQrData(
+//                                     name: name,
+//                                     id: id,
+//                                     dob: formatDob(dob),
+//                                     mobile: mobile,
+//                                   ),
+//                                   size: 60,
+//                                   backgroundColor: Colors.white,
+//                                   errorCorrectionLevel: QrErrorCorrectLevel.Q,
+//                                 ),
+//                               ),
+//                             ),
+//
+//                           const SizedBox(height: 10),
+//
+//                           const Text(
+//                             "Office Address:\n"
+//                                 "B-7, Satya Nagar, Main Road\n"
+//                                 "Techman City, Mathura-281006\n"
+//                                 "Mob: 9068570082, 9068570083",
+//                             textAlign: TextAlign.center,
+//                             style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//
+//             /// FRONT SIDE
+//             Expanded(
+//               child: Container(
+//                 // padding: const EdgeInsets.all(14),
+//                 decoration: BoxDecoration(
+//                   border: Border.all(color: Colors.green.shade800, width: 1.5),
+//                   borderRadius: const BorderRadius.horizontal(
+//                     right: Radius.circular(12),
+//                   ),
+//                 ),
+//                 child: Stack(
+//                   children: [
+//                     Stack(
+//                       children: [
+//                         ClipPath(
+//                           clipper: LeftCenterDiagonalClipper(),
+//                           child: Container(
+//                             height: 150,
+//                             width: double.infinity,
+//                             decoration: BoxDecoration(
+//                               borderRadius: BorderRadius.only(topRight: Radius.circular(10)),
+//
+//                               color:Color(0xFFD8EFB4),
+//
+//                             ),
+//                           ),
+//                         ),
+//                         ClipPath(
+//                           clipper: RightDiagonalClipper(),
+//                           child: Container(
+//                             height: 110,
+//
+//                             width: double.infinity,
+//                             decoration: BoxDecoration(
+//                               borderRadius: BorderRadius.only(topRight: Radius.circular(10)),
+//
+//                               color: Color(0xFFE89A08),
+//
+//                             ),
+//                           ),
+//                         ),
+//                         ClipPath(
+//                           clipper: RightDiagonalClipper(),
+//                           child: Container(
+//                             height: 100,
+//                             width: double.infinity,
+//                             decoration: BoxDecoration(
+//                                 borderRadius: BorderRadius.only(topRight: Radius.circular(10)),
+//                               color:Color(0xFF026F06),
+//
+//                             ),
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//
+//                     Padding(
+//                       padding: const EdgeInsets.all(8.0),
+//                       child: Column(
+//                         children: [
+//                           Row(mainAxisAlignment: MainAxisAlignment.center,
+//                             children: [
+//                               Text("PAN No.\nAALTA4598E",style: TextStyle(color: Colors.white,fontSize: 8,fontWeight: FontWeight.bold),),Spacer(),
+//                               Image.asset("${Appconstants.applogo}",width: MediaQuery.sizeOf(context).width/9),Spacer(),
+//                               Text("Reg No.\nUP-71/2025",style: TextStyle(color: Colors.white,fontSize: 8,fontWeight: FontWeight.bold),)
+//                             ],
+//                           ),
+//                           Text("ऑल इंडिया पुलिस वित्तीय सहायता ट्रस्ट (रजिO.)",style: TextStyle(fontSize: 9,color: Colors.yellow,fontWeight: FontWeight.bold),),
+//                           Text("ALL INDIA POLICE VITTIYA SAHAYATA TRUST [REGI.]" ,style: TextStyle(fontSize: 7,color: Colors.yellow,fontWeight: FontWeight.bold),),
+//                           SizedBox(height: 5,),
+//                           DecoratedBox(
+//
+//                             decoration: BoxDecoration(
+//                               borderRadius: BorderRadius.circular(10),
+//                               border: Border.all(color: Colors.green.shade900,strokeAlign: 3),
+//                             ),
+//                             child: ClipRRect(
+//                               borderRadius: BorderRadius.circular(10),
+//                               child: Image.network(
+//                                 "${ServerAssets.users}${image}",
+//                                 height: 80,
+//                                 width: 70,
+//                                 fit: BoxFit.cover,
+//                               ),
+//                             ),
+//                           ),
+//                           SizedBox(height: 5,),
+//                           Center(child: Text(name.toString(),style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 12),)),
+//                          controller.usermodel.value?.is_district_member.toString()!="1"?SizedBox(): Center(child: Text("(District Member)".toString(),style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 12),)),
+//
+//                           SizedBox(height: 5,),
+//                           Row(children: [
+//                             Text("id :           ",style: TextStyle(color: Colors.black,fontSize: 11,fontWeight: FontWeight.bold),),
+//                             Expanded(child: Text("AIPVST"+id,style: TextStyle(color: Colors.black,fontSize: 11,fontWeight: FontWeight.bold),)),
+//                           ],),
+//                           Row(children: [
+//                             Text(
+//                               "DOB :      ${formatDob("1999-07-22")}",
+//                               style: const TextStyle(
+//                                 color: Colors.black,
+//                                 fontSize: 11,
+//                                 fontWeight: FontWeight.bold,
+//                               ),
+//                             ),
+//                           ],),
+//                           Row(children: [
+//                             Text("Mobile:   ",style: TextStyle(color: Colors.black,fontSize: 11,fontWeight: FontWeight.bold),),
+//                             Expanded(child: Text(mobile,style: TextStyle(color: Colors.black,fontSize: 11,fontWeight: FontWeight.bold),)),
+//                           ],),
+//
+//
+//                         ],
+//                       ),
+//                     ),
+//                     Padding(
+//                       padding: const EdgeInsets.all(10.0),
+//                       child: Align(
+//                           alignment: Alignment.bottomRight,
+//                           child: Image.asset("assets/authsign.png",height: 20,)),
+//                     )
+//                   ],
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
 
+
+  Widget idcard(
+      String image,
+      String name,
+      String id,
+      String dob,
+      String mobile,
+      ) {
     String buildQrData({
       required String name,
       required String id,
@@ -346,70 +628,82 @@ Mobile : $mobile
 ''';
     }
 
+    double screenWidth = MediaQuery.of(context).size.width;
 
+    double scale = screenWidth / 400;
 
+    if (scale < 0.85) scale = 0.85;
+    if (scale > 1.4) scale = 1.4;
 
-
-
-    return AspectRatio(
-      aspectRatio: 297 / 210,
+    return Center(
       child: Container(
+        width: MediaQuery.of(context).size.width * 0.95,
+
+        constraints: const BoxConstraints(
+          maxWidth: 700,
+          minHeight: 230,
+          maxHeight: 280,
+        ),
+
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12 * scale),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              color: Colors.black12,
+              blurRadius: 10 * scale,
             ),
           ],
         ),
+
         child: Row(
           children: [
 
+            /// =========================================================
             /// BACK SIDE
+            /// =========================================================
+
             Expanded(
               child: Container(
-                // padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.green.shade800, width: 1.5),
-                  borderRadius: const BorderRadius.horizontal(
-                    left: Radius.circular(12),
+                  border: Border.all(
+                    color: Colors.green.shade800,
+                    width: 1.5,
+                  ),
+
+                  borderRadius: BorderRadius.horizontal(
+                    left: Radius.circular(12 * scale),
                   ),
                 ),
+
                 child: Stack(
                   children: [
+
+                    /// BOTTOM DESIGN
+
                     Align(
                       alignment: Alignment.bottomCenter,
                       child: Stack(
                         children: [
+
                           ClipPath(
                             clipper: TopDiagonalClipper(),
                             child: Container(
-                              height: 50,
+                              height: 50 * scale,
                               width: double.infinity,
-                              decoration: BoxDecoration(
-
-                                  color:  Color(0xFFFFD700),
-                                  borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(10)
-                                  )
+                              decoration: const BoxDecoration(
+                                color: Color(0xFFFFD700),borderRadius: BorderRadius.only(bottomLeft: Radius.circular(12))
                               ),
                             ),
                           ),
+
                           ClipPath(
                             clipper: TopLeftDiagonalClipper(),
                             child: Container(
-                              height: 50,
-
+                              height: 50 * scale,
                               width: double.infinity,
-                              decoration: BoxDecoration(
-
-                                color: Color(0xFF026F06),
-                                borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(10)
-                                )
+                              decoration:  BoxDecoration(
+                                color: Color(0xFF026F06),borderRadius: BorderRadius.only(bottomLeft: Radius.circular(12))
                               ),
                             ),
                           ),
@@ -417,55 +711,127 @@ Mobile : $mobile
                       ),
                     ),
 
-
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: EdgeInsets.all(8 * scale),
+
                       child: Column(
                         children: [
-                          Row(mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text("PAN No.\nAALTA4598E",style: TextStyle(color: Colors.black,fontSize: 8,fontWeight: FontWeight.bold),),Spacer(),
-                              Image.asset("${Appconstants.applogo}",width: MediaQuery.sizeOf(context).width/9),Spacer(),
-                              Text("Reg No.\nUP-71/2025",style: TextStyle(color: Colors.black,fontSize: 8,fontWeight: FontWeight.bold),)
-                            ],
-                          ),
-                          Text("ऑल इंडिया पुलिस वित्तीय सहायता ट्रस्ट (रजिO.)",style: TextStyle(fontSize: 9,color: Colors.green,fontWeight: FontWeight.bold),),
-                          Text("ALL INDIA POLICE VITTIYA SAHAYATA TRUST [REGI.]" ,style: TextStyle(fontSize: 7,color: Colors.green,fontWeight: FontWeight.bold),),
-                          SizedBox(height: 5,),
 
-                          const SizedBox(height: 10),
-                          Center(
-                              child: Container(
-                                padding: const EdgeInsets.all(2),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(color: Colors.green),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: QrImageView(
-                                  data: buildQrData(
-                                    name: name,
-                                    id: id,
-                                    dob: formatDob(dob),
-                                    mobile: mobile,
+                          /// HEADER
+
+                          Row(
+                            children: [
+
+                              Expanded(
+                                child: Text(
+                                  "PAN No.\nAALTA4598E",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 10 * scale,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  size: 60,
-                                  backgroundColor: Colors.white,
-                                  errorCorrectionLevel: QrErrorCorrectLevel.Q,
                                 ),
                               ),
+
+                              Image.asset(
+                                Appconstants.applogo,
+                                width: 35 * scale,
+                                height: 35 * scale,
+                                fit: BoxFit.contain,
+                              ),
+
+                              Expanded(
+                                child: Text(
+                                  "Reg No.\nUP-71/2025",
+                                  textAlign: TextAlign.end,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 10 * scale,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          SizedBox(height: 4 * scale),
+
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              "ऑल इंडिया पुलिस वित्तीय सहायता ट्रस्ट (रजिO.)",
+                              style: TextStyle(
+                                fontSize: 10 * scale,
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(height: 2 * scale),
+
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              "ALL INDIA POLICE VITTIYA SAHAYATA TRUST [REGI.]",
+                              style: TextStyle(
+                                fontSize: 8 * scale,
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(height: 10 * scale),
+
+                          /// QR
+
+                          Container(
+                            padding: EdgeInsets.all(2 * scale),
+
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: Colors.green,
+                              ),
+                              borderRadius:
+                              BorderRadius.circular(8 * scale),
                             ),
 
-                          const SizedBox(height: 10),
+                            child: QrImageView(
+                              data: buildQrData(
+                                name: name,
+                                id: id,
+                                dob: formatDob(dob),
+                                mobile: mobile,
+                              ),
 
-                          const Text(
-                            "Office Address:\n"
-                                "B-7, Satya Nagar, Main Road\n"
-                                "Techman City, Mathura-281006\n"
-                                "Mob: 9068570082, 9068570083",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold),
+                              size: 80 * scale,
+                              backgroundColor: Colors.white,
+                            ),
                           ),
+
+                          // const Spacer(),
+SizedBox(height: 10,),
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              "Office Address:\n"
+                                  "B-7, Satya Nagar, Main Road\n"
+                                  "Techman City, Mathura-281006\n"
+                                  "Mob: 9068570082, 9068570083",
+
+                              textAlign: TextAlign.center,
+
+                              style: TextStyle(
+                                fontSize: 9 * scale,
+                                fontWeight: FontWeight.bold,
+                                height: 1.3,
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(height: 10 * scale),
                         ],
                       ),
                     ),
@@ -474,56 +840,60 @@ Mobile : $mobile
               ),
             ),
 
+            /// =========================================================
             /// FRONT SIDE
+            /// =========================================================
+
             Expanded(
               child: Container(
-                // padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.green.shade800, width: 1.5),
-                  borderRadius: const BorderRadius.horizontal(
-                    right: Radius.circular(12),
+                  border: Border.all(
+                    color: Colors.green.shade800,
+                    width: 1.5,
+                  ),
+
+                  borderRadius: BorderRadius.horizontal(
+                    right: Radius.circular(12 * scale),
                   ),
                 ),
+
                 child: Stack(
                   children: [
+
+                    /// TOP DESIGN
+
                     Stack(
                       children: [
+
                         ClipPath(
                           clipper: LeftCenterDiagonalClipper(),
                           child: Container(
-                            height: 150,
+                            height: 120 * scale,
                             width: double.infinity,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(topRight: Radius.circular(10)),
-
-                              color:Color(0xFFD8EFB4),
-
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFD8EFB4),borderRadius: BorderRadius.only(topRight: Radius.circular(12))
                             ),
                           ),
                         ),
+
                         ClipPath(
                           clipper: RightDiagonalClipper(),
                           child: Container(
-                            height: 110,
-
+                            height: 90 * scale,
                             width: double.infinity,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(topRight: Radius.circular(10)),
-
-                              color: Color(0xFFE89A08),
-
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFE89A08),borderRadius: BorderRadius.only(topRight: Radius.circular(12))
                             ),
                           ),
                         ),
+
                         ClipPath(
                           clipper: RightDiagonalClipper(),
                           child: Container(
-                            height: 100,
+                            height: 80 * scale,
                             width: double.infinity,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.only(topRight: Radius.circular(10)),
-                              color:Color(0xFF026F06),
-
+                            decoration: const BoxDecoration(
+                              color: Color(0xFF026F06),borderRadius: BorderRadius.only(topRight: Radius.circular(12))
                             ),
                           ),
                         ),
@@ -531,69 +901,167 @@ Mobile : $mobile
                     ),
 
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: EdgeInsets.all(8 * scale),
+
                       child: Column(
                         children: [
-                          Row(mainAxisAlignment: MainAxisAlignment.center,
+
+                          /// HEADER
+
+                          Row(
                             children: [
-                              Text("PAN No.\nAALTA4598E",style: TextStyle(color: Colors.white,fontSize: 8,fontWeight: FontWeight.bold),),Spacer(),
-                              Image.asset("${Appconstants.applogo}",width: MediaQuery.sizeOf(context).width/9),Spacer(),
-                              Text("Reg No.\nUP-71/2025",style: TextStyle(color: Colors.white,fontSize: 8,fontWeight: FontWeight.bold),)
+
+                              Expanded(
+                                child: Text(
+                                  "PAN No.\nAALTA4598E",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10 * scale,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+
+                              Image.asset(
+                                Appconstants.applogo,
+                                width: 35 * scale,
+                                height: 35 * scale,
+                                fit: BoxFit.contain,
+                              ),
+
+                              Expanded(
+                                child: Text(
+                                  "Reg No.\nUP-71/2025",
+                                  textAlign: TextAlign.end,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10 * scale,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
-                          Text("ऑल इंडिया पुलिस वित्तीय सहायता ट्रस्ट (रजिO.)",style: TextStyle(fontSize: 9,color: Colors.yellow,fontWeight: FontWeight.bold),),
-                          Text("ALL INDIA POLICE VITTIYA SAHAYATA TRUST [REGI.]" ,style: TextStyle(fontSize: 7,color: Colors.yellow,fontWeight: FontWeight.bold),),
-                          SizedBox(height: 5,),
-                          DecoratedBox(
 
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: Colors.green.shade900,strokeAlign: 3),
+                          SizedBox(height: 5 * scale),
+
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              "ऑल इंडिया पुलिस वित्तीय सहायता ट्रस्ट (रजिO.)",
+                              style: TextStyle(
+                                fontSize: 10 * scale,
+                                color: Colors.yellow,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
+                          ),
+
+                          SizedBox(height: 2 * scale),
+
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              "ALL INDIA POLICE VITTIYA SAHAYATA TRUST [REGI.]",
+                              style: TextStyle(
+                                fontSize: 8 * scale,
+                                color: Colors.yellow,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(height: 8 * scale),
+
+                          /// PROFILE IMAGE
+
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius:
+                              BorderRadius.circular(8 * scale),
+
+                              border: Border.all(
+                                color: Colors.green.shade900,
+                              ),
+                            ),
+
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius:
+                              BorderRadius.circular(8 * scale),
+
                               child: Image.network(
-                                "${ServerAssets.users}${image}",
-                                height: 80,
-                                width: 70,
+                                "${ServerAssets.users}$image",
+
+                                height: 80 * scale,
+                                width: 70 * scale,
                                 fit: BoxFit.cover,
                               ),
                             ),
                           ),
-                          SizedBox(height: 5,),
-                          Center(child: Text(name.toString(),style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 12),)),
-                         controller.usermodel.value?.is_district_member.toString()!="1"?SizedBox(): Center(child: Text("(District Member)".toString(),style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 12),)),
 
-                          SizedBox(height: 5,),
-                          Row(children: [
-                            Text("id :           ",style: TextStyle(color: Colors.black,fontSize: 11,fontWeight: FontWeight.bold),),
-                            Expanded(child: Text("AIPVST"+id,style: TextStyle(color: Colors.black,fontSize: 11,fontWeight: FontWeight.bold),)),
-                          ],),
-                          Row(children: [
-                            Text(
-                              "DOB :      ${formatDob("1999-07-22")}",
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
+                          SizedBox(height: 5 * scale),
+
+                          /// NAME
+
+                          SizedBox(
+                            width: double.infinity,
+
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                name.toUpperCase(),
+
+                                maxLines: 1,
+
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13 * scale,
+                                ),
                               ),
                             ),
-                          ],),
-                          Row(children: [
-                            Text("Mobile:   ",style: TextStyle(color: Colors.black,fontSize: 11,fontWeight: FontWeight.bold),),
-                            Expanded(child: Text(mobile,style: TextStyle(color: Colors.black,fontSize: 11,fontWeight: FontWeight.bold),)),
-                          ],),
+                          ),
 
+                          SizedBox(height: 6 * scale),
 
+                          _buildInfoRow(
+                            "ID",
+                            "AIPVST$id",
+                            scale,
+                          ),
+
+                          SizedBox(height: 3 * scale),
+
+                          _buildInfoRow(
+                            "DOB",
+                            formatDob(dob),
+                            scale,
+                          ),
+
+                          SizedBox(height: 3 * scale),
+
+                          _buildInfoRow(
+                            "Mobile",
+                            mobile,
+                            scale,
+                          ),
+
+                          const Spacer(),
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Align(
-                          alignment: Alignment.bottomRight,
-                          child: Image.asset("assets/authsign.png",height: 20,)),
-                    )
+
+                    /// SIGN
+
+                    Positioned(
+                      right: 8 * scale,
+                      bottom: 8 * scale,
+
+                      child: Image.asset(
+                        "assets/authsign.png",
+                        height: 18 * scale,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -604,6 +1072,97 @@ Mobile : $mobile
     );
   }
 
+  /// =========================================================
+  /// INFO ROW
+  /// =========================================================
+
+  Widget _buildInfoRow(
+      String title,
+      String value,
+      double scale,
+      ) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+
+        SizedBox(
+          width: 55 * scale,
+
+          child: Text(
+            "$title :",
+
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 10 * scale,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+
+        Expanded(
+          child: FittedBox(
+            alignment: Alignment.centerLeft,
+            fit: BoxFit.scaleDown,
+
+            child: Text(
+              value,
+
+              maxLines: 1,
+
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 10 * scale,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+  /// =====================================
+  /// RESPONSIVE INFO ROW
+  /// =====================================
+
+  // Widget _buildInfoRow(
+  //     String title,
+  //     String value,
+  //     double scale,
+  //     ) {
+  //   return Row(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //
+  //       SizedBox(
+  //         width: 80 * scale,
+  //         child: Text(
+  //           "$title :",
+  //           style: TextStyle(
+  //             color: Colors.black,
+  //             fontSize: 14 * scale,
+  //             fontWeight: FontWeight.bold,
+  //           ),
+  //         ),
+  //       ),
+  //
+  //       Expanded(
+  //         child: FittedBox(
+  //           alignment: Alignment.centerLeft,
+  //           fit: BoxFit.scaleDown,
+  //           child: Text(
+  //             value,
+  //             maxLines: 1,
+  //             style: TextStyle(
+  //               color: Colors.black,
+  //               fontSize: 14 * scale,
+  //               fontWeight: FontWeight.bold,
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
   Widget info(String title, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),

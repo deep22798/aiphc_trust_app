@@ -46,8 +46,9 @@ dependencies:
   flutter_html: ^3.0.0
   image_picker: ^1.2.1
   webview_flutter: ^4.13.1
-  phonepe_payment_sdk: ^3.0.2
+  phonepe_payment_sdk: ^ 3.0.2
   crypto: ^3.0.7
+  timeago: ^3.6.1
   url_launcher: ^6.2.6
   app_links: ^6.1.4
   google_maps_flutter: ^2.5.0

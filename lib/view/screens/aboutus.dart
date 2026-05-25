@@ -106,49 +106,51 @@ class Aboutus extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: IntrinsicHeight(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            MaterialButton(
-                              onPressed: () {
-                                Get.to(() => WebViewPage(
-                                  url: "https://aiphc.in/termcondition",
-                                  title: "Term and condition",
-                                ));
-                              },
-                              child: const Text("Term and condition"),
-                            ),
+                        child: SingleChildScrollView(scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              MaterialButton(
+                                onPressed: () {
+                                  Get.to(() => WebViewPage(
+                                    url: "https://aiphc.in/termcondition",
+                                    title: "Term and condition",
+                                  ));
+                                },
+                                child: const Text("Term and condition"),
+                              ),
 
-                            const VerticalDivider(
-                              width: 10,
-                              thickness: 1,
-                              color: Colors.black12,
-                            ),
+                              const VerticalDivider(
+                                width: 10,
+                                thickness: 1,
+                                color: Colors.black12,
+                              ),
 
-                            MaterialButton(
-                              onPressed: () {
-                                Get.to(() => WebViewPage(
-                                  url: "https://aiphc.in/privacy_policy",
-                                  title: "Privacy Policy",
-                                ));
-                              },
-                              child: const Text("Privacy Policy"),
-                            ),const VerticalDivider(
-                              width: 10,
-                              thickness: 1,
-                              color: Colors.black12,
-                            ),
+                              MaterialButton(
+                                onPressed: () {
+                                  Get.to(() => WebViewPage(
+                                    url: "https://aiphc.in/privacy_policy",
+                                    title: "Privacy Policy",
+                                  ));
+                                },
+                                child: const Text("Privacy Policy"),
+                              ),const VerticalDivider(
+                                width: 10,
+                                thickness: 1,
+                                color: Colors.black12,
+                              ),
 
-                            MaterialButton(
-                              onPressed: () {
-                                Get.to(() => WebViewPage(
-                                  url: "https://aiphc.in/refundpolicy",
-                                  title: "Refund Policy",
-                                ));
-                              },
-                              child: const Text("Refund Policy"),
-                            ),
-                          ],
+                              MaterialButton(
+                                onPressed: () {
+                                  Get.to(() => WebViewPage(
+                                    url: "https://aiphc.in/refundpolicy",
+                                    title: "Refund Policy",
+                                  ));
+                                },
+                                child: const Text("Refund Policy"),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

@@ -77,14 +77,13 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
-
     defaultConfig {
         applicationId = "com.wintechwings.aipvst"
 //        minSdk = flutter.minSdkVersion
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = 10
-        versionName = "9.0.0"
+        versionCode = 14
+        versionName = "14.0.0"
     }
 
 
